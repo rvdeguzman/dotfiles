@@ -1,6 +1,126 @@
 # Source zsh plugins
 source $(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
+
+# Path to your oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load --- if set to "random", it will
+# load a random theme each time oh-my-zsh is loaded, in which case,
+# to know which specific one was loaded, run: echo $RANDOM_THEME
+# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
+ZSH_THEME="robbyrussell"
+
+# Set list of themes to pick from when loading at random
+# Setting this variable when ZSH_THEME=random will cause zsh to load
+# a theme from this variable instead of looking in $ZSH/themes/
+# If set to an empty array, this variable will have no effect.
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment one of the following lines to change the auto-update behavior
+# zstyle ':omz:update' mode disabled  # disable automatic updates
+# zstyle ':omz:update' mode auto      # update automatically without asking
+# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+
+# Uncomment the following line to change how often to auto-update (in days).
+# zstyle ':omz:update' frequency 13
+
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS="true"
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# You can also set it to another string to have that shown instead of the default red dots.
+# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
+# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# You can set one of the optional three formats:
+# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# or set a custom format using the strftime function format specifications,
+# see 'man strftime' for details.
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load?
+# Standard plugins can be found in $ZSH/plugins/
+# Custom plugins may be added to $ZSH_CUSTOM/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+plugins=(git)
+
+source $ZSH/oh-my-zsh.sh
+
+# User configuration
+
+# export MANPATH="/usr/local/man:$MANPATH"
+
+# You may need to manually set your language environment
+# export LANG=en_US.UTF-8
+
+# Preferred editor for local and remote sessions
+# if [[ -n $SSH_CONNECTION ]]; then
+#   export EDITOR='vim'
+# else
+#   export EDITOR='mvim'
+# fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+
+alias code="code-insiders"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+export PATH=/Users/rdeguzman/Developer/flutter/bin:$PATH
+
+export PATH=$PATH:/Users/rdeguzman/.spicetify
+export PATH="$PATH":"$HOME/.pub-cache/bin"
+export PATH="$PATH":"$HOME/.py-venv/bin/python"
+export PATH="$PATH":"$HOME/.py-venv/bin/python3"
+export PATH="$PATH":"$HOME/.py-venv/bin/pip"
+export PATH="$PATH":"$HOME/.py-venv/bin/pip3"
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+
+# Created by `pipx` on 2024-08-06 04:46:02
+export PATH="$PATH:/Users/rdeguzman/.local/bin"
 
 # Aliases for common dirs
 alias home="cd ~"
@@ -21,11 +141,7 @@ alias cfg="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
 alias push="git push"
 alias g="lazygit"
 
-eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"
-
-alias ssh="TERM=xterm-256color ssh"
-
 alias n="nnn"
 function nnn () {
   command nnn "$@"
@@ -39,38 +155,5 @@ function kill () {
   command kill -KILL $(pidof "$@")
 }
 
-function suyabai () {
-  SHA256=$(shasum -a 256 /opt/homebrew/bin/yabai | awk "{print \$1;}")
-  if [ -f "/private/etc/sudoers.d/yabai" ]; then
-    sudo sed -i '' -e 's/sha256:[[:alnum:]]*/sha256:'${SHA256}'/' /private/etc/sudoers.d/yabai
-  else
-    echo "sudoers file does not exist yet"
-  fi
-}
-
-# Color Scheme
-export BLACK=0xff181819
-export WHITE=0xffe2e2e3
-export RED=0xfffc5d7c
-export GREEN=0xff9ed072
-export BLUE=0xff76cce0
-export YELLOW=0xffe7c664
-export ORANGE=0xfff39660
-export MAGENTA=0xffb39df3
-export GREY=0xff7f8490
-export TRANSPARENT=0x00000000
-export BG0=0xff2c2e34
-export BG1=0xff363944
-export BG2=0xff414550
 
 source "$HOME/.cargo/env"
-
-# Only load conda into path but dont actually use the bloat that comes with it
-export PATH="$HOME/miniforge3/bin:/usr/local/anaconda3/bin:$PATH:$(brew --prefix)/opt/llvm/bin"
-export NNN_TMPFILE="$HOME/.config/nnn/.lastd"
-export NNN_OPTS="AdHoU"
-export NNN_FCOLORS='c1e2272e006033f7c6d6abc4'
-export EDITOR="$(which hx)"
-export VISUAL="$(which hx)"
-export MANPAGER="$(which nvim) +Man!"
-export XDG_CONFIG_HOME="$HOME/.config"
