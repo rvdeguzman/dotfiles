@@ -13,7 +13,6 @@ brew analytics off
 ## Taps
 echo "Tapping Brew..."
 brew tap homebrew/cask-fonts
-brew tap FelixKratz/formulae
 brew tap koekeishiya/formulae
 
 ## Formulae
@@ -24,17 +23,11 @@ brew install jq
 brew install ripgrep
 brew install mas
 brew install gh
-brew install ifstat
-brew install switchaudio-osx
 brew install skhd
-brew install sketchybar
-brew install borders
 brew install yabai
 
 ### Terminal
 brew install neovim
-brew install helix
-brew install starship
 brew install zsh-autosuggestions
 brew install zsh-fast-syntax-highlighting
 brew install zoxide
@@ -44,15 +37,11 @@ brew install btop
 brew install lazygit
 brew install dooit
 
-### Custom HEAD only forks
-brew install fnnn --head # nnn fork (changed colors, keymappings)
-
 ## Casks
 echo "Installing Brew Casks..."
 ### Terminals & Browsers
-brew install --cask alacritty
-brew install --cask kitty
-brew install --cask orion # browser
+brew install --cask iterm2
+brew install --cask firefox
 
 ### Nice to have
 brew install --cask alfred
@@ -81,8 +70,6 @@ defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 defaults write NSGlobalDomain _HIHideMenuBar -bool true
-defaults write NSGlobalDomain AppleHighlightColor -string "0.65098 0.85490 0.58431"
-defaults write NSGlobalDomain AppleAccentColor -int 1
 defaults write com.apple.screencapture location -string "$HOME/Desktop"
 defaults write com.apple.screencapture disable-shadow -bool true
 defaults write com.apple.screencapture type -string "png"
@@ -106,33 +93,23 @@ defaults write NSGlobalDomain WebKitDeveloperExtras -bool true
 defaults write com.apple.mail AddressesIncludeNameOnPasteboard -bool false
 defaults write -g NSWindowShouldDragOnGesture YES
 
-# Copying and checking out configuration files
-echo "Planting Configuration Files..."
-[ ! -d "$HOME/dotfiles" ] && git clone --bare git@github.com:FelixKratz/dotfiles.git $HOME/dotfiles
-git --git-dir=$HOME/dotfiles/ --work-tree=$HOME checkout master
-
 # Installing Fonts
 git clone git@github.com:shaunsingh/SFMono-Nerd-Font-Ligaturized.git /tmp/SFMono_Nerd_Font
 mv /tmp/SFMono_Nerd_Font/* $HOME/Library/Fonts
 rm -rf /tmp/SFMono_Nerd_Font/
-
-curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.5/sketchybar-app-font.ttf -o $HOME/Library/Fonts/sketchybar-app-font.ttf
-
-# Installing helix language server
-git clone https://github.com/estin/simple-completion-language-server.git /tmp/simple-completion-language-server
-(cd /tmp/simple-completion-language-server && cargo install --path .)
-rm -rf /tmp/simple-completion-language-server
-
 
 source $HOME/.zshrc
 cfg config --local status.showUntrackedFiles no
 
 # Start Services
 echo "Starting Services (grant permissions)..."
-brew services start skhd
-brew services start fyabai
-brew services start sketchybar
-brew services start borders
+yabai --start-service
+yabai --restart-service
+
+skhd --start-service
+skhd --restart-service
+#brew services start skhd
+#brew services start fyabai
 
 csrutil status
 echo "(optional) Disable SIP for advanced yabai features."

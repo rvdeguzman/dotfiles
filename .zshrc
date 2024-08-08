@@ -103,7 +103,7 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-alias code="code-insiders"
+alias code="codium"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
@@ -142,14 +142,6 @@ alias push="git push"
 alias g="lazygit"
 
 eval "$(zoxide init --cmd cd zsh)"
-alias n="nnn"
-function nnn () {
-  command nnn "$@"
-
-  if [ -f "$NNN_TMPFILE" ]; then
-          . "$NNN_TMPFILE"
-  fi
-}
 
 function kill () {
   command kill -KILL $(pidof "$@")
