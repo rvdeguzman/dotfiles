@@ -124,6 +124,7 @@ export PATH="$PATH:/Users/rdeguzman/.local/bin"
 
 # Aliases for common dirs
 alias home="cd ~"
+alias repos="cd ~/repos"
 
 # System Aliases
 alias ..="cd .."
@@ -149,3 +150,6 @@ function kill () {
 
 
 source "$HOME/.cargo/env"
+
+# ensure start in ~
+cd ~
