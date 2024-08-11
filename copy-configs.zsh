@@ -5,7 +5,7 @@ REPO_DIR="$HOME/repos/dotfiles/"
 
 TARGET_DIR="${1:-$REPO_DIR}"
 
-FOLDERS=(kitty nvim skhd yabai vscode iterm2)
+FOLDERS=(kitty nvim skhd yabai vscode)
 
 echo "Moving folders from ${CONFIG_DIR} to ${TARGET_DIR}"
 
