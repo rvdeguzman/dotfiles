@@ -42,6 +42,7 @@ echo "Installing Brew Casks..."
 ### Terminals & Browsers
 brew install --cask iterm2
 brew install --cask firefox
+brew install --cask kitty
 
 ### Nice to have
 brew install --cask alfred
