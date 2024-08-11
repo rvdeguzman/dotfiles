@@ -1,11 +1,11 @@
 #!/bin/zsh
 
 CONFIG_DIR="$HOME/.config"
-REPO_DIR="$HOME/repos/dotfiles/"
+REPO_DIR="$HOME/repos/dotfiles/config/"
 
 TARGET_DIR="${1:-$REPO_DIR}"
 
-FOLDERS=(kitty nvim skhd yabai vscode)
+FOLDERS=(kitty nvim skhd yabai)
 
 echo "Moving folders from ${CONFIG_DIR} to ${TARGET_DIR}"
 
