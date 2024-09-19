@@ -12,10 +12,10 @@ echo "Moving folders from ${CONFIG_DIR} to ${TARGET_DIR}"
 # Move the specified folders
 for FOLDER in "${FOLDERS[@]}"; do
     if [ -d "$CONFIG_DIR/$FOLDER" ]; then
-        echo "Moving $FOLDER to $REPO_DIR"
+        echo "Copying $FOLDER to $REPO_DIR"
         cp -r "$CONFIG_DIR/$FOLDER" "$TARGET_DIR/"
     else
-        echo "Folder $FOLDER does not exist in $CONFIG_DIR"
+        echo "Folder $FOLDER does not exist in $CONFIG_DIR, making...."
     fi
 done
 

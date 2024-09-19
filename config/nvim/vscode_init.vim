@@ -83,3 +83,7 @@ nmap <Tab> :Tabnext<CR>
 nmap <S-Tab> :Tabprev<CR>
 
 set clipboard=unnamedplus
+
+set ignorecase
+set smartcase
+set nohlsearch
