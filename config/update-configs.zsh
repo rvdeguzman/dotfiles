@@ -5,7 +5,7 @@ REPO_DIR="$HOME/repos/dotfiles/config/"
 
 TARGET_DIR="${1:-$REPO_DIR}"
 
-FOLDERS=(kitty nvim skhd yabai)
+FOLDERS=(kitty doom emacs karabiner nvim tmux)
 
 echo "Moving folders from ${CONFIG_DIR} to ${TARGET_DIR}"
 

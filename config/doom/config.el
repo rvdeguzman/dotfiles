@@ -6,8 +6,8 @@
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
-;; (setq user-full-name "John Doe"
-;;       user-mail-address "john@doe.com")
+ (setq user-full-name "rvdeguzman"
+       user-mail-address "rvdeguzman@gmail.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom:
 ;;
@@ -40,36 +40,54 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
+;; config.el
+;; Keep your existing configuration at the top...
+
+;; First, set up the basic org configuration
 (setq org-directory "~/org/")
 
-;; Whenever you reconfigure a package, make sure to wrap your config in an
-;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
-;;
-;;   (after! PACKAGE
-;;     (setq x y))
-;;
-;; The exceptions to this rule:
-;;
-;;   - Setting file/directory variables (like `org-directory')
-;;   - Setting variables which explicitly tell you to set them before their
-;;     package is loaded (see 'C-h v VARIABLE' to look up their documentation).
-;;   - Setting doom variables (which start with 'doom-' or '+').
-;;
-;; Here are some additional functions/macros that will help you configure Doom.
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;; Alternatively, use `C-h o' to look up a symbol (functions, variables, faces,
-;; etc).
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
+;; Set up org-roam configuration in a single place to avoid duplicates
+(after! org-roam
+  ;; Set the directory where your notes will live
+  (setq org-roam-directory (file-truename "~/notes/roam"))
+  
+  ;; Explicitly set the database location
+  (setq org-roam-db-location (file-truename "~/notes/roam/org-roam.db"))
+  
+  ;; Set up capture templates for creating new notes
+  (setq org-roam-capture-templates
+        '(("d" "default" plain
+           "%?"
+           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                             "#+title: ${title}\n#+date: %U\n#+filetags: \n\n")
+           :unnarrowed t)
+          ("r" "reference" plain
+           "%?"
+           :target (file+head "references/${slug}.org"
+                             "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
+           :unnarrowed t)))
+
+  ;; Configure the display template for better completion
+  (setq org-roam-node-display-template
+        (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+
+  ;; Set up the keybindings using Doom's map! macro
+  (map! :leader
+        :prefix "n"
+        :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
+        :desc "org-roam-node-find" "f" #'org-roam-node-find
+        :desc "org-roam-graph" "g" #'org-roam-graph
+        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
+        :desc "org-roam-capture" "c" #'org-roam-capture
+        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today))
+
+;; Keep your org-roam-ui configuration
+(use-package! org-roam-ui
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
+
+;; Keep your remaining configurations...
