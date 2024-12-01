@@ -1,20 +1,17 @@
 #!/bin/zsh 
 
+# Set directory paths
 CONFIG_DIR="$HOME/.config"
 CURRENT_DIR="$PWD"
 
-FOLDERS=(kitty nvim skhd yabai)
+echo "Moving all folders from ${CURRENT_DIR} to ${CONFIG_DIR}"
 
-echo "Moving folders from ${CURRENT_DIR} to ${CONFIG_DIR}"
-
-# Move the specified folders
-for FOLDER in "${FOLDERS[@]}"; do
-    if [ -d "$PWD/$FOLDER" ]; then
+for ITEM in "$CURRENT_DIR"/*; do
+    if [ -d "$ITEM" ]; then
+        FOLDER=$(basename "$ITEM")
         echo "Copying $FOLDER to $CONFIG_DIR"
-        cp -r "$PWD/$FOLDER" "$CONFIG_DIR/"
-    else
-        echo "Folder $FOLDER does not exist in $CONFIG_DIR, making...."
+        cp -r "$ITEM" "$CONFIG_DIR/"
     fi
 done
 
-echo "Done."
+echo "all dotfiles copied, lets goooo"
