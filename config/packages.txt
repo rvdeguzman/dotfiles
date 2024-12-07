@@ -16,7 +16,6 @@ ripgrep
 rofi
 tmux
 xclip
-yay
 zsh
 syncthing
 zathura
