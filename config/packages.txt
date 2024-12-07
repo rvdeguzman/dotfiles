@@ -21,3 +21,6 @@ zsh
 syncthing
 zathura
 zathura-pdf-poppler
+aspell
+aspell-en
+ispell
