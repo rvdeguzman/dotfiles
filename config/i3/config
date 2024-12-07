@@ -276,7 +276,8 @@ bindsym XF86MonBrightnessUp exec brightnessctl s +5%
 
 # exec --no-startup-id i3-msg 'workspace 1:Web; exec /usr/bin/firefox'
 
-exec_always --no-startup-id picom --config $HOME/.config/i3/picom.conf
+exec_always --no-startup-id picom --config $HOME/.config/picom/picom.conf
+# exec_always --no-startup-id picom
 exec_always --no-startup-id twmnd 
 
 # media keys
@@ -285,7 +286,7 @@ exec_always --no-startup-id twmnd
 
 # application rules
         # firefox
-                assign [class="Firefox"] → 1
+                # assign [class="Firefox"] → 1
 
 
 # battery notification
