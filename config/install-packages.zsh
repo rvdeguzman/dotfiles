@@ -1,1 +1,1 @@
-sudo sudo pacman -S --needed --ignore-missing - < packages.txt
+sudo sudo pacman -S --needed - < packages.txt
