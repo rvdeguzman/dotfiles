@@ -1,0 +1,42 @@
+# Minimal i3status configuration for desktop PC
+# Save this to ~/.config/i3status/config
+
+general {
+    # Update interval in seconds - a longer interval uses less resources
+    interval = 5
+    
+    # Define colors for status indicators
+    colors = true
+    # Gruvbox colors
+    colors = true
+    color_good = "#b8bb26"     # Gruvbox green
+    color_degraded = "#fabd2f" # Gruvbox yellow
+    color_bad = "#fb4934"      # Gruvbox red
+    
+    # Use Gruvbox dark for the basic elements
+    color_separator = "#928374" # Gruvbox gray} 
+}
+
+# Define which modules to show and their order
+order += "ethernet _first_"
+order += "memory"
+order += "tztime local"
+
+ethernet _first_ { 
+    # Show whether ethernet is connected and the IP address
+    format_up = "E: %ip"
+    format_down = "E: down"
+}
+
+memory {
+    # Show memory usage as a percentage
+    format = "RAM: %percentage_used"
+    threshold_degraded = "80%"  # Show yellow when memory usage is above 80%
+    threshold_critical = "95%"  # Show red when memory usage is above 95%
+}
+
+tztime local {
+    # Show time in hours:minutes format
+    format = "%H:%M"
+}
+
