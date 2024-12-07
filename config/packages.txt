@@ -19,3 +19,5 @@ xclip
 yay
 zsh
 syncthing
+zathura
+zathura-pdf-poppler
