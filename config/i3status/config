@@ -21,11 +21,22 @@ general {
 order += "ethernet _first_"
 order += "memory"
 order += "tztime local"
+#order += "volume master"
+#order += "battery all"
+
+wireless _first_ {
+        format_up = "W: (%quality at %essid) %ip"
+        format_down = "W: down"
+}
 
 ethernet _first_ { 
     # Show whether ethernet is connected and the IP address
     format_up = "E: %ip"
     format_down = "E: down"
+}
+
+battery all {
+        format = "%status %percentage %remaining"
 }
 
 memory {
@@ -36,7 +47,7 @@ memory {
 }
 
 tztime local {
-    # Show time in hours:minutes format
-    format = "%H:%M"
+   # format = "%H:%M"
+    format = "%m-%d-%Y %H:%M"
 }
 
