@@ -1,0 +1,72 @@
+# Minimal i3status configuration for desktop PC
+# Save this to ~/.config/i3status/config
+
+general {
+    # Update interval in seconds - a longer interval uses less resources
+    interval = 5
+    
+    # Define colors for status indicators
+    colors = true
+    # Gruvbox colors
+    colors = true
+    color_good = "#b8bb26"     # Gruvbox green
+    color_degraded = "#fabd2f" # Gruvbox yellow
+    color_bad = "#fb4934"      # Gruvbox red
+    
+    # Use Gruvbox dark for the basic elements
+    color_separator = "#928374" # Gruvbox gray} 
+}
+
+# Define which modules to show and their order
+#order += "ethernet _first_"
+order += "wireless _first_"
+order += "memory"
+order += "battery 0"
+order += "battery 1"
+order += "volume master"
+order += "tztime local"
+
+
+ethernet _first_ { 
+    # Show whether ethernet is connected and the IP address
+    format_up = "E: %ip"
+    format_down = "E: down"
+}
+
+memory {
+    # Show memory usage as a percentage
+    format = "RAM: %percentage_used"
+    threshold_degraded = "80%"  # Show yellow when memory usage is above 80%
+    threshold_critical = "95%"  # Show red when memory usage is above 95%
+}
+
+wireless _first_ {
+    format_up = "%essid"
+    format_down = "W: down"
+}
+
+battery 0 {
+    format = "BAT0: %percentage"
+    format_down = "No BAT0"
+    status_chr = "⚡ CHR"
+    status_bat = "🔋 BAT"
+    status_unk = "? UNK"
+    status_full = "☻ FULL"
+    path = "/sys/class/power_supply/BAT0/uevent"
+    low_threshold = 10
+}
+
+battery 1 {
+    format = "BAT1: %percentage"
+    format_down = "No BAT1"
+    status_chr = "⚡ CHR"
+    status_bat = "🔋 BAT"
+    status_unk = "? UNK"
+    status_full = "☻ FULL"
+    path = "/sys/class/power_supply/BAT1/uevent"
+    low_threshold = 10
+}
+
+tztime local {
+    format = "%m/%d/%Y %H:%M"
+}
