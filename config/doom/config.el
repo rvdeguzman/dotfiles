@@ -44,28 +44,94 @@
 ;; Keep your existing configuration at the top...
 
 ;; First, set up the basic org configuration
-(setq org-directory "~/org/")
+(setq org-directory "~/school/org/")
 
 ;; Set up org-roam configuration in a single place to avoid duplicates
 (after! org-roam
   ;; Set the directory where your notes will live
-  (setq org-roam-directory (file-truename "~/notes/roam"))
+  ;; (setq org-roam-directory (file-truename "~/notes/roam"))
+  (setq org-roam-directory (file-truename "~/school/roam"))
   
   ;; Explicitly set the database location
-  (setq org-roam-db-location (file-truename "~/notes/roam/org-roam.db"))
-  
-  ;; Set up capture templates for creating new notes
+  ;; (setq org-roam-db-location (file-truename "~/notes/roam/org-roam.db"))
+  (setq org-roam-db-location (file-truename "~/school/roam/org-roam.db"))
+
   (setq org-roam-capture-templates
-        '(("d" "default" plain
-           "%?"
-           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                             "#+title: ${title}\n#+date: %U\n#+filetags: \n\n")
-           :unnarrowed t)
-          ("r" "reference" plain
-           "%?"
-           :target (file+head "references/${slug}.org"
-                             "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
-           :unnarrowed t)))
+      '(("d" "default" plain
+         "%?"
+         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                           "#+title: ${title}\n#+date: %U\n#+filetags: \n\n")
+         :unnarrowed t)
+        ("r" "reference" plain
+         "%?"
+         :target (file+head "references/${slug}.org"
+                           "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
+         :unnarrowed t)
+        ("l" "lecture" plain
+         "%?"
+         :target (file+head "${course}/lectures/${slug}.org"
+                           "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :lecture:\n\n* Key Points\n\n* Examples\n\n* Questions")
+         :unnarrowed t
+         :properties (("course" . "${course}")))
+        ("c" "concept" plain
+         "%?"
+         :target (file+head "${course}/concepts/${slug}.org"
+                           "#+title: ${title}\n#+filetags: :concept:\n\n* Definition\n\n* Examples\n\n* Related Concepts")
+         :unnarrowed t
+         :properties (("course" . "${course}")))
+        ("n" "new course" plain
+         "%?"
+         :target (file+head "${title}/index.org"
+                           "#+title: ${title}\n#+filetags: :course:\n\n* Course Overview\n- Professor: \n- Schedule: \n- Office Hours: \n\n* Key Topics\n\n* Assignments & Due Dates\n\n* Resources\n\n* Lectures\n\n* Important Concepts")
+         :unnarrowed t)))
+  ;;  (setq org-roam-capture-templates
+;;      '(("d" "default" plain
+;;         "%?"
+;;         :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+;;                           "#+title: ${title}\n#+date: %U\n#+filetags: \n\n")
+;;         :unnarrowed t)
+;;        ("r" "reference" plain
+;;         "%?"
+;;         :target (file+head "references/${slug}.org"
+;;                           "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
+;;         :unnarrowed t)
+;;        ("l" "lecture" plain
+;;         "%?"
+;;         :target (file+head "${course}/lectures/${slug}.org"
+;;                           "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :${course}:lecture:\n\n* Key Points\n\n* Examples\n\n* Questions")
+;;         :unnarrowed t)
+;;        ("c" "concept" plain
+;;         "%?"
+;;         :target (file+head "${course}/concepts/${slug}.org"
+;;                           "#+title: ${title}\n#+filetags: :${course}:concept:\n\n* Definition\n\n* Examples\n\n* Related Concepts")
+;;         :unnarrowed t)
+;;        ("n" "new course" plain
+;;         "%?"
+;;         :target (file+head "${course}/index.org"
+;;                           "#+title: ${title}\n#+filetags: :${course}:course:\n\n* Course Overview\n- Professor: \n- Schedule: \n- Office Hours: \n\n* Key Topics\n\n* Assignments & Due Dates\n\n* Resources\n\n* Lectures\n\n* Important Concepts")
+;;         :unnarrowed t)))
+  ;; Set up capture templates for creating new notes
+;;  (setq org-roam-capture-templates
+;;        '(("d" "default" plain
+;;           "%?"
+;;           :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+;;                             "#+title: ${title}\n#+date: %U\n#+filetags: \n\n")
+;;           :unnarrowed t)
+;;          ("r" "reference" plain
+;;           "%?"
+;;           :target (file+head "references/${slug}.org"
+;;                             "#+title: ${title}\n#+date: %U\n#+filetags: :reference:\n\n")
+;;           :unnarrowed t)))
+;;        '(("l" "lecture" plain
+;;        "%?"
+;;        :if-new (file+head "${course}/lectures/${slug}.org"
+;;                                "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :${course}:lecture:\n\n* Key Points\n\n* Examples\n\n* Questions")
+;;        :unnarrowed t)
+;;        '(("c" "concept" plain
+;;        "%?"
+;;        :if-new (file+head "${course}/concepts/${slug}.org"
+;;                                "#+title: ${title}\n#+filetags: :${course}:concept:\n\n* Definition\n\n* Examples\n\n* Related Concepts")
+;;        :unnarrowed t)))
 
   ;; Configure the display template for better completion
   (setq org-roam-node-display-template
@@ -82,12 +148,11 @@
         :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today))
 
 ;; Keep your org-roam-ui configuration
-(use-package! org-roam-ui
-  :after org-roam
-  :config
-  (setq org-roam-ui-sync-theme t
-        org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
-
-;; Keep your remaining configurations...
+ (use-package! org-roam-ui
+   :after org-roam
+   :config
+   (setq org-roam-ui-sync-theme t
+         org-roam-ui-follow t
+         org-roam-ui-update-on-save t
+         org-roam-ui-open-on-start t))
+ 

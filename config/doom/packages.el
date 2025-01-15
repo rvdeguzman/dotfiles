@@ -59,3 +59,6 @@
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui"))
 (package! vterm)
+(package! emacsql
+  :pin "20241117.1614"
+  :recipe (:host github :repo "magit/emacsql"))
