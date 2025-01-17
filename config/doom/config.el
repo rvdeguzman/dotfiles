@@ -156,3 +156,9 @@
          org-roam-ui-update-on-save t
          org-roam-ui-open-on-start t))
  
+(set-default 'preview-scale-function 1.5)
+
+(setq display-line-numbers 'relative)
+(after! org
+  (plist-put org-format-latex-options :scale 1.5))
+;;(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
