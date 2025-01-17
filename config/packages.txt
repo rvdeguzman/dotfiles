@@ -24,3 +24,5 @@ aspell
 aspell-en
 ispell
 texlive
+ffmpeg
+
