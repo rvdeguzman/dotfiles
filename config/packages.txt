@@ -25,4 +25,5 @@ aspell-en
 ispell
 texlive
 ffmpeg
-
+pandoc
+discount
