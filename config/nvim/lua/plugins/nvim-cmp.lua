@@ -1,7 +1,8 @@
 return {
   {
     "hrsh7th/nvim-cmp",
-    event = "InsertEnter",
+    enabled = true,
+    lazy = false,
     dependencies = {
       "hrsh7th/vim-vsnip",
       "hrsh7th/cmp-vsnip",
