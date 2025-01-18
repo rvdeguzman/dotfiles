@@ -84,6 +84,8 @@ alt-shift-equal = 'resize smart +50'
 
 # Enter service mode (for additional commands)
 alt-shift-semicolon = 'mode service'
+alt-shift-c = 'reload-config'
+alt-f = 'fullscreen'
 
 [mode.service.binding]
 # Exit service mode
@@ -104,20 +106,17 @@ alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
 
+
 [mode.resize.binding]
-# Vim-style keys for resizing
 h = 'resize width -50'  # Shrink width
 j = 'resize height +50' # Grow height
 k = 'resize height -50' # Shrink height
 l = 'resize width +50'  # Grow width
 
-# Arrow keys for resizing (alternative)
 left = 'resize width -50'
 down = 'resize height +50'
 up = 'resize height -50'
 right = 'resize width +50'
 
-# Exit resize mode
 esc = 'mode main'
 enter = 'mode main'
-alt-r = 'mode main'
