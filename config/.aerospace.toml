@@ -17,15 +17,17 @@ exec-on-workspace-change = [
 [gaps]
 inner.horizontal = 8
 inner.vertical = 8
-outer.left = 24
-outer.bottom = 24
-outer.top = 32       # Larger top gapƒƒ for menu bar
-outer.right = 24
+outer.left = 16
+outer.bottom = 8
+outer.top = 40       # Larger top gapƒƒ for menu bar
+outer.right = 16
 
 [key-mapping]
 preset = 'qwerty'
 
 [mode.main.binding]
+# resize mode
+alt-r = 'mode resize'
 # Terminal
 alt-enter = "exec-and-forget /Applications/kitty.app/Contents/MacOS/kitty --directory ~"
 # Window focus (vim-style)
@@ -68,17 +70,13 @@ alt-shift-0 = 'move-node-to-workspace 10'
 alt-space = 'layout floating tiling'
 
 # Layout controls
-alt-e = 'layout tiles horizontal'                  # horizontal split
-alt-v = 'layout tiles vertical'                    # vertical split
-alt-w = 'layout accordion'                         # accordion layout (fullscreen-like)
-alt-f = ['mode service', 'layout floating tiling'] # toggle floating
+alt-s = 'layout accordion vertical'        # stack
+alt-w = 'layout accordion horizontal'      # tab
+alt-e = 'layout tiles horizontal vertical'
 
 # Workspace navigation (similar to your i3 tab bindings)
 alt-tab = 'workspace-back-and-forth'
 alt-shift-tab = 'move-workspace-to-monitor --wrap-around next'
-
-# Kill window (equivalent to your i3 alt+shift+q)
-alt-shift-q = 'close'
 
 # Resize
 alt-shift-minus = 'resize smart -50'
@@ -105,3 +103,21 @@ alt-shift-h = ['join-with left', 'mode main']
 alt-shift-j = ['join-with down', 'mode main']
 alt-shift-k = ['join-with up', 'mode main']
 alt-shift-l = ['join-with right', 'mode main']
+
+[mode.resize.binding]
+# Vim-style keys for resizing
+h = 'resize width -50'  # Shrink width
+j = 'resize height +50' # Grow height
+k = 'resize height -50' # Shrink height
+l = 'resize width +50'  # Grow width
+
+# Arrow keys for resizing (alternative)
+left = 'resize width -50'
+down = 'resize height +50'
+up = 'resize height -50'
+right = 'resize width +50'
+
+# Exit resize mode
+esc = 'mode main'
+enter = 'mode main'
+alt-r = 'mode main'
