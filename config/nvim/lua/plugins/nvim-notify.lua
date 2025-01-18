@@ -2,6 +2,7 @@ return {
   -- Other plugins
   {
     "rcarriga/nvim-notify",
+    enabled = false,
     config = function()
       require("notify").setup({
         stages = "fade_in_slide_out",

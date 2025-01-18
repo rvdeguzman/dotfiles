@@ -1,8 +1,8 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.lang.java",
-    "lazyvim.plugins.extras.lang.kotlin",
-    "lazyvim.plugins.extras.lang.toml"
+    "lazyvim.plugins.extras.coding.mini-surround",
+    "lazyvim.plugins.extras.editor.harpoon2",
+    "lazyvim.plugins.extras.editor.telescope"
   ],
   "news": {
     "NEWS.md": "10960"
