@@ -58,6 +58,8 @@
 (package! org-roam)
 (package! org-roam-ui
   :recipe (:host github :repo "org-roam/org-roam-ui"))
+(package! org-download
+  :recipe (:host github :repo "abo-abo/org-download"))
 (package! vterm)
 (package! emacsql
   :pin "20241117.1614"

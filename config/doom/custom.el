@@ -37,10 +37,13 @@
       ("pdflatex -interaction nonstopmode -output-directory %o %f")
       :image-converter
       ("convert -density %D -trim -antialias %f -quality 100 %O"))))
- '(package-selected-packages '(emacsql)))
+ '(org-yank-image-save-method "~/school/org/images/")
+ '(package-selected-packages '(org-download emacsql))
+ '(tab-width 2))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'customize-variable 'disabled nil)

@@ -36,7 +36,8 @@
 
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type t)
+(setq display-line-numbers-type 'relative)
+;; (setq display-line-numbers 'relative)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
@@ -70,13 +71,13 @@
         ("l" "lecture" plain
          "%?"
          :target (file+head "${course}/lectures/${slug}.org"
-                           "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :lecture:\n\n* Key Points\n\n* Examples\n\n* Questions")
+                           "#+title: ${title}\n#+date: %<%Y-%m-%d>\n#+filetags: :${course}:lecture:\n\n* Key Points\n\n* Examples\n\n* Questions")
          :unnarrowed t
          :properties (("course" . "${course}")))
         ("c" "concept" plain
          "%?"
          :target (file+head "${course}/concepts/${slug}.org"
-                           "#+title: ${title}\n#+filetags: :concept:\n\n* Definition\n\n* Examples\n\n* Related Concepts")
+                           "#+title: ${title}\n#+filetags: :${course}:concept:\n\n* Definition\n\n* Examples\n\n* Related Concepts")
          :unnarrowed t
          :properties (("course" . "${course}")))
         ("n" "new course" plain
@@ -158,7 +159,14 @@
  
 (set-default 'preview-scale-function 1.5)
 
-(setq display-line-numbers 'relative)
 (after! org
   (plist-put org-format-latex-options :scale 1.5))
 ;;(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+
+(after! org
+  (setq org-download-method 'directory
+        org-download-image-dir "~/school/org/images/"
+        org-download-image-org-width 600
+        org-download-link-format "[[file:%s]]\n"
+        org-download-abbreviate-filename-function #'file-relative-name
+        org-download-link-format-function #'org-download-link-format-function-default))
