@@ -30,6 +30,7 @@ preset = 'qwerty'
 alt-r = 'mode resize'
 # Terminal
 alt-enter = "exec-and-forget /Applications/kitty.app/Contents/MacOS/kitty --directory ~"
+
 # Window focus (vim-style)
 alt-h = 'focus left'
 alt-j = 'focus down'
@@ -108,15 +109,41 @@ alt-shift-l = ['join-with right', 'mode main']
 
 
 [mode.resize.binding]
-h = 'resize width -50'  # Shrink width
-j = 'resize height +50' # Grow height
-k = 'resize height -50' # Shrink height
-l = 'resize width +50'  # Grow width
-
+h = 'resize width -50'     # Shrink width
+j = 'resize height +50'    # Grow height
+k = 'resize height -50'    # Shrink height
+l = 'resize width +50'     # Grow width
 left = 'resize width -50'
 down = 'resize height +50'
 up = 'resize height -50'
 right = 'resize width +50'
-
 esc = 'mode main'
 enter = 'mode main'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.FaceTime'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.mail'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.TextEdit'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.AppStore'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.MobileSMS'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.gnu.Emacs'
+run = 'layout floating'
