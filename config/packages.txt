@@ -31,3 +31,7 @@ discount
 ripgrep
 fzf
 bat
+clang
+unzip
+nodejs
+go
