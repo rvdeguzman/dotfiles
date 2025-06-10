@@ -35,3 +35,4 @@ clang
 unzip
 nodejs
 go
+ttf-jetbrains-mono-nerd

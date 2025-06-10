@@ -182,6 +182,7 @@ bindsym $mod+r mode "resize"
 bar {
     status_command i3status
     font pango:DejaVu Sans Mono, FontAwesome, Icons 13
+    position top
     height 28 
     tray_padding 4
     tray_output none
