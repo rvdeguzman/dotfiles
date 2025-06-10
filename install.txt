@@ -1,4 +1,0 @@
-atuin - curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-sdkman - curl -s "https://get.sdkman.io" | bash
-brew - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-ohmyzsh - sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"

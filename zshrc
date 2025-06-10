@@ -1,18 +1,25 @@
-# Source zsh plugins
-source $(brew --prefix)/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
+# Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
+# Flutter path
+# export PATH=$HOME/Developer/flutter/bin:$PATH
+
+# Doom emacs path
+# export PATH=$HOME/.emacs.d/bin:$PATH
+
+# API Keys
+export ANTHROPIC_API_KEY=""
+export GEMINI_API_KEY=""
+export OPENAI_API_KEY=""
+
 # Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
+# load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
-#ZSH_THEME="robbyrussell"
+ZSH_THEME="geoffgarside"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -75,7 +82,6 @@ ZSH_THEME="agnoster"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(git)
-#plugins=(git conda-zsh-completion)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -90,102 +96,32 @@ source $ZSH/oh-my-zsh.sh
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
 # else
-#   export EDITOR='mvim'
+#   export EDITOR='nvim'
 # fi
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# export ARCHFLAGS="-arch $(uname -m)"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-#alias code="code-insiders"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-export PATH=/Users/rdeguzman/Developer/flutter/bin:$PATH
-
-export PATH=$PATH:/Users/rdeguzman/.spicetify
-export PATH="$PATH":"$HOME/.pub-cache/bin"
-export PATH="$PATH":"$HOME/.py-venv/bin/python"
-export PATH="$PATH":"$HOME/.py-venv/bin/python3"
-export PATH="$PATH":"$HOME/.py-venv/bin/pip"
-export PATH="$PATH":"$HOME/.py-venv/bin/pip3"
-
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-
-# Created by `pipx` on 2024-08-06 04:46:02
-export PATH="$PATH:/Users/rdeguzman/.local/bin"
-
-
-export JAVA_HOME="/usr/bin/java"
-
-# Aliases for common dirs
-alias home="cd ~"
-alias repos="cd ~/repos"
-
-alias javax="/opt/homebrew/Cellar/openjdk/22.0.2/libexec/openjdk.jdk/Contents/Home/bin/java"
-
-# System Aliases
-alias ..="cd .."
-alias x="exit"
-
-# Git Aliases
-alias add="git add"
-alias commit="git commit"
-alias pull="git pull"
-alias stat="git status"
-alias gdiff="git diff HEAD"
-alias vdiff="git difftool HEAD"
-alias log="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
-alias cfg="git --git-dir=$HOME/dotfiles/ --work-tree=$HOME"
-alias push="git push"
 alias g="lazygit"
+alias t="tmux"
+alias y="yazi"
+alias vim="nvim"
+alias v="nvim"
 
-eval "$(zoxide init --cmd cd zsh)"
+# icloud school alias
+# alias school='cd /Users/rv/Library/Mobile\ Documents/com~apple~CloudDocs/school'
+# add symlink: ln -s /Users/rv/Library/Mobile\ Documents/com~apple~CloudDocs/school 
 
-function kill () {
-  command kill -KILL $(pidof "$@")
-}
-
-
-source "$HOME/.cargo/env"
-
-# ensure start in ~
-# cd ~
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
-function set_directory_and_conda() {
-# Always start in home directory
-if [[ $PWD == "/" ]]; then
-  cd ~
-fi
-
-# Hide base Conda environment
-if [[ $CONDA_DEFAULT_ENV == "base" ]]; then
-  CONDA_DEFAULT_ENV=""
-fi
-}
-
-precmd_functions+=(set_directory_and_conda)
+# atuin zoxide sdkman
