@@ -8,7 +8,8 @@ git
 github-cli
 kitty
 lazygit
-neofetch
+fastfetch
+zoxide
 neovim
 noto-fonts-emoji
 picom
@@ -27,3 +28,6 @@ texlive
 ffmpeg
 pandoc
 discount
+ripgrep
+fzf
+bat
