@@ -24,7 +24,7 @@ alias vim="nvim"
 alias v="nvim"
 
 # key repeat rate
-xset r rate 350 40
+# xset r rate 350 40
 
 # icloud school alias
 # alias school='cd /Users/rv/Library/Mobile\ Documents/com~apple~CloudDocs/school'
