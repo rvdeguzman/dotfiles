@@ -37,3 +37,4 @@ nodejs
 go
 ttf-jetbrains-mono-nerd
 brightnessctl
+yazi
