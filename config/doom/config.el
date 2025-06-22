@@ -95,3 +95,8 @@
   :after org
   :config
   (add-hook 'dired-mode-hook 'org-download-enable))
+
+(after! org
+  (setq org-format-latex-options
+        (plist-put org-format-latex-options :scale 1.6))
+  (setq org-preview-latex-default-process 'dvisvgm))
