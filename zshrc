@@ -6,6 +6,9 @@ export ZSH="$HOME/.oh-my-zsh"
 # Doom emacs path
 # export PATH=$HOME/.emacs.d/bin:$PATH
 
+# local bin path
+# export PATH=$HOME/.local/bin:$PATH
+
 # API Keys
 export ANTHROPIC_API_KEY=""
 export GEMINI_API_KEY=""
