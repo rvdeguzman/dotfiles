@@ -74,3 +74,24 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+
+(setq display-line-numbers-type 'relative)
+
+(use-package! pulse
+  :config
+  (setq pulse-flag t)
+  (setq pulse-delay 0.04)
+
+  (defun my/pulse-yank ()
+    "Pulse the yanked region."
+    (when (and pulse-flag (use-region-p))
+      (pulse-momentary-highlight-region (point) (mark t))))
+
+  (advice-add 'yank :after #'my/pulse-yank)
+  (advice-add 'yank-pop :after #'my/pulse-yank))
+
+(use-package! org-download
+  :after org
+  :config
+  (add-hook 'dired-mode-hook 'org-download-enable))
