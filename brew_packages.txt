@@ -31,3 +31,7 @@ postman
 raycast
 spotify
 zoom
+graphviz
+dvisvgm
+imagemagick
+mactex
