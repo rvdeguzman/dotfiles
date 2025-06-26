@@ -35,3 +35,4 @@ graphviz
 dvisvgm
 imagemagick
 mactex
+pngpaste
