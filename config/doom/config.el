@@ -101,32 +101,4 @@
         (plist-put org-format-latex-options :scale 1.6))
   (setq org-preview-latex-default-process 'dvisvgm))
 
-(after! org-modern
-  (setq org-modern-star nil
-        org-modern-list nil
-        org-modern-checkbox nil
-        org-modern-priority nil
-        org-modern-horizontal-rule nil
-        org-modern-internal-target nil
-        org-modern-radio-target nil
-        org-modern-replace-stars nil
-        org-modern-fold-stars nil
-
-        org-modern-table t
-        org-modern-table-vertical 3
-        org-modern-table-horizontal 0.1
-        org-modern-timestamp t
-        org-modern-todo t
-        org-modern-tag t
-        org-modern-keyword t
-        org-modern-block-name t
-        org-modern-block-fringe t
-        org-modern-progress 12
-        org-modern-footnote nil
-
-        org-modern-label-border 'auto
-        org-modern-hide-stars 'leading))
-
-
 (setq confirm-kill-emacs nil)
-
