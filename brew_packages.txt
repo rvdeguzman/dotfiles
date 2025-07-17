@@ -1,4 +1,5 @@
 bat
+cbonsai
 fzf
 gh
 git
@@ -13,6 +14,7 @@ ripgrep
 sqlite
 tmux
 tree-sitter
+tree
 xz
 yazi
 zoxide
@@ -36,3 +38,4 @@ dvisvgm
 imagemagick
 mactex
 pngpaste
+railwaycat/emacsmacport/emacs-mac@29
