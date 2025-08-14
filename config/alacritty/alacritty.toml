@@ -1,0 +1,138 @@
+[bell]
+animation = "EaseOutExpo"
+color = "#8ec07c"
+duration = 0
+
+[colors.bright]
+black = "#7c6f64"
+blue = "#83a598"
+cyan = "#8ec07c"
+green = "#b8bb26"
+magenta = "#d3869b"
+red = "#fb4934"
+white = "#bdae93"
+yellow = "#fabd2f"
+
+[colors.cursor]
+cursor = "#928374"
+text = "#282828"
+
+[colors.normal]
+black = "#665c54"
+blue = "#458588"
+cyan = "#689d6a"
+green = "#98971a"
+magenta = "#b16286"
+red = "#cc241d"
+white = "#a89984"
+yellow = "#d79921"
+
+[colors.primary]
+background = "#282828"
+foreground = "#ebdbb2"
+
+[colors.search.focused_match]
+background = "#d79921"
+foreground = "#282828"
+
+[colors.search.matches]
+background = "#fabd2f"
+foreground = "#282828"
+
+[colors.selection]
+background = "#ebdbb2"
+text = "#928374"
+
+[colors.vi_mode_cursor]
+cursor = "#928374"
+text = "#282828"
+
+[font]
+size = 16.0
+
+[font.bold]
+style = "Bold"
+
+[font.bold_italic]
+style = "Bold Italic"
+
+[font.italic]
+style = "Italic"
+
+[font.normal]
+family = "JetBrainsMono Nerd Font Mono"
+style = "Regular"
+
+[[keyboard.bindings]]
+chars = "\u001B1"
+key = "Key1"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B2"
+key = "Key2"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B3"
+key = "Key3"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B4"
+key = "Key4"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B5"
+key = "Key5"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B6"
+key = "Key6"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B7"
+key = "Key7"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B8"
+key = "Key8"
+mods = "Control"
+
+[[keyboard.bindings]]
+chars = "\u001B9"
+key = "Key9"
+mods = "Control"
+
+[mouse]
+hide_when_typing = true
+
+[scrolling]
+history = 10000
+multiplier = 3
+
+[terminal.shell]
+args = ["--login"]
+program = "/bin/zsh"
+
+[window]
+decorations = "None"
+dynamic_padding = true
+opacity = 0.86
+startup_mode = "Maximized"
+title = "alacritty"
+blur = true
+dynamic_title = false
+
+[window.padding]
+x = 5
+y = 5
+
+[general]
+live_config_reload = true
+
+[terminal]
