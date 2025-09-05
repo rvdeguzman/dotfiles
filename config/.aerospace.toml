@@ -192,6 +192,18 @@ run = 'layout floating'
 if.app-id = 'com.microsoft.Outlook'
 run = 'layout floating'
 
+[[on-window-detected]]
+if.app-id = 'com.dmitrynikolaev.numi'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.gimp.gimp-3.0'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.Preview'
+run = 'layout floating'
+
 [workspace-to-monitor-force-assignment]
 1 = 'main'
 2 = 'main'
