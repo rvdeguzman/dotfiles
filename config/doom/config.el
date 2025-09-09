@@ -49,12 +49,10 @@
 ;; org-roam-ui (ensure `websocket` & `org-roam-ui` are in packages.el)
 (use-package! org-roam-ui
   :after org-roam
-  :hook (org-roam-db-autosync-mode . org-roam-ui-mode)  ;; works in v2
   :config
   (setq org-roam-ui-sync-theme t
         org-roam-ui-follow t
-        org-roam-ui-update-on-save t
-        org-roam-ui-open-on-start t))
+        org-roam-ui-update-on-save t))
 
 ;; vterm (usually provided by :term vterm in Doom; keep only if you need it)
 (use-package! vterm
