@@ -59,3 +59,8 @@
 ;; vterm (usually provided by :term vterm in Doom; keep only if you need it)
 (use-package! vterm
   :commands vterm)
+
+(after! org
+  (setq org-startup-with-latex-preview t) ;; auto render formulas
+  (setq org-latex-create-formula-image-program 'dvisvgm) ;; svg formulas
+  )
