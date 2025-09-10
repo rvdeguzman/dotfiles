@@ -1,7 +1,9 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
-(setq doom-theme 'kanagawa-dragon)
-(setq doom-font (font-spec :family "IosevkaTerm Nerd Font Mono" :size 14))
+;; theme
+(setq doom-theme 'doom-dark-funeral)
+
+(setq doom-font (font-spec :family "JetBrainsMono Nerd Font Mono" :size 14))
 (setq display-line-numbers-type 'relative)
 
 ;; Org paths (set these before org loads)
@@ -12,7 +14,7 @@
 ;; (setq org-roam-file-extensions '("org"))
 
 ;; Display template: title + tags (avoid ${type:15})
-(setq org-roam-node-display-template
+(setq org-roam-node-display-template
       (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
 
 (setq org-roam-capture-templates
