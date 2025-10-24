@@ -35,6 +35,16 @@ ttf-jetbrains-mono-nerd
 ttf-iosevka-nerd
 brightnessctl
 yazi
+bob
+dunst
+eza
+htop
+ly
+openssh
+python
+npm
+wget
+xdg-utils
 
 [i3]
 i3
@@ -50,3 +60,5 @@ hyprlock
 grim
 slurp
 grimshot
+hyprpaper
+grimblast-git
