@@ -32,6 +32,7 @@ unzip
 nodejs
 go
 ttf-jetbrains-mono-nerd
+ttf-iosevka-nerd
 brightnessctl
 yazi
 
