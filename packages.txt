@@ -50,7 +50,6 @@ xdg-utils
 docker
 nvidia-container-toolkit
 ollama-cuda
-mako
 vesktop-bin
 opencode-bin
 localsend-bin
@@ -64,9 +63,12 @@ flameshot
 
 [hyprland]
 hyprland
+hypridle
 waybar
 wl-clipboard
 hyprlock
+mako
+wl-screenrec
 grim
 slurp
 hyprpaper
