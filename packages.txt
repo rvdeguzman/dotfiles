@@ -10,7 +10,6 @@ kitty
 lazygit
 fastfetch
 zoxide
-neovim
 noto-fonts-emoji
 ripgrep
 rofi
@@ -49,6 +48,7 @@ xdg-utils
 docker
 nvidia-container-toolkit
 ollama-cuda
+mako
 
 [i3]
 i3
