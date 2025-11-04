@@ -1,0 +1,56 @@
+# macOS Packages (via Homebrew)
+# Base packages - required for all macOS setups
+[base]
+emacs
+feh
+firefox
+fzf
+git
+gh
+kitty
+lazygit
+fastfetch
+zoxide
+mpv
+ripgrep
+rofi
+tmux
+zsh
+syncthing
+zathura
+aspell
+fd
+cmake
+graphviz
+ffmpeg
+pandoc
+discount
+bat
+llvm
+node
+go
+openssh
+python@3.11
+wget
+docker
+yazi
+bob
+htop
+eza
+nvm
+
+# Homebrew Casks (GUI applications)
+[casks]
+kitty
+firefox
+emacs
+mpv
+zathura
+localsend
+vesktop
+docker
+
+# Mac-specific development tools
+[mac-dev]
+xcode-select
+llvm

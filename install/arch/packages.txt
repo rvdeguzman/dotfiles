@@ -1,3 +1,5 @@
+# Arch Linux Packages
+# Base packages - required for all Arch setups
 [base]
 emacs
 feh
@@ -55,6 +57,9 @@ vesktop-bin
 opencode-bin
 localsend-bin
 nvtop
+
+# Wayland/Hyprland specific packages
+[hyprland]
 hyprland
 hypridle
 waybar
@@ -66,3 +71,12 @@ grim
 slurp
 hyprpaper
 grimblast-git
+
+# X11/i3 specific packages
+[i3]
+i3-wm
+i3status
+i3lock
+xorg-xrandr
+xorg-setxkbmap
+dunst
