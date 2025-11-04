@@ -9,7 +9,7 @@ kitty
 lazygit
 fastfetch
 zoxide
-vlc
+mpv
 noto-fonts-emoji
 ripgrep
 rofi
