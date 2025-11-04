@@ -20,6 +20,9 @@ zathura-pdf-poppler
 aspell
 aspell-en
 ispell
+fd
+cmake
+graphviz
 texlive
 ffmpeg
 pandoc
