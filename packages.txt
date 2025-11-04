@@ -53,6 +53,8 @@ ollama-cuda
 mako
 vesktop-bin
 opencode-bin
+localsend-bin
+nvtop
 
 [i3]
 i3
