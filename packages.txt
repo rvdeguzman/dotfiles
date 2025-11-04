@@ -1,5 +1,4 @@
 [base]
-discord
 emacs
 feh
 firefox
@@ -49,6 +48,8 @@ docker
 nvidia-container-toolkit
 ollama-cuda
 mako
+vesktop
+opencode-bin
 
 [i3]
 i3
@@ -63,6 +64,5 @@ wl-clipboard
 hyprlock
 grim
 slurp
-grimshot
 hyprpaper
 grimblast-git
