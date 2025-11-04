@@ -20,30 +20,48 @@ show_usage() {
     exit 1
 }
 
-# Function to check if Homebrew is installed
-check_homebrew() {
-    if ! command -v brew &> /dev/null; then
-        echo "Error: Homebrew is not installed!"
-        echo ""
-        echo "Please install Homebrew first:"
-        echo '  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-        echo ""
-        echo "After installation, you may need to add Homebrew to your PATH:"
-        echo "  eval \"\$(/opt/homebrew/bin/brew shellenv)\""
-        exit 1
+# Function to install Xcode Command Line Tools if not already installed
+install_xcode_tools() {
+    if xcode-select -p &> /dev/null; then
+        echo "✓ Xcode Command Line Tools already installed"
+        return
     fi
-    echo "✓ Found Homebrew"
+    
+    echo "Installing Xcode Command Line Tools..."
+    xcode-select --install
+    
+    # Wait for installation to complete
+    while ! xcode-select -p &> /dev/null; do
+        echo "Waiting for Xcode Command Line Tools installation to complete..."
+        sleep 5
+    done
+    
+    echo "✓ Xcode Command Line Tools installed"
 }
 
-# Function to install Xcode Command Line Tools
-check_xcode_tools() {
-    if ! xcode-select -p &> /dev/null; then
-        echo "Installing Xcode Command Line Tools..."
-        xcode-select --install
-        echo "Please complete the Xcode installation and run this script again."
+# Function to install Homebrew if not already installed
+install_homebrew() {
+    if command -v brew &> /dev/null; then
+        echo "✓ Homebrew already installed"
+        return
+    fi
+    
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    # Add Homebrew to PATH for this session
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    
+    echo "✓ Homebrew installed successfully"
+}
+
+# Function to verify Homebrew is available
+check_homebrew() {
+    if ! command -v brew &> /dev/null; then
+        echo "Error: Homebrew installation failed or is unavailable!"
         exit 1
     fi
-    echo "✓ Xcode Command Line Tools installed"
+    echo "✓ Homebrew is available"
 }
 
 # Function to install packages
@@ -56,7 +74,7 @@ install_packages() {
     
     echo ""
     echo "→ Installing ${#packages[@]} packages with Homebrew..."
-    brew install "${packages[@]}"
+    brew install --quiet "${packages[@]}"
     echo "✓ Installation complete!"
 }
 
@@ -70,7 +88,7 @@ install_casks() {
     
     echo ""
     echo "→ Installing ${#casks[@]} casks with Homebrew..."
-    brew install --cask "${casks[@]}"
+    brew install --cask --quiet "${casks[@]}"
     echo "✓ Cask installation complete!"
 }
 
@@ -137,8 +155,13 @@ main() {
         exit 1
     fi
     
-    # Check for dependencies
-    check_xcode_tools
+    # Install dependencies
+    install_xcode_tools
+    echo ""
+    install_homebrew
+    echo ""
+    
+    # Verify dependencies are available
     check_homebrew
     echo ""
     
