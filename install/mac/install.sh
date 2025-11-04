@@ -4,7 +4,11 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGES_FILE="$SCRIPT_DIR/packages.txt"
+COMMON_DIR="$(cd "$SCRIPT_DIR/../common" && pwd)"
 CHOICE="${1:-}"
+
+# Source common shell setup functions
+source "$COMMON_DIR/shell.sh"
 
 show_usage() {
     echo "macOS Setup - Package Installation"
@@ -190,9 +194,15 @@ main() {
         *) echo "Invalid choice: $CHOICE"; show_usage ;;
     esac
     
-    echo ""
+     echo ""
     parse_packages "$CHOICE"
     echo ""
+    
+    # Setup shell (zsh + Oh My Zsh)
+    echo ""
+    setup_shell
+    echo ""
+    
     echo "================================================"
     echo "   Setup complete!"
     echo "================================================"
