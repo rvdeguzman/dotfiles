@@ -43,8 +43,12 @@ ly
 openssh
 python
 npm
+nvm
 wget
 xdg-utils
+docker
+nvidia-container-toolkit
+ollama-cuda
 
 [i3]
 i3
