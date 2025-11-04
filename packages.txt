@@ -68,7 +68,7 @@ waybar
 wl-clipboard
 hyprlock
 mako
-wl-screenrec
+wf-recorder
 grim
 slurp
 hyprpaper
