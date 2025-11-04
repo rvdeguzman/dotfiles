@@ -22,26 +22,34 @@ show_usage() {
     exit 1
 }
 
-# Function to check if paru/yay is installed
+# Function to install paru if not already installed
+install_paru() {
+    if command -v paru &> /dev/null; then
+        echo "✓ Paru already installed"
+        return
+    fi
+    
+    echo "Installing paru..."
+    sudo pacman -S --needed --noconfirm base-devel
+    
+    # Clone and build paru
+    local temp_dir=$(mktemp -d)
+    trap "rm -rf $temp_dir" EXIT
+    
+    cd "$temp_dir"
+    git clone https://aur.archlinux.org/paru.git
+    cd paru
+    makepkg -si --noconfirm
+    echo "✓ Paru installed successfully"
+}
+
+# Function to verify package manager is available
 check_package_manager() {
     if command -v paru &> /dev/null; then
         PACKAGE_MANAGER="paru"
-        echo "✓ Found paru"
-    elif command -v yay &> /dev/null; then
-        PACKAGE_MANAGER="yay"
-        echo "✓ Found yay"
+        echo "✓ Paru is available"
     else
-        echo "Error: Neither paru nor yay is installed!"
-        echo ""
-        echo "Please install paru first:"
-        echo "  sudo pacman -S --needed base-devel"
-        echo "  git clone https://aur.archlinux.org/paru.git"
-        echo "  cd paru && makepkg -si"
-        echo ""
-        echo "Or install yay instead:"
-        echo "  sudo pacman -S --needed git base-devel"
-        echo "  git clone https://aur.archlinux.org/yay.git"
-        echo "  cd yay && makepkg -si"
+        echo "Error: Paru installation failed or is unavailable!"
         exit 1
     fi
 }
@@ -56,7 +64,7 @@ install_packages() {
     
     echo ""
     echo "→ Installing ${#packages[@]} packages with $PACKAGE_MANAGER..."
-    $PACKAGE_MANAGER -S --needed "${packages[@]}"
+    $PACKAGE_MANAGER -S --needed --noconfirm "${packages[@]}"
     echo "✓ Installation complete!"
 }
 
@@ -126,7 +134,11 @@ main() {
         exit 1
     fi
     
-    # Check for package manager
+    # Install paru first
+    install_paru
+    echo ""
+    
+    # Verify paru is available
     check_package_manager
     echo ""
     
