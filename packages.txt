@@ -48,7 +48,7 @@ docker
 nvidia-container-toolkit
 ollama-cuda
 mako
-vesktop
+vesktop-bin
 opencode-bin
 
 [i3]
