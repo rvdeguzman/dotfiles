@@ -14,14 +14,71 @@ show_usage() {
     exit 1
 }
 
-# Function to check if paru is installed
+# Function to install and set zsh as default shell with oh-my-zsh
+setup_zsh() {
+    # Check if zsh is installed
+    if ! command -v zsh &> /dev/null; then
+        echo "zsh is not installed. Installing zsh..."
+        sudo pacman -S --needed zsh
+        
+        if ! command -v zsh &> /dev/null; then
+            echo "Error: zsh installation failed!"
+            exit 1
+        fi
+        echo "zsh installed successfully!"
+    fi
+    
+    # Check if zsh is already the default shell
+    if [[ "$SHELL" != */zsh ]]; then
+        echo "Setting zsh as default shell..."
+        chsh -s "$(which zsh)"
+        echo "Default shell changed to zsh."
+        echo "Please log out and log back in for the change to take effect."
+    else
+        echo "zsh is already the default shell."
+    fi
+    
+    # Install oh-my-zsh if not already installed
+    if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+        echo "Installing oh-my-zsh..."
+        sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+        echo "oh-my-zsh installed successfully!"
+    else
+        echo "oh-my-zsh is already installed."
+    fi
+}
+
+# Function to check if paru is installed, install if not
 check_paru() {
     if ! command -v paru &> /dev/null; then
-        echo "Error: paru is not installed!"
-        echo "Please install paru first:"
-        echo "  git clone https://aur.archlinux.org/paru.git"
-        echo "  cd paru && makepkg -si"
-        exit 1
+        echo "paru is not installed. Installing paru..."
+        
+        # Check if base-devel is installed
+        sudo pacman -S --needed base-devel git
+        
+        # Create temporary directory for building
+        TEMP_DIR=$(mktemp -d)
+        cd "$TEMP_DIR" || exit 1
+        
+        # Clone and build paru
+        echo "Cloning paru repository..."
+        git clone https://aur.archlinux.org/paru.git
+        cd paru || exit 1
+        
+        echo "Building and installing paru..."
+        makepkg -si
+        
+        # Clean up
+        cd - > /dev/null || exit 1
+        rm -rf "$TEMP_DIR"
+        
+        # Verify installation
+        if ! command -v paru &> /dev/null; then
+            echo "Error: paru installation failed!"
+            exit 1
+        fi
+        
+        echo "paru installed successfully!"
     fi
 }
 
@@ -89,6 +146,9 @@ parse_packages() {
 
 # Main script
 main() {
+    # Install zsh
+    setup_zsh
+
     # Check if paru is available
     check_paru
     

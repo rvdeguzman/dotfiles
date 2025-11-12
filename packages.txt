@@ -56,6 +56,7 @@ vesktop-bin
 opencode-bin
 localsend-bin
 nvtop
+zsh
 
 [i3]
 i3
