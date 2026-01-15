@@ -23,6 +23,8 @@ aspell
 aspell-en
 ispell
 fd
+fwupd
+impala
 cmake
 graphviz
 texlive
