@@ -52,6 +52,7 @@ nvm
 wget
 xdg-utils
 docker
+docker-compose
 nvidia-container-toolkit
 ollama-cuda
 vesktop-bin
