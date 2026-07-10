@@ -6,13 +6,42 @@ Curated macOS and Linux configuration. This repository is the source of truth;
 ## Setup
 
 ```sh
+./setup
+```
+
+The interactive selector detects macOS or Arch Linux, preselects conservative
+configuration and package defaults, then opens a keyboard-driven checklist:
+
+- `j` / `k` moves the cursor down or up
+- Space toggles the highlighted item
+- `a` selects all; `n` selects none
+- Enter accepts the current list; `q` exits without changes
+
+The selector and `./setup list` hide incompatible entries instead of showing
+one combined list. Aerospace, cmux, Karabiner, and OmniWM are macOS-only;
+Hyprland, the minibook profile, Mako, Waybar, and Wofi are Linux-only. All
+other components are shared. Package profiles are already separated under
+`packages/macos/` and `packages/arch/`, so only profiles supported by the
+current operating system appear. An explicitly named component remains
+available for advanced cross-platform use, such as `./setup link hypr`.
+
+The final review defaults to **preview only**. Applying changes requires
+choosing `apply` and confirming a second time. Passing `--dry-run` locks the
+session to preview mode:
+
+```sh
+./setup --dry-run
+```
+
+The command-line interface remains available:
+
+```sh
 ./setup list
 ./setup --dry-run link shell tmux nvim
 ./setup link shell tmux nvim
+./setup --dry-run packages core dev
 ./setup packages core dev
 ```
-
-Run `./setup` without arguments for interactive selection.
 
 `link` discovers components under `configs/` and creates absolute, leaf-file
 symlinks at their home-relative paths. Existing files are preserved under:
@@ -21,8 +50,7 @@ symlinks at their home-relative paths. Existing files are preserved under:
 ~/.local/state/dotfiles/backups/<timestamp-pid>/
 ```
 
-Re-running the same command is safe: correct links are skipped. Use
-`--dry-run` before a large selection to preview every move and link.
+Re-running the same command is safe: correct links are skipped.
 
 ## Package profiles
 

@@ -26,11 +26,13 @@ DRY_RUN=0
 
 case "$(uname -s)" in
   Darwin)
+    OS_KIND="macos"
     PROFILE_KIND="macos"
     PROFILE_DIR="$PACKAGES_DIR/macos"
     PROFILE_EXTENSION=".Brewfile"
     ;;
   Linux)
+    OS_KIND="linux"
     if [ -e /etc/arch-release ] || command -v pacman >/dev/null 2>&1; then
       PROFILE_KIND="arch"
       PROFILE_DIR="$PACKAGES_DIR/arch"
@@ -42,18 +44,43 @@ case "$(uname -s)" in
     fi
     ;;
   *)
+    OS_KIND="other"
     PROFILE_KIND="unsupported"
     PROFILE_DIR=""
     PROFILE_EXTENSION=""
     ;;
 esac
 
-discover_components() {
-  COMPONENTS=()
+discover_all_components() {
+  ALL_COMPONENTS=()
   local directory
   for directory in "$CONFIGS_DIR"/*; do
     [ -d "$directory" ] || continue
-    COMPONENTS[${#COMPONENTS[@]}]=${directory##*/}
+    ALL_COMPONENTS[${#ALL_COMPONENTS[@]}]=${directory##*/}
+  done
+}
+
+component_supported_on_platform() {
+  case "$1" in
+    aerospace|cmux|karabiner|omniwm)
+      [ "$OS_KIND" = "macos" ]
+      ;;
+    hypr|hypr-minibook|mako|waybar|wofi)
+      [ "$OS_KIND" = "linux" ]
+      ;;
+    *)
+      return 0
+      ;;
+  esac
+}
+
+discover_components() {
+  discover_all_components
+  COMPONENTS=()
+  local component
+  for component in "${ALL_COMPONENTS[@]}"; do
+    component_supported_on_platform "$component" || continue
+    COMPONENTS[${#COMPONENTS[@]}]="$component"
   done
 }
 
@@ -94,9 +121,9 @@ print_list() {
 
 list() {
   discover_components
-  print_list "Components" "${COMPONENTS[@]}"
+  print_list "Components ($(platform_label))" "${COMPONENTS[@]}"
   discover_profiles
-  print_list "Package profiles ($PROFILE_KIND)" "${PROFILES[@]}"
+  print_list "Package profiles ($(platform_label))" "${PROFILES[@]}"
 }
 
 backup_root() {
@@ -156,9 +183,10 @@ link_component() {
 }
 
 link_components() {
-  discover_components
+  discover_all_components
   local component
   if [ "$#" -eq 0 ]; then
+    discover_components
     set -- "${COMPONENTS[@]}"
   fi
   if [ "$#" -eq 0 ]; then
@@ -167,7 +195,7 @@ link_components() {
   fi
 
   for component in "$@"; do
-    contains "$component" "${COMPONENTS[@]}" || fail "Unknown component: $component"
+    contains "$component" "${ALL_COMPONENTS[@]}" || fail "Unknown component: $component"
     link_component "$component"
   done
 }
@@ -279,33 +307,343 @@ install_packages() {
   esac
 }
 
+UI_BOLD=""
+UI_DIM=""
+UI_ACCENT=""
+UI_REVERSE=""
+UI_RESET=""
+if [ -t 1 ] && [ "${TERM:-dumb}" != "dumb" ]; then
+  UI_BOLD=$(printf '\033[1m')
+  UI_DIM=$(printf '\033[2m')
+  UI_ACCENT=$(printf '\033[36m')
+  UI_REVERSE=$(printf '\033[7m')
+  UI_RESET=$(printf '\033[0m')
+fi
+
+platform_label() {
+  case "$OS_KIND" in
+    macos)
+      printf 'macOS'
+      ;;
+    linux)
+      if [ "$PROFILE_KIND" = "arch" ]; then
+        printf 'Arch Linux'
+      else
+        printf 'Linux'
+      fi
+      ;;
+    *)
+      printf '%s' "$(uname -s)"
+      ;;
+  esac
+}
+
+default_component_selection() {
+  discover_components
+  SELECTED_COMPONENTS=()
+  local component
+  for component in "${COMPONENTS[@]}"; do
+    case "$component" in
+      hypr-minibook)
+        continue
+        ;;
+      hypr|mako|waybar|wofi)
+        if [ "$OS_KIND" = "linux" ] && [ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+          continue
+        fi
+        ;;
+    esac
+    SELECTED_COMPONENTS[${#SELECTED_COMPONENTS[@]}]="$component"
+  done
+}
+
+default_profile_selection() {
+  discover_profiles
+  SELECTED_TUI_PROFILES=()
+  local profile
+  for profile in "${PROFILES[@]}"; do
+    case "$PROFILE_KIND:$profile" in
+      macos:core|arch:base)
+        SELECTED_TUI_PROFILES[${#SELECTED_TUI_PROFILES[@]}]="$profile"
+        ;;
+      arch:hyprland)
+        [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ] &&
+          SELECTED_TUI_PROFILES[${#SELECTED_TUI_PROFILES[@]}]="$profile"
+        ;;
+      arch:i3)
+        [ -n "${I3SOCK:-}" ] &&
+          SELECTED_TUI_PROFILES[${#SELECTED_TUI_PROFILES[@]}]="$profile"
+        ;;
+    esac
+  done
+}
+
+toggle_component() {
+  local wanted=$1 item
+  local updated=()
+  if contains "$wanted" "${SELECTED_COMPONENTS[@]}"; then
+    for item in "${SELECTED_COMPONENTS[@]}"; do
+      [ "$item" = "$wanted" ] || updated[${#updated[@]}]="$item"
+    done
+    SELECTED_COMPONENTS=("${updated[@]}")
+  else
+    SELECTED_COMPONENTS[${#SELECTED_COMPONENTS[@]}]="$wanted"
+  fi
+}
+
+toggle_tui_profile() {
+  local wanted=$1 item
+  local updated=()
+  if contains "$wanted" "${SELECTED_TUI_PROFILES[@]}"; then
+    for item in "${SELECTED_TUI_PROFILES[@]}"; do
+      [ "$item" = "$wanted" ] || updated[${#updated[@]}]="$item"
+    done
+    SELECTED_TUI_PROFILES=("${updated[@]}")
+  else
+    SELECTED_TUI_PROFILES[${#SELECTED_TUI_PROFILES[@]}]="$wanted"
+  fi
+}
+
+tui_clear() {
+  if [ "${TERM:-dumb}" != "dumb" ]; then
+    printf '\033[2J\033[H'
+  else
+    printf '\n'
+  fi
+}
+
+read_tui_key() {
+  if ! IFS= read -r -s -n 1 TUI_KEY </dev/tty; then
+    TUI_KEY="q"
+  fi
+}
+
+print_tui_header() {
+  printf '%sDotfiles setup%s  %s%s%s\n' \
+    "$UI_BOLD" "$UI_RESET" "$UI_DIM" "$(platform_label)" "$UI_RESET"
+}
+
+print_tui_controls() {
+  printf '\n%sj/k%s move  %sspace%s toggle  %sa%s all  %sn%s none  %senter%s continue  %sq%s quit\n' \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET"
+}
+
+print_component_choices() {
+  local cursor=$1 component marker index=0
+  tui_clear
+  print_tui_header
+  printf '\n%sConfiguration components%s\n\n' "$UI_BOLD" "$UI_RESET"
+  for component in "${COMPONENTS[@]}"; do
+    marker=" "
+    contains "$component" "${SELECTED_COMPONENTS[@]}" && marker="x"
+    if [ "$index" -eq "$cursor" ]; then
+      printf '  %s>%s %s[%s] %s%s\n' \
+        "$UI_ACCENT" "$UI_RESET" "$UI_REVERSE" "$marker" "$component" "$UI_RESET"
+    else
+      printf '    [%s] %s\n' "$marker" "$component"
+    fi
+    index=$((index + 1))
+  done
+  print_tui_controls
+}
+
+print_profile_choices() {
+  local cursor=$1 profile marker index=0
+  tui_clear
+  print_tui_header
+  printf '\n%sPackage profiles%s\n\n' "$UI_BOLD" "$UI_RESET"
+  for profile in "${PROFILES[@]}"; do
+    marker=" "
+    contains "$profile" "${SELECTED_TUI_PROFILES[@]}" && marker="x"
+    if [ "$index" -eq "$cursor" ]; then
+      printf '  %s>%s %s[%s] %s%s\n' \
+        "$UI_ACCENT" "$UI_RESET" "$UI_REVERSE" "$marker" "$profile" "$UI_RESET"
+    else
+      printf '    [%s] %s\n' "$marker" "$profile"
+    fi
+    index=$((index + 1))
+  done
+  print_tui_controls
+}
+
+choose_components_tui() {
+  local cursor=0 count=${#COMPONENTS[@]}
+  [ "$count" -gt 0 ] || return 0
+  while :; do
+    print_component_choices "$cursor"
+    read_tui_key
+    case "$TUI_KEY" in
+      j|J)
+        cursor=$(((cursor + 1) % count))
+        ;;
+      k|K)
+        cursor=$(((cursor + count - 1) % count))
+        ;;
+      ' ')
+        toggle_component "${COMPONENTS[$cursor]}"
+        ;;
+      a|A)
+        SELECTED_COMPONENTS=("${COMPONENTS[@]}")
+        ;;
+      n|N)
+        SELECTED_COMPONENTS=()
+        ;;
+      q|Q)
+        TUI_ABORTED=1
+        return 0
+        ;;
+      '')
+        return 0
+        ;;
+    esac
+  done
+}
+
+choose_profiles_tui() {
+  local cursor=0 count=${#PROFILES[@]}
+  [ "$count" -gt 0 ] || return 0
+  while :; do
+    print_profile_choices "$cursor"
+    read_tui_key
+    case "$TUI_KEY" in
+      j|J)
+        cursor=$(((cursor + 1) % count))
+        ;;
+      k|K)
+        cursor=$(((cursor + count - 1) % count))
+        ;;
+      ' ')
+        toggle_tui_profile "${PROFILES[$cursor]}"
+        ;;
+      a|A)
+        SELECTED_TUI_PROFILES=("${PROFILES[@]}")
+        ;;
+      n|N)
+        SELECTED_TUI_PROFILES=()
+        ;;
+      q|Q)
+        TUI_ABORTED=1
+        return 0
+        ;;
+      '')
+        return 0
+        ;;
+    esac
+  done
+}
+
+print_plan() {
+  local item
+  printf '\n%sReview%s\n' "$UI_BOLD" "$UI_RESET"
+  printf '  Operating system: %s\n' "$(platform_label)"
+  printf '  Configurations:\n'
+  if [ "${#SELECTED_COMPONENTS[@]}" -eq 0 ]; then
+    printf '    (none)\n'
+  else
+    for item in "${SELECTED_COMPONENTS[@]}"; do
+      printf '    - %s\n' "$item"
+    done
+  fi
+  printf '  Package profiles:\n'
+  if [ "${#SELECTED_TUI_PROFILES[@]}" -eq 0 ]; then
+    printf '    (none)\n'
+  else
+    for item in "${SELECTED_TUI_PROFILES[@]}"; do
+      printf '    - %s\n' "$item"
+    done
+  fi
+}
+
+run_tui_plan() {
+  if [ "${#SELECTED_COMPONENTS[@]}" -gt 0 ]; then
+    link_components "${SELECTED_COMPONENTS[@]}"
+  fi
+  if [ "${#SELECTED_TUI_PROFILES[@]}" -gt 0 ]; then
+    install_packages "${SELECTED_TUI_PROFILES[@]}"
+  fi
+}
+
 usage() {
   printf '%s\n' \
     "Usage: ./setup [--dry-run] [list|link [component ...]|packages [profile ...]]" \
     "" \
+    "  ./setup               Review OS-aware defaults in the interactive selector" \
     "  list                  List discovered config components and package profiles" \
     "  link [component ...]  Link every leaf file from selected components (all by default)" \
-    "  packages [profile ...] Install selected OS package profiles (all by default)"
+    "  packages [profile ...] Install selected OS package profiles (all by default)" \
+    "  --dry-run             Print every planned change without applying it"
 }
 
 interactive() {
-  printf '%s\n' \
-    "Select an action:" \
-    "  1) List available components and profiles" \
-    "  2) Link all config components" \
-    "  3) Install all package profiles" \
-    "  4) Quit"
-  printf 'Choice: '
-  if ! IFS= read -r choice; then
-    printf '\n'
-    return
+  [ -t 0 ] || fail "Interactive setup needs a terminal; use ./setup --help for command-line usage"
+
+  default_component_selection
+  default_profile_selection
+  TUI_ABORTED=0
+
+  choose_components_tui
+  if [ "$TUI_ABORTED" -eq 1 ]; then
+    tui_clear
+    printf 'No changes made.\n'
+    return 0
   fi
-  case "$choice" in
-    1) list ;;
-    2) link_components ;;
-    3) install_packages ;;
-    4) ;;
-    *) fail "Invalid selection: $choice" ;;
+
+  [ "$PROFILE_KIND" = "unsupported" ] || choose_profiles_tui
+  if [ "$TUI_ABORTED" -eq 1 ]; then
+    tui_clear
+    printf 'No changes made.\n'
+    return 0
+  fi
+
+  tui_clear
+  print_tui_header
+  print_plan
+
+  local action confirmation
+  if [ "$DRY_RUN" -eq 1 ]; then
+    action="p"
+    printf '\n--dry-run is active; this plan will only be previewed.\n'
+  else
+    printf '\n[p]review only  [a]pply  [q]uit  (default: preview): '
+    if ! IFS= read -r action; then
+      printf '\nNo changes made.\n'
+      return 0
+    fi
+  fi
+
+  case "$action" in
+    ''|p|P|preview)
+      DRY_RUN=1
+      printf '\n%sPreview%s\n' "$UI_BOLD" "$UI_RESET"
+      run_tui_plan
+      ;;
+    a|A|apply)
+      printf 'Apply this plan? [y/N]: '
+      if ! IFS= read -r confirmation; then
+        printf '\nNo changes made.\n'
+        return 0
+      fi
+      case "$confirmation" in
+        y|Y|yes|YES)
+          DRY_RUN=0
+          run_tui_plan
+          ;;
+        *)
+          printf 'No changes made.\n'
+          ;;
+      esac
+      ;;
+    q|Q|quit)
+      printf 'No changes made.\n'
+      ;;
+    *)
+      fail "Invalid action: $action"
+      ;;
   esac
 }
 
