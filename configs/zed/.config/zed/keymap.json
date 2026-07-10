@@ -1,0 +1,172 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  // top level overrides
+  {
+    "bindings": {
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-w h": "workspace::ActivatePaneLeft",
+      "ctrl-w j": "workspace::ActivatePaneDown",
+      "ctrl-w k": "workspace::ActivatePaneUp",
+      "ctrl-w l": "workspace::ActivatePaneRight",
+      "ctrl-g": "git_panel::ToggleFocus",
+      "cmd-h": "workspace::ToggleLeftDock",
+      "cmd-j": "workspace::ToggleBottomDock",
+      "cmd-k": "workspace::NewCenterTerminal",
+      "cmd-l": "workspace::ToggleRightDock",
+      "ctrl-z": "workspace::ToggleCenteredLayout",
+      "cmd-e": "project_panel::ToggleFocus",
+      "cmd-?": "agent::ToggleFocus",
+      "cmd-shift-o": "projects::OpenRecent",
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-;": "agent::ToggleModelSelector",
+      "cmd-:": "agent::ToggleProfileSelector",
+      "z j": "editor::ToggleFold",
+      "z k": "editor::UnfoldAll",
+    },
+  },
+  {
+    "context": "AgentPanel || AcpThread",
+    "bindings": {
+      "cmd-;": "agent::ToggleModelSelector",
+      "cmd-:": "agent::ToggleProfileSelector",
+      "cmd-n": [
+        "agent::NewExternalAgentThread",
+        {
+          "agent": {
+            "custom": { "name": "claude-acp" },
+          },
+        },
+      ],
+      "cmd-N": [
+        "agent::NewExternalAgentThread",
+        {
+          "agent": {
+            "custom": { "name": "codex-acp" },
+          },
+        },
+      ],
+      "cmd-O": [
+        "agent::NewExternalAgentThread",
+        {
+          "agent": {
+            "custom": { "name": "opencode" },
+          },
+        },
+      ],
+      "cmd-A": "agent::ToggleNewThreadMenu",
+    },
+  },
+  {
+    "context": "InvalidItem || EmptyPane",
+    "bindings": {
+      "space space": "file_finder::Toggle",
+    },
+  },
+  {
+    "context": "Picker",
+    "bindings": {
+      "ctrl-j": "menu::SelectNext",
+      "ctrl-k": "menu::SelectPrevious",
+    },
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      // "ctrl-h": null,
+      // "ctrl-j": null,
+      // "ctrl-k": null,
+      // "ctrl-l": null,
+    },
+  },
+  {
+    "context": "Workspace",
+    "bindings": {},
+  },
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      // <leader><leader> → find files
+      "space space": "file_finder::Toggle",
+      "space a a": "agent::ToggleFocus",
+
+      // <leader>e → file explorer
+      "space e": "project_panel::ToggleFocus",
+
+      "space ,": "pane::DeploySearch",
+
+      // <leader>ss / <leader>sf → document symbols
+      "space s f": "outline::Toggle",
+      // <leader>ws → workspace symbols
+      "space w s": "project_symbols::Toggle",
+
+      // <leader>wv → vertical split
+      "space w v": "pane::SplitRight",
+      // <leader>wh → horizontal split
+      "space w h": "pane::SplitDown",
+      // <leader>wd → close pane
+      "space w d": "pane::CloseActiveItem",
+
+      // LSP navigation
+      "g d": "editor::GoToDefinition",
+      "g D": "editor::GoToDeclaration",
+      "g i": "editor::GoToImplementation",
+      "g t": "editor::GoToTypeDefinition",
+      "g r": "editor::FindAllReferences",
+
+      // K → hover documentation
+      "K": "editor::Hover",
+      "ctrl-s": "editor::ShowSignatureHelp",
+
+      // <leader>rn → rename symbol
+      "space r n": "editor::Rename",
+      // <leader>ca → code actions
+      "space c a": "editor::ToggleCodeActions",
+
+      // <leader>f → format buffer
+      "space f": "editor::Format",
+
+      // Diagnostics: [d / ]d
+      "ctrl-w ctrl-d": "editor::Hover",
+      "[d": "editor::GoToDiagnostic",
+      "]d": "editor::GoToPreviousDiagnostic",
+      "space d": "editor::ToggleInlineDiagnostics",
+      "space D": "editor::ToggleDiagnostics",
+
+      // Git hunks: ]c / [c
+      "]c": "editor::GoToHunk",
+      "[c": "editor::GoToPreviousHunk",
+      // <leader>hs → stage hunk
+      "space h s": "editor::ApplyDiffHunk",
+      // <leader>hp → preview / toggle inline hunk diff
+      "space h p": "editor::ToggleSelectedDiffHunks",
+      // <leader>hb → git blame
+      "space h b": "editor::BlameHover",
+      "space h B": "git::Blame",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == visual",
+    "bindings": {
+      "space a e": "agent::AddSelectionToThread",
+    },
+  },
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      // "j k": "vim::NormalBefore"
+    },
+  },
+]

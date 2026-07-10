@@ -1,0 +1,16 @@
+width=300
+height=100
+margin=10
+padding=15
+border-size=2
+border-color=#FBCB97
+background-color=#000000
+text-color=#C1C1C1
+progress-color=#5F8787
+
+font=monospace 10
+
+default-timeout=5000
+ignore-timeout=0
+
+anchor=top-right
