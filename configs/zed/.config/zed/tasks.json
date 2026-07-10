@@ -1,0 +1,16 @@
+[
+  {
+    "label": "oil here",
+    "command": "nvim",
+    "args": ["$ZED_DIRNAME", "+Oil"],
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true
+  },
+  {
+    "label": "oil project root",
+    "command": "nvim",
+    "args": ["$ZED_WORKTREE_ROOT", "+Oil"],
+    "use_new_terminal": true,
+    "allow_concurrent_runs": true
+  }
+]

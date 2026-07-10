@@ -1,0 +1,11 @@
+hyprland
+hypridle
+waybar
+wl-clipboard
+hyprlock
+mako
+wf-recorder
+grim
+slurp
+hyprpaper
+grimblast-git

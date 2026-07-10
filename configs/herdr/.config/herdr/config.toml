@@ -1,0 +1,62 @@
+onboarding = false
+
+[theme]
+name = "vesper"
+
+auto_switch = false
+[keys]
+prefix = "ctrl+a"
+
+settings = "prefix+g"
+workspace_picker = "prefix+w"
+goto = "prefix+s"
+
+navigate_workspace_down = "j"
+navigate_workspace_up = "k"
+
+next_workspace = "prefix+j"
+previous_workspace = "prefix+k"
+
+# Vim-style pane focus — direct chords, matches tmux C-h/j/k/l (no prefix)
+navigate_pane_left = ""
+navigate_pane_down = ""
+navigate_pane_up = ""
+navigate_pane_right = ""
+
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+j"
+focus_pane_up = "ctrl+k"
+focus_pane_right = "ctrl+l"
+
+# Splits — tmux split-mode: v = left/right, h = top/bottom, x = delete pane
+# (herdr has no w-> submode; these are direct, w stays the workspace picker)
+split_vertical = "prefix+v"
+split_horizontal = "prefix+h"
+close_pane = "prefix+x"
+
+# Tabs ~ tmux windows
+new_tab = "prefix+c"            # tmux: c new-window
+next_tab = "prefix+n"
+previous_tab = "prefix+p"
+close_tab = "prefix+shift+x"    # tmux: X kill-window
+rename_tab = "prefix+comma"         # tmux: r -> w rename-window
+
+# Workspaces ~ tmux sessions
+new_workspace = "prefix+shift+c"   # tmux: C new-session
+close_workspace = "prefix+q" # tmux: q kill-session (confirm_close on)
+rename_workspace = "prefix+colon" # tmux: r -> s rename-session
+rename_pane = "prefix+semicolon"
+
+# Session / pane control
+detach = "prefix+d"                # tmux: d detach-client
+zoom = "prefix+enter"                  # tmux: z zoom-pane
+edit_scrollback = "prefix+y"       # closest to tmux: y copy-mode
+resize_mode = "prefix+shift+r"     # moved off r (rename took it)
+reload_config = "prefix+ctrl+r"
+
+[ui.toast]
+delivery = "herdr"
+
+[ui]
+show_agent_labels_on_pane_borders = true
+prompt_new_tab_name = false

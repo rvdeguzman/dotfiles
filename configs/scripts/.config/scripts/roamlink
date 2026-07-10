@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# create symlink in ~/org/roam to current directory
+
+local roam="$HOME/org/roam"
+local destination="$roam/$(basename "$PWD")"
+if [ -e "$destination" ]; then
+  echo "symlink already exists"
+  exit 1
+fi
+
+ln -s "$PWD" "$destination" && echo "linked $PWD -> $destination"

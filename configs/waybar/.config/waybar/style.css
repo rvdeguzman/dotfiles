@@ -1,0 +1,62 @@
+
+/* Palette */
+@define-color bg #000000;
+@define-color fg #c1c1c1;
+@define-color accent #fbcb97;
+@define-color line #252530;
+@define-color visual #333333;
+@define-color warn #f3be7c;
+@define-color error #d8647e;
+@define-color hint #7e98e8;
+
+/* Base */
+* {
+  border: none;
+  border-radius: 0;
+  min-height: 0;
+  font-family: "Iosevka Nerd Font Mono";
+  font-size: 16px;
+}
+
+window#waybar {
+  background: @bg;
+  color: @fg;
+  border-bottom: 1px solid @line;
+}
+
+#workspaces button {
+   color: @fg;
+   padding: 0 8px;
+   background: transparent;
+   font-size: 28px;
+   min-width: 28px;
+   min-height: 28px;
+}
+
+#workspaces button.active {
+  color: #FFFFFF;
+  background: @visual;
+  border-bottom: 2px solid @accent;
+}
+
+#workspaces button:hover {
+  background: @visual;
+}
+
+#clock, #pulseaudio, #battery, #network, #tray {
+   padding: 0 10px;
+   margin: 0 2px;
+   font-size: 18px;
+   min-height: 18px;
+}
+
+#pulseaudio.muted { color: @comment; }
+#battery.warning { color: @warn; }
+#battery.critical { color: @error; }
+#network.disconnected { color: @error; }
+
+/* Optional subtle pill look for right modules */
+#clock, #pulseaudio, #battery, #network, #tray {
+  background: transparent;
+}
+

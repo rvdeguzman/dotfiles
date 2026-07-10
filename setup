@@ -1,0 +1,346 @@
+#!/usr/bin/env bash
+# Compatible with macOS's Bash 3.2.
+set -e
+
+fail() {
+  printf 'Error: %s\n' "$*" >&2
+  exit 1
+}
+
+script_path=$0
+case "$script_path" in
+  */*) ;;
+  *)
+    if [ -f "$script_path" ]; then
+      script_path="./$script_path"
+    else
+      script_path=$(command -v "$script_path") || fail "Cannot locate setup script"
+    fi
+    ;;
+esac
+REPO_DIR=$(CDPATH='' cd -- "$(dirname -- "$script_path")" && pwd -P)
+CONFIGS_DIR="$REPO_DIR/configs"
+PACKAGES_DIR="$REPO_DIR/packages"
+BACKUP_ROOT=""
+DRY_RUN=0
+
+case "$(uname -s)" in
+  Darwin)
+    PROFILE_KIND="macos"
+    PROFILE_DIR="$PACKAGES_DIR/macos"
+    PROFILE_EXTENSION=".Brewfile"
+    ;;
+  Linux)
+    if [ -e /etc/arch-release ] || command -v pacman >/dev/null 2>&1; then
+      PROFILE_KIND="arch"
+      PROFILE_DIR="$PACKAGES_DIR/arch"
+      PROFILE_EXTENSION=".txt"
+    else
+      PROFILE_KIND="unsupported"
+      PROFILE_DIR=""
+      PROFILE_EXTENSION=""
+    fi
+    ;;
+  *)
+    PROFILE_KIND="unsupported"
+    PROFILE_DIR=""
+    PROFILE_EXTENSION=""
+    ;;
+esac
+
+discover_components() {
+  COMPONENTS=()
+  local directory
+  for directory in "$CONFIGS_DIR"/*; do
+    [ -d "$directory" ] || continue
+    COMPONENTS[${#COMPONENTS[@]}]=${directory##*/}
+  done
+}
+
+discover_profiles() {
+  PROFILES=()
+  [ "$PROFILE_KIND" = "unsupported" ] && return
+
+  local file name
+  for file in "$PROFILE_DIR"/*"$PROFILE_EXTENSION"; do
+    [ -f "$file" ] || continue
+    name=${file##*/}
+    name=${name%"$PROFILE_EXTENSION"}
+    PROFILES[${#PROFILES[@]}]="$name"
+  done
+}
+
+contains() {
+  local wanted=$1 candidate
+  shift
+  for candidate in "$@"; do
+    [ "$candidate" = "$wanted" ] && return 0
+  done
+  return 1
+}
+
+print_list() {
+  local heading=$1 item
+  shift
+  printf '%s:\n' "$heading"
+  if [ "$#" -eq 0 ]; then
+    printf '  (none)\n'
+    return
+  fi
+  for item in "$@"; do
+    printf '  %s\n' "$item"
+  done
+}
+
+list() {
+  discover_components
+  print_list "Components" "${COMPONENTS[@]}"
+  discover_profiles
+  print_list "Package profiles ($PROFILE_KIND)" "${PROFILES[@]}"
+}
+
+backup_root() {
+  if [ -z "$BACKUP_ROOT" ]; then
+    BACKUP_ROOT="$HOME/.local/state/dotfiles/backups/$(date +%Y%m%d-%H%M%S)-$$"
+  fi
+}
+
+link_file() {
+  local source=$1 relative=$2 target target_parent backup
+  target="$HOME/$relative"
+
+  if [ -L "$target" ] && [ "$target" -ef "$source" ]; then
+    printf 'Skipping linked file: %s\n' "$target"
+    return
+  fi
+
+  if [ -e "$target" ] || [ -L "$target" ]; then
+    backup_root
+    backup="$BACKUP_ROOT/$relative"
+    if [ "$DRY_RUN" -eq 1 ]; then
+      printf '+ mkdir -p %s\n' "$(dirname "$backup")"
+      printf '+ mv %s %s\n' "$target" "$backup"
+    else
+      [ ! -e "$backup" ] && [ ! -L "$backup" ] || fail "Backup already exists: $backup"
+      mkdir -p "$(dirname "$backup")"
+      mv "$target" "$backup"
+    fi
+  fi
+
+  target_parent=$(dirname "$target")
+  if [ "$DRY_RUN" -eq 1 ]; then
+    printf '+ mkdir -p %s\n' "$target_parent"
+    printf '+ ln -s %s %s\n' "$source" "$target"
+  else
+    mkdir -p "$target_parent"
+    ln -s "$source" "$target"
+  fi
+}
+
+link_component() {
+  local component=$1 component_dir source relative
+  component_dir="$CONFIGS_DIR/$component"
+  if [ ! -d "$component_dir" ]; then
+    printf 'Skipping vanished component: %s\n' "$component" >&2
+    return
+  fi
+
+  while IFS= read -r -d '' source; do
+    [ -f "$source" ] || {
+      printf 'Skipping vanished config file: %s\n' "$source" >&2
+      continue
+    }
+    relative=${source#"$component_dir"/}
+    link_file "$source" "$relative"
+  done < <(find "$component_dir" -type f -print0)
+}
+
+link_components() {
+  discover_components
+  local component
+  if [ "$#" -eq 0 ]; then
+    set -- "${COMPONENTS[@]}"
+  fi
+  if [ "$#" -eq 0 ]; then
+    printf 'No components found in %s\n' "$CONFIGS_DIR"
+    return
+  fi
+
+  for component in "$@"; do
+    contains "$component" "${COMPONENTS[@]}" || fail "Unknown component: $component"
+    link_component "$component"
+  done
+}
+
+select_profiles() {
+  discover_profiles
+  [ "$PROFILE_KIND" != "unsupported" ] || fail "Packages are supported on macOS and Arch Linux"
+
+  SELECTED_PROFILES=()
+  local profile
+  if [ "$#" -eq 0 ]; then
+    set -- "${PROFILES[@]}"
+  fi
+  if [ "$#" -eq 0 ]; then
+    printf 'No package profiles found in %s\n' "$PROFILE_DIR"
+    return
+  fi
+
+  for profile in "$@"; do
+    contains "$profile" "${PROFILES[@]}" || fail "Unknown $PROFILE_KIND package profile: $profile"
+    SELECTED_PROFILES[${#SELECTED_PROFILES[@]}]="$profile"
+  done
+}
+
+install_macos_profiles() {
+  local profile file
+  if [ "$DRY_RUN" -eq 1 ]; then
+    for profile in "${SELECTED_PROFILES[@]}"; do
+      printf '+ brew bundle --file=%s --no-upgrade\n' "$PROFILE_DIR/$profile$PROFILE_EXTENSION"
+    done
+    return
+  fi
+
+  command -v brew >/dev/null 2>&1 || fail "Homebrew is required; install Homebrew first, then rerun this command"
+  for profile in "${SELECTED_PROFILES[@]}"; do
+    file="$PROFILE_DIR/$profile$PROFILE_EXTENSION"
+    [ -f "$file" ] || fail "Package profile disappeared: $file"
+    brew bundle --file="$file" --no-upgrade
+  done
+}
+
+read_arch_profiles() {
+  ARCH_PACKAGES=()
+  local profile file line
+  for profile in "${SELECTED_PROFILES[@]}"; do
+    file="$PROFILE_DIR/$profile$PROFILE_EXTENSION"
+    [ -f "$file" ] || fail "Package profile disappeared: $file"
+    while IFS= read -r line || [ -n "$line" ]; do
+      line=${line#"${line%%[![:space:]]*}"}
+      line=${line%"${line##*[![:space:]]}"}
+      case "$line" in
+        ''|\#*) continue ;;
+      esac
+      ARCH_PACKAGES[${#ARCH_PACKAGES[@]}]="$line"
+    done < "$file"
+  done
+}
+
+install_arch_profiles() {
+  local manager package
+  read_arch_profiles
+  if [ "${#ARCH_PACKAGES[@]}" -eq 0 ]; then
+    printf 'No packages selected.\n'
+    return
+  fi
+
+  if command -v paru >/dev/null 2>&1; then
+    manager=paru
+  elif command -v yay >/dev/null 2>&1; then
+    manager=yay
+  else
+    manager=""
+  fi
+
+  if [ "$DRY_RUN" -eq 1 ]; then
+    printf '+ %s -S --needed' "${manager:-paru-or-yay}"
+    for package in "${ARCH_PACKAGES[@]}"; do
+      printf ' %s' "$package"
+    done
+    printf '\n'
+    return
+  fi
+
+  [ -n "$manager" ] || fail "Neither paru nor yay is installed. Install one, then rerun ./setup packages <profile>"
+  command -v pacman >/dev/null 2>&1 || fail "pacman is required to check installed packages"
+
+  missing_packages=()
+  for package in "${ARCH_PACKAGES[@]}"; do
+    if pacman -Q "$package" >/dev/null 2>&1; then
+      printf 'Skipping installed package: %s\n' "$package"
+    else
+      missing_packages[${#missing_packages[@]}]="$package"
+    fi
+  done
+  if [ "${#missing_packages[@]}" -eq 0 ]; then
+    printf 'All selected packages are already installed.\n'
+    return
+  fi
+
+  "$manager" -S --needed "${missing_packages[@]}"
+}
+
+install_packages() {
+  select_profiles "$@"
+  [ "${#SELECTED_PROFILES[@]}" -gt 0 ] || return
+  case "$PROFILE_KIND" in
+    macos) install_macos_profiles ;;
+    arch) install_arch_profiles ;;
+  esac
+}
+
+usage() {
+  printf '%s\n' \
+    "Usage: ./setup [--dry-run] [list|link [component ...]|packages [profile ...]]" \
+    "" \
+    "  list                  List discovered config components and package profiles" \
+    "  link [component ...]  Link every leaf file from selected components (all by default)" \
+    "  packages [profile ...] Install selected OS package profiles (all by default)"
+}
+
+interactive() {
+  printf '%s\n' \
+    "Select an action:" \
+    "  1) List available components and profiles" \
+    "  2) Link all config components" \
+    "  3) Install all package profiles" \
+    "  4) Quit"
+  printf 'Choice: '
+  if ! IFS= read -r choice; then
+    printf '\n'
+    return
+  fi
+  case "$choice" in
+    1) list ;;
+    2) link_components ;;
+    3) install_packages ;;
+    4) ;;
+    *) fail "Invalid selection: $choice" ;;
+  esac
+}
+
+POSITIONAL=()
+for argument in "$@"; do
+  case "$argument" in
+    --dry-run) DRY_RUN=1 ;;
+    *) POSITIONAL[${#POSITIONAL[@]}]="$argument" ;;
+  esac
+done
+set -- "${POSITIONAL[@]}"
+
+if [ "$#" -eq 0 ]; then
+  interactive
+  exit 0
+fi
+
+case "$1" in
+  list)
+    [ "$#" -eq 1 ] || fail "list does not take arguments"
+    list
+    ;;
+  link)
+    shift
+    link_components "$@"
+    ;;
+  packages)
+    shift
+    install_packages "$@"
+    ;;
+  -h|--help|help)
+    usage
+    ;;
+  *)
+    usage >&2
+    fail "Unknown action: $1"
+    ;;
+esac

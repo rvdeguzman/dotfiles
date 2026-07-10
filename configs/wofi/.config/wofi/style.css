@@ -1,0 +1,56 @@
+/* Base window */
+* {
+    font-family: 'Iosevka Nerd Font';
+    font-size: 16px;
+}
+window {
+    background-color: #000000;
+    color: #c1c1c1;
+}
+
+/* Input field */
+#input {
+    margin: 6px;
+    padding: 6px 10px;
+    background-color: #000000;
+    color: #c1c1c1;
+    border: 1px solid #252530;
+    border-radius: 0px;
+}
+
+/* Entry rows */
+#entry {
+    padding: 6px 10px;
+    margin: 2px 6px;
+    background-color: #000000;
+    color: #c1c1c1;
+    border-radius: 4px;
+}
+
+/* Selected entry */
+#entry:selected {
+    background-color: #000000; /* visual */
+    color: #ffffff;
+    border: 1px solid #fbcb97; /* accent */
+    border-radius: 0px;
+}
+
+/* Entry text + icons */
+#text {
+    color: #c1c1c1;
+}
+#img {
+    margin-right: 8px;
+}
+
+/* Error, warning, hint states (if used) */
+.error {
+    color: #d8647e;
+}
+.warning {
+    color: #f3be7c;
+}
+.hint {
+    color: #7e98e8;
+}
+

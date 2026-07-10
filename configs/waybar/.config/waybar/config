@@ -1,0 +1,52 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 24,
+  "spacing": 6,
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "battery", "network", "tray"],
+  "hyprland/workspaces": {
+        "format": "<span size='x-large' font-weight='bold'>{icon}</span>",
+        "on-click": "activate",
+        "format-icons": {
+            "active": "\uf444",
+            "default": "\uf4c3"
+        },
+        "icon-size": 48,
+        "sort-by-number": true,
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": [],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": [],
+            "10": []
+        }
+    },
+
+  "clock": { "format": "{:%m.%d.%Y | %H:%M}" },
+
+  "pulseaudio": {
+    "format": "  {volume}%",
+    "format-muted": "  muted"
+  },
+
+  "battery": {
+    "format": " {capacity}%",
+    "format-charging": "  {capacity}%",
+    "states": { "warning": 20, "critical": 10 }
+  },
+
+  "network": {
+    "format-wifi": "  {essid}",
+    "format-ethernet": "󰈀  {ipaddr}",
+    "format-disconnected": "󰖪"
+  },
+
+  "tray": { "icon-size": 16, "spacing": 16 }
+}
