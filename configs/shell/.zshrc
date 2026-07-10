@@ -46,6 +46,8 @@ alias h="herdr"
 alias school='cd "$HOME/Library/Mobile Documents/com~apple~CloudDocs/school"'
 alias icloud='cd "$HOME/Library/Mobile Documents/com~apple~CloudDocs"'
 
+export MAINICHI_DIR="$HOME/Library/Mobile Documents/com~apple~CloudDocs/mainichi"
+
 [[ -r "$HOME/.atuin/bin/env" ]] && source "$HOME/.atuin/bin/env"
 command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
 
