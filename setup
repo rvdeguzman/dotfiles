@@ -307,6 +307,23 @@ install_packages() {
   esac
 }
 
+setup_terminal() {
+  local terminal=${1:-}
+  if [ -n "$terminal" ]; then
+    contains "$terminal" ghostty kitty alacritty || fail "Unknown terminal emulator: $terminal"
+  else
+    [ -t 0 ] || fail "Terminal setup needs a terminal emulator argument: ghostty, kitty, or alacritty"
+    choose_terminal_emulator || {
+      tui_clear
+      printf 'No changes made.\n'
+      return
+    }
+    terminal=$SELECTED_TERMINAL
+  fi
+  link_components shell tmux nvim herdr omp opencode yazi scripts rift "$terminal"
+  install_packages terminal
+}
+
 UI_BOLD=""
 UI_DIM=""
 UI_ACCENT=""
@@ -416,6 +433,47 @@ read_tui_key() {
   if ! IFS= read -r -s -n 1 TUI_KEY </dev/tty; then
     TUI_KEY="q"
   fi
+}
+
+print_terminal_choices() {
+  local cursor=$1 terminal index=0
+  tui_clear
+  print_tui_header
+  printf '\n%sTerminal emulator%s\n\n' "$UI_BOLD" "$UI_RESET"
+  for terminal in ghostty kitty alacritty; do
+    if [ "$index" -eq "$cursor" ]; then
+      printf '  %s>%s %s%s%s\n' \
+        "$UI_ACCENT" "$UI_RESET" "$UI_REVERSE" "$terminal" "$UI_RESET"
+    else
+      printf '    %s\n' "$terminal"
+    fi
+    index=$((index + 1))
+  done
+  printf '\n%sj/k%s move  %sspace/enter%s select  %sq%s quit\n' \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET" \
+    "$UI_BOLD" "$UI_RESET"
+}
+
+choose_terminal_emulator() {
+  local cursor=0
+  while :; do
+    print_terminal_choices "$cursor"
+    read_tui_key
+    case "$TUI_KEY" in
+      j|J) cursor=$(((cursor + 1) % 3)) ;;
+      k|K) cursor=$(((cursor + 2) % 3)) ;;
+      ' '|'')
+        case "$cursor" in
+          0) SELECTED_TERMINAL=ghostty ;;
+          1) SELECTED_TERMINAL=kitty ;;
+          2) SELECTED_TERMINAL=alacritty ;;
+        esac
+        return 0
+        ;;
+      q|Q) return 1 ;;
+    esac
+  done
 }
 
 print_tui_header() {
@@ -570,12 +628,13 @@ run_tui_plan() {
 
 usage() {
   printf '%s\n' \
-    "Usage: ./setup [--dry-run] [list|link [component ...]|packages [profile ...]]" \
+    "Usage: ./setup [--dry-run] [list|link [component ...]|packages [profile ...]|terminal [emulator]]" \
     "" \
     "  ./setup               Review OS-aware defaults in the interactive selector" \
     "  list                  List discovered config components and package profiles" \
     "  link [component ...]  Link every leaf file from selected components (all by default)" \
     "  packages [profile ...] Install selected OS package profiles (all by default)" \
+    "  terminal [emulator]   Install terminal tools; choose ghostty, kitty, or alacritty" \
     "  --dry-run             Print every planned change without applying it"
 }
 
@@ -673,6 +732,10 @@ case "$1" in
   packages)
     shift
     install_packages "$@"
+    ;;
+  terminal)
+    [ "$#" -le 2 ] || fail "terminal takes at most one emulator"
+    setup_terminal "${2:-}"
     ;;
   -h|--help|help)
     usage

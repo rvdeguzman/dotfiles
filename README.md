@@ -37,11 +37,16 @@ The command-line interface remains available:
 
 ```sh
 ./setup list
+./setup --dry-run terminal ghostty
+./setup terminal
 ./setup --dry-run link shell tmux nvim
 ./setup link shell tmux nvim
 ./setup --dry-run packages core dev
 ./setup packages core dev
 ```
+
+`./setup terminal` asks for one terminal emulator with `j` / `k` and
+Space or Enter. Pass `ghostty`, `kitty`, or `alacritty` to skip the prompt.
 
 `link` discovers components under `configs/` and creates absolute, leaf-file
 symlinks at their home-relative paths. Existing files are preserved under:
