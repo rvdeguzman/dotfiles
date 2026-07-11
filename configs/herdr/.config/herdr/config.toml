@@ -50,7 +50,7 @@ rename_pane = "prefix+semicolon"
 # Session / pane control
 detach = "prefix+d"                # tmux: d detach-client
 zoom = "prefix+enter"                  # tmux: z zoom-pane
-edit_scrollback = "prefix+y"       # closest to tmux: y copy-mode
+copy_mode = "prefix+y"             # tmux: [ enters copy-mode
 resize_mode = "prefix+shift+r"     # moved off r (rename took it)
 reload_config = "prefix+ctrl+r"
 

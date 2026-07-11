@@ -1,0 +1,66 @@
+symbolPreset: nerd
+theme:
+  dark: dark-gruvbox
+setupVersion: 1
+modelRoles:
+  default: openai-codex/gpt-5.6-sol:medium
+  plan: anthropic/claude-fable-5:high
+  designer: anthropic/claude-opus-4-8:xhigh
+  commit: anthropic/claude-sonnet-4-6:low
+  vision: openai-codex/gpt-5.5:xhigh
+  smol: openai-codex/gpt-5.6-luna:medium
+  advisor: anthropic/claude-fable-5:low
+  slow: anthropic/claude-fable-5:high
+  task: openai-codex/gpt-5.6-terra:high
+defaultThinkingLevel: auto
+advisor:
+  enabled: false
+  subagents: false
+task:
+  maxConcurrency: 4
+  agentModelOverrides:
+    fable_orchestrator: anthropic/claude-fable-5:high
+    luna_scout: openai-codex/gpt-5.6-luna:medium
+    terra_builder: openai-codex/gpt-5.6-terra:high
+    sol_builder: openai-codex/gpt-5.6-sol:high
+    verification_gate: openai-codex/gpt-5.6-luna:high
+    fable_reviewer: anthropic/claude-fable-5:high
+  disabledAgents: []
+  isolation:
+    mode: auto
+    commits: ai
+    merge: branch
+  eager: default
+  showResolvedModelBadge: true
+tier:
+  openai: default
+  google: priority
+statusLine:
+  separator: none
+  transparent: true
+hideThinkingBlock: false
+dev:
+  autoqa:
+    consent: denied
+tools:
+  approvalMode: yolo
+steeringMode: one-at-a-time
+providers:
+  anthropic:
+    serverSideFallback: true
+  webSearchGeminiModel: ""
+browser:
+  headless: false
+power:
+  sleepPrevention: idle
+readLineNumbers: false
+inspect_image:
+  enabled: true
+checkpoint:
+  enabled: true
+github:
+  enabled: true
+tui:
+  hyperlinks: auto
+  tight: true
+
