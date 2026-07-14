@@ -57,6 +57,15 @@ symlinks at their home-relative paths. Existing files are preserved under:
 
 Re-running the same command is safe: correct links are skipped.
 
+### Manual steps
+
+The herdr keybinds in `configs/herdr` depend on a herdr-managed plugin
+(`setup` does not install it):
+
+```sh
+herdr plugin install paulbkim-dev/vim-herdr-navigation --yes
+```
+
 ## Package profiles
 
 Package profiles are plain data files:

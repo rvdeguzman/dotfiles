@@ -42,3 +42,32 @@ end, { desc = "LSP symbols" })
 map("n", "<leader>sW", function()
   Snacks.picker.lsp_workspace_symbols()
 end, { desc = "LSP workspace symbols" })
+
+-- vim-herdr-navigation (vendored from paulbkim-dev/vim-herdr-navigation
+-- editor/nvim.lua, tmux fallback dropped): <C-h/j/k/l> moves between splits,
+-- and at a split edge crosses into the neighbouring herdr pane.
+local function herdr_nav(wincmd, dir)
+  local prev = vim.api.nvim_get_current_win()
+  vim.cmd("wincmd " .. wincmd)
+  if vim.api.nvim_get_current_win() ~= prev then
+    return -- moved within Neovim
+  end
+  if vim.env.HERDR_PANE_ID and vim.env.HERDR_PANE_ID ~= "" then
+    local herdr = vim.env.HERDR_BIN_PATH
+    if herdr == nil or herdr == "" then
+      herdr = "herdr"
+    end
+    vim.fn.system({ herdr, "pane", "focus", "--direction", dir, "--current" })
+  end
+end
+
+for key, nav in pairs({
+  ["<C-h>"] = { "h", "left" },
+  ["<C-j>"] = { "j", "down" },
+  ["<C-k>"] = { "k", "up" },
+  ["<C-l>"] = { "l", "right" },
+}) do
+  map("n", key, function()
+    herdr_nav(nav[1], nav[2])
+  end, { desc = "Navigate " .. nav[2] .. " (vim/herdr)" })
+end
