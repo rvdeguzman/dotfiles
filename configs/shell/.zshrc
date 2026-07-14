@@ -87,3 +87,4 @@ omc() { _ompair openai/gpt-5.5 anthropic/claude-opus-4-8 "$@"; }
 
 # Machine-only aliases and experiments belong here.
 [[ -r "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+export PATH="$HOME/.local/share/nvim/mason/bin:$PATH"

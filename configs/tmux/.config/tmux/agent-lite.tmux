@@ -1,6 +1,3 @@
-# Reversible tmux agent-lite layer for Rafael/Frieren.
-# Disable by commenting the source-file line in ~/.config/tmux/tmux.conf.
-#
 # Keys:
 #   C-a s    fuzzy tmux/zoxide session search via sesh
 #   C-a H    harpoon-style pinned project/session jump
@@ -9,6 +6,7 @@
 #   C-a U    ack/clear pending notifications for current pane
 #   C-a M    show pending notification popup
 #   C-a O    show detected agent/status popup
+#   C-a S    toggle herdr-style agent sidebar pane
 #   C-a C-u  ack/clear all pending notifications
 
 # Project/session search: sesh combines tmux sessions + zoxide paths.
@@ -47,6 +45,9 @@ bind M display-popup -E -w 80% -h 60% -d "#{pane_current_path}" "/Users/rv/.loca
 
 # Full status popup: pending queue + detected Claude/Codex/Gemini/etc panes.
 bind O display-popup -E -w 88% -h 72% -d "#{pane_current_path}" "/Users/rv/.local/bin/tmux-agent-status | less -R"
+
+# Herdr-style agent sidebar: toggle a narrow live agent-status pane on the right.
+bind S run-shell "/Users/rv/.local/bin/tmux-agent-sidebar"
 
 # Drop notifications for panes that have died, so jumps never point at ghosts.
 set-hook -g pane-died 'run-shell "bellmux prune-pane --pane-id #{pane_id} >/dev/null 2>&1 || true"'
