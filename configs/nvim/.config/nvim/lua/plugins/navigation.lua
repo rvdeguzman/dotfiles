@@ -229,6 +229,24 @@ return {
     },
   },
   {
+    "lewis6991/gitsigns.nvim",
+    keys = {
+      { "<leader>hb", function() require("gitsigns").blame_line() end, desc = "Blame Line" },
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        ["*"] = {
+          keys = {
+            { "<leader>rn", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+          },
+        },
+      },
+    },
+  },
+  {
     "folke/which-key.nvim",
     opts = function(_, opts)
       opts.delay = 0
@@ -238,6 +256,7 @@ return {
         { "<leader>g", group = "[G]it" },
         { "<leader>h", group = "[H]arpoon" },
         { "<leader>o", group = "[O]pen" },
+        { "<leader>r", group = "[R]ename" },
         { "<leader>s", group = "[S]earch", mode = { "n", "v" } },
         { "<leader>t", group = "[T]oggle" },
         { "<leader>w", group = "[W]indows" },
