@@ -1,0 +1,35 @@
+{{ if and (eq .chezmoi.os "linux") (lookPath "pacman") .packages -}}
+#!/bin/bash
+# Reruns when a selected package list changes:
+{{ range .packages -}}
+# {{ . }}.txt hash: {{ include (joinPath ".." "packages" "arch" (printf "%s.txt" .)) | sha256sum }}
+{{ end -}}
+set -euo pipefail
+
+if command -v paru >/dev/null 2>&1; then
+  manager=paru
+elif command -v yay >/dev/null 2>&1; then
+  manager=yay
+else
+  echo "Error: neither paru nor yay is installed; install one, then run 'chezmoi apply' again" >&2
+  exit 1
+fi
+
+packages=()
+while IFS= read -r line; do
+  line="${line#"${line%%[![:space:]]*}"}"
+  line="${line%"${line##*[![:space:]]}"}"
+  case "$line" in
+    ''|\#*) continue ;;
+  esac
+  pacman -Q "$line" >/dev/null 2>&1 && continue
+  packages+=("$line")
+done < <(cat {{ range .packages }}"{{ $.chezmoi.workingTree }}/packages/arch/{{ . }}.txt" {{ end }})
+
+if [ "${#packages[@]}" -eq 0 ]; then
+  echo "All selected packages are already installed."
+  exit 0
+fi
+
+"$manager" -S --needed "${packages[@]}"
+{{ end -}}

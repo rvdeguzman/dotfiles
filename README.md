@@ -1,6 +1,7 @@
 # Dotfiles
 
-Curated macOS and Linux configuration. This repository is the source of truth;
+Curated macOS and Linux configuration, managed with
+[chezmoi](https://www.chezmoi.io). This repository is the source of truth;
 `~/.config` stays a normal application-state directory.
 
 ## Setup
@@ -9,57 +10,39 @@ Curated macOS and Linux configuration. This repository is the source of truth;
 ./setup
 ```
 
-The interactive selector detects macOS or Arch Linux, preselects conservative
-configuration and package defaults, then opens a keyboard-driven checklist:
+`setup` installs chezmoi if missing (via Homebrew, pacman, or the official
+installer), then runs `chezmoi init --apply` against this checkout. On first
+run, `chezmoi init` asks a few questions and writes the answers to
+`~/.config/chezmoi/chezmoi.toml`:
 
-- `j` / `k` moves the cursor down or up
-- Space toggles the highlighted item
-- `a` selects all; `n` selects none
-- Enter accepts the current list; `q` exits without changes
+- **macOS** — which Homebrew package profiles to install (default: `core`)
+- **Linux** — whether to manage Hyprland configs (default: on when Hyprland is
+  running), whether to include the minibook Hyprland variant, and which Arch
+  package profiles to install (default: `base`, plus `hyprland`/`i3` when the
+  matching session is detected)
 
-The selector and `./setup list` hide incompatible entries instead of showing
-one combined list. Aerospace, cmux, Karabiner, and OmniWM are macOS-only;
-Hyprland, the minibook profile, Mako, Waybar, and Wofi are Linux-only. All
-other components are shared. Package profiles are already separated under
-`packages/macos/` and `packages/arch/`, so only profiles supported by the
-current operating system appear. An explicitly named component remains
-available for advanced cross-platform use, such as `./setup link hypr`.
+chezmoi runs in **symlink mode**: files in `$HOME` are symlinks into this
+repository, so editing a config in place edits the checkout directly — commit
+with plain git. Platform gating is handled by `home/.chezmoiignore`: Aerospace,
+cmux, Karabiner, and OmniWM apply only on macOS; Hyprland, the minibook
+variant, Mako, Waybar, and Wofi only on Linux.
 
-The final review defaults to **preview only**. Applying changes requires
-choosing `apply` and confirming a second time. Passing `--dry-run` locks the
-session to preview mode:
-
-```sh
-./setup --dry-run
-```
-
-The command-line interface remains available:
+Day-to-day commands (all take `--dry-run`/`-n`):
 
 ```sh
-./setup list
-./setup --dry-run terminal ghostty
-./setup terminal
-./setup --dry-run link shell tmux nvim
-./setup link shell tmux nvim
-./setup --dry-run packages core dev
-./setup packages core dev
+chezmoi diff            # preview what apply would change
+chezmoi apply           # link configs + run package scripts
+chezmoi add ~/.zshrc    # start managing a new file
+chezmoi managed         # list everything managed
 ```
 
-`./setup terminal` asks for one terminal emulator with `j` / `k` and
-Space or Enter. Pass `ghostty`, `kitty`, or `alacritty` to skip the prompt.
-
-`link` discovers components under `configs/` and creates absolute, leaf-file
-symlinks at their home-relative paths. Existing files are preserved under:
-
-```text
-~/.local/state/dotfiles/backups/<timestamp-pid>/
-```
-
-Re-running the same command is safe: correct links are skipped.
+To change your answers later (e.g. enable more package profiles), edit
+`~/.config/chezmoi/chezmoi.toml` and run `chezmoi apply`, or re-run
+`chezmoi init` to be prompted again.
 
 ### Manual steps
 
-The herdr keybinds in `configs/herdr` depend on a herdr-managed plugin
+The herdr keybinds in `home/dot_config/herdr` depend on a herdr-managed plugin
 (`setup` does not install it):
 
 ```sh
@@ -73,9 +56,11 @@ Package profiles are plain data files:
 - macOS: `packages/macos/*.Brewfile`
 - Arch Linux: `packages/arch/*.txt`
 
-On macOS, `setup packages` requires Homebrew and runs `brew bundle` with
-`--no-upgrade`. On Arch, it requires `paru` or `yay`. The setup script never
-installs a package manager, removes packages, or upgrades existing packages.
+The `run_onchange` scripts under `home/.chezmoiscripts/` install the profiles
+selected at `chezmoi init` and re-run automatically whenever a selected
+profile file changes. On macOS this requires Homebrew and runs `brew bundle`
+with `--no-upgrade`; on Arch it requires `paru` or `yay` and skips packages
+that are already installed. Nothing is ever removed or upgraded.
 
 ## Secrets
 
@@ -97,12 +82,13 @@ files are ignored.
 
 ## Layout
 
-Each directory in `configs/` is independently selectable and mirrors paths
-relative to `$HOME`:
+`home/` is the chezmoi source directory (selected by `.chezmoiroot`) and uses
+chezmoi's naming: `dot_` becomes a leading dot, `empty_` marks intentionally
+empty files:
 
 ```text
-configs/tmux/.config/tmux/tmux.conf -> ~/.config/tmux/tmux.conf
-configs/shell/.zshrc                -> ~/.zshrc
+home/dot_config/tmux/tmux.conf -> ~/.config/tmux/tmux.conf
+home/dot_zshrc                 -> ~/.zshrc
 ```
 
 Generated logs, sessions, caches, databases, backups, authentication files,

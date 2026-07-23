@@ -1,4 +1,4 @@
 .DS_Store
 **/.DS_Store
-configs/shell/.config/zsh/secrets.zsh
+home/dot_config/zsh/secrets.zsh
 *.local

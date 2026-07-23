@@ -1,0 +1,16 @@
+{{ if and (eq .chezmoi.os "darwin") .packages -}}
+#!/bin/bash
+# Reruns when a selected Brewfile changes:
+{{ range .packages -}}
+# {{ . }}.Brewfile hash: {{ include (joinPath ".." "packages" "macos" (printf "%s.Brewfile" .)) | sha256sum }}
+{{ end -}}
+set -euo pipefail
+
+command -v brew >/dev/null 2>&1 || {
+  echo "Error: Homebrew is required; install it, then run 'chezmoi apply' again" >&2
+  exit 1
+}
+{{ range .packages }}
+brew bundle --no-upgrade --file="{{ $.chezmoi.workingTree }}/packages/macos/{{ . }}.Brewfile"
+{{- end }}
+{{ end -}}

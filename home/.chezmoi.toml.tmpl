@@ -1,0 +1,27 @@
+{{/* Generates ~/.config/chezmoi/chezmoi.toml on `chezmoi init`. */ -}}
+{{- $hyprland := false -}}
+{{- $minibook := false -}}
+{{- $packages := list -}}
+{{- if eq .chezmoi.os "darwin" -}}
+{{-   $packages = promptMultichoiceOnce . "packages" "Homebrew package profiles" (list "core" "apps" "dev" "terminal") (list "core") -}}
+{{- else if eq .chezmoi.os "linux" -}}
+{{-   $hyprland = promptBoolOnce . "hyprland" "Manage Hyprland configs (hypr, mako, waybar, wofi)" (not (empty (env "HYPRLAND_INSTANCE_SIGNATURE"))) -}}
+{{-   if $hyprland -}}
+{{-     $minibook = promptBoolOnce . "minibook" "Also manage the minibook Hyprland variant" false -}}
+{{-   end -}}
+{{-   if lookPath "pacman" -}}
+{{-     $default := list "base" -}}
+{{-     if $hyprland -}}{{- $default = append $default "hyprland" -}}{{- end -}}
+{{-     if env "I3SOCK" -}}{{- $default = append $default "i3" -}}{{- end -}}
+{{-     $packages = promptMultichoiceOnce . "packages" "Arch package profiles" (list "base" "hyprland" "i3" "terminal") $default -}}
+{{-   end -}}
+{{- end -}}
+# Symlink mode keeps the old workflow: files in $HOME are symlinks into this
+# repo, so editing a config in place edits the repo checkout directly.
+mode = "symlink"
+sourceDir = {{ .chezmoi.workingTree | quote }}
+
+[data]
+    hyprland = {{ $hyprland }}
+    minibook = {{ $minibook }}
+    packages = {{ $packages | toJson }}

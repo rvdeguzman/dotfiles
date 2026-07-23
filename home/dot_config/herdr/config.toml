@@ -66,7 +66,7 @@ prompt_new_tab_name = false
 # vim-herdr-navigation: Ctrl+h/j/k/l across herdr panes and Vim splits.
 # Requires the plugin (one-time, per machine):
 #   herdr plugin install paulbkim-dev/vim-herdr-navigation --yes
-# Editor side is vendored in configs/nvim/.../lua/config/keymaps.lua.
+# Editor side is vendored in home/dot_config/nvim/.../lua/config/keymaps.lua.
 [[keys.command]]
 key = "ctrl+h"
 type = "plugin_action"
