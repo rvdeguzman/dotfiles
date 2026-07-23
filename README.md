@@ -32,7 +32,7 @@ Day-to-day commands (all take `--dry-run`/`-n`):
 ```sh
 chezmoi diff            # preview what apply would change
 chezmoi apply           # link configs + run package scripts
-chezmoi add ~/.zshrc    # start managing a new file
+chezmoi add ~/.config/foo/bar.toml   # start managing a new file
 chezmoi managed         # list everything managed
 ```
 
@@ -62,9 +62,16 @@ profile file changes. On macOS this requires Homebrew and runs `brew bundle`
 with `--no-upgrade`; on Arch it requires `paru` or `yay` and skips packages
 that are already installed. Nothing is ever removed or upgraded.
 
-## Secrets
+## Shell rc files and secrets
 
-Secrets never belong in this repository. Shell configuration optionally loads:
+`~/.zshrc`, `~/.zshenv`, and `~/.zprofile` are intentionally **not managed and
+not tracked**: they accumulate machine-local keys, certs, and tool hooks, and
+must never be replaced by an apply. They are plain local files; edit them
+freely. Machine-only aliases and experiments can also go in `~/.zshrc.local`;
+`*.local` files are ignored.
+
+Other secrets never belong in this repository either. Shell configuration
+optionally loads:
 
 ```text
 ~/.config/zsh/secrets.zsh
@@ -77,9 +84,6 @@ file locally, and restrict it:
 chmod 600 ~/.config/zsh/secrets.zsh
 ```
 
-Machine-only aliases and experiments can go in `~/.zshrc.local`; `*.local`
-files are ignored.
-
 ## Layout
 
 `home/` is the chezmoi source directory (selected by `.chezmoiroot`) and uses
@@ -87,8 +91,8 @@ chezmoi's naming: `dot_` becomes a leading dot, `empty_` marks intentionally
 empty files:
 
 ```text
-home/dot_config/tmux/tmux.conf -> ~/.config/tmux/tmux.conf
-home/dot_zshrc                 -> ~/.zshrc
+home/dot_config/tmux/tmux.conf   -> ~/.config/tmux/tmux.conf
+home/dot_config/ghostty/config   -> ~/.config/ghostty/config
 ```
 
 Generated logs, sessions, caches, databases, backups, authentication files,

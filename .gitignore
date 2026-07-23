@@ -1,4 +1,7 @@
 .DS_Store
 **/.DS_Store
 home/dot_config/zsh/secrets.zsh
+home/dot_zshrc
+home/dot_zshenv
+home/dot_zprofile
 *.local
