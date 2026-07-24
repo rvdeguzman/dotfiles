@@ -34,15 +34,18 @@ keybind = super+control+shift+alt+arrow_down=resize_split:down,100
 keybind = super+control+shift+alt+arrow_up=resize_split:up,100
 keybind = super+control+shift+alt+arrow_left=resize_split:left,100
 keybind = super+control+shift+alt+arrow_right=resize_split:right,100
-# keybind = control+h=goto_split:left
-# keybind = control+j=goto_split:down
-# keybind = control+k=goto_split:up
-# keybind = control+l=goto_split:right
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:down
+keybind = performable:ctrl+k=goto_split:up
+keybind = performable:ctrl+l=goto_split:right
 
 # Slowdown mouse scrolling
 mouse-scroll-multiplier = 0.95
 
+mouse-hide-while-typing = true
+
 # shader
 # custom-shader = "shaders/cursor_tail.glsl"
+custom-shader = "shaders/cursor_warp.glsl"
 
 quit-after-last-window-closed = true

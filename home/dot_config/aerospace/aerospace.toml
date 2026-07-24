@@ -9,7 +9,7 @@ persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 # Mouse follows focus: warp the pointer to the focused window on every focus
 # change (incl. cmd-tab to another app). Docs: guide#on-focus-changed-callbacks
 on-focus-changed = ['move-mouse window-lazy-center']
-on-focused-monitor-changed = []
+on-focused-monitor-changed = ['move-mouse monitor-force-center']
 # focus-follows-mouse.enabled = true  # opposite direction: hover a window to focus it
 
 [gaps]
@@ -25,7 +25,7 @@ preset = 'qwerty'
 
 [mode.main.binding]
 alt-r = 'mode resize'
-# alt-enter = "exec-and-forget /Applications/Ghostty.app/Contents/MacOS/ghostty"
+alt-enter = "exec-and-forget /Applications/Ghostty.app/Contents/MacOS/ghostty"
 # alt-enter = "exec-and-forget /Applications/Alacritty.app/Contents/MacOS/alacritty"
 
 alt-h = 'focus left'
@@ -43,27 +43,30 @@ alt-shift-l = 'move right'
 alt-shift-p = 'move-node-to-monitor --focus-follows-window --wrap-around prev'
 alt-shift-n = 'move-node-to-monitor --focus-follows-window --wrap-around next'
 
-alt-1 = 'summon-workspace 1'
-alt-2 = 'summon-workspace 2'
-alt-3 = 'summon-workspace 3'
-alt-4 = 'summon-workspace 4'
-alt-5 = 'summon-workspace 5'
-alt-6 = 'summon-workspace 6'
-alt-7 = 'summon-workspace 7'
-alt-8 = 'summon-workspace 8'
-alt-9 = 'summon-workspace 9'
-alt-0 = 'summon-workspace 10'
+alt-ctrl-p = ['focus-monitor --wrap-around prev', 'move-mouse monitor-force-center']
+alt-ctrl-n = ['focus-monitor --wrap-around next', 'move-mouse monitor-force-center']
 
-alt-shift-1 = 'move-node-to-workspace 1; summon-workspace 1'
-alt-shift-2 = 'move-node-to-workspace 2; summon-workspace 2'
-alt-shift-3 = 'move-node-to-workspace 3; summon-workspace 3'
-alt-shift-4 = 'move-node-to-workspace 4; summon-workspace 4'
-alt-shift-5 = 'move-node-to-workspace 5; summon-workspace 5'
-alt-shift-6 = 'move-node-to-workspace 6; summon-workspace 6'
-alt-shift-7 = 'move-node-to-workspace 7; summon-workspace 7'
-alt-shift-8 = 'move-node-to-workspace 8; summon-workspace 8'
-alt-shift-9 = 'move-node-to-workspace 9; summon-workspace 9'
-alt-shift-0 = 'move-node-to-workspace 10; summon-workspace 10'
+alt-1 = ['workspace 1', 'move-mouse window-lazy-center']
+alt-2 = ['workspace 2', 'move-mouse window-lazy-center']
+alt-3 = ['workspace 3', 'move-mouse window-lazy-center']
+alt-4 = ['workspace 4', 'move-mouse window-lazy-center']
+alt-5 = ['workspace 5', 'move-mouse window-lazy-center']
+alt-6 = ['workspace 6', 'move-mouse window-lazy-center']
+alt-7 = ['workspace 7', 'move-mouse window-lazy-center']
+alt-8 = ['workspace 8', 'move-mouse window-lazy-center']
+alt-9 = ['workspace 9', 'move-mouse window-lazy-center']
+alt-0 = ['workspace 10', 'move-mouse window-lazy-center']
+
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1', 'move-mouse window-lazy-center']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2', 'move-mouse window-lazy-center']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3', 'move-mouse window-lazy-center']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4', 'move-mouse window-lazy-center']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5', 'move-mouse window-lazy-center']
+alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6', 'move-mouse window-lazy-center']
+alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7', 'move-mouse window-lazy-center']
+alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8', 'move-mouse window-lazy-center']
+alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9', 'move-mouse window-lazy-center']
+alt-shift-0 = ['move-node-to-workspace 10', 'workspace 10', 'move-mouse window-lazy-center']
 
 alt-space = 'layout floating tiling'
 alt-s = 'layout accordion vertical'        # stack
@@ -103,85 +106,3 @@ enter = 'mode main'
 [[on-window-detected]]
 check-further-callbacks = true
 run = 'layout floating'
-
-# select windows to tile
-[[on-window-detected]]
-if.app-id = 'com.mitchellh.ghostty'
-run = ['layout tiling', 'move-node-to-workspace 1']
-
-[[on-window-detected]]
-if.app-id = 'com.apple.Safari'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'dev.zed.Zed'
-run = ['layout tiling', 'move-node-to-workspace 1']
-
-[[on-window-detected]]
-if.app-id = 'org.gnu.Emacs'
-run = 'move-node-to-workspace 2'
-
-[[on-window-detected]]
-if.app-id = 'com.google.Chrome'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'org.chromium.Chromium'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'company.thebrowser.Browser'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'org.mozilla.firefox'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'com.brave.Browser'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'com.microsoft.edgemac'
-run = ['layout tiling', 'move-node-to-workspace 3']
-
-[[on-window-detected]]
-if.app-id = 'com.openai.chat'
-run = 'move-node-to-workspace 4'
-
-[[on-window-detected]]
-if.app-id = 'com.anthropic.claudefordesktop'
-run = 'move-node-to-workspace 4'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.finder'
-run = 'move-node-to-workspace 9'
-
-[[on-window-detected]]
-if.app-id = 'com.cmuxterm.app'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'com.apple.MobileSMS'
-run = 'move-node-to-workspace 10'
-
-[[on-window-detected]]
-if.app-id = 'com.microsoft.teams'
-run = 'move-node-to-workspace 10'
-
-[[on-window-detected]]
-if.app-id = 'com.microsoft.teams2'
-run = 'move-node-to-workspace 10'
-
-[[on-window-detected]]
-if.app-id = 'us.zoom.xos'
-run = 'move-node-to-workspace 10'
-
-[[on-window-detected]]
-if.app-id = 'com.hnc.Discord'
-run = 'move-node-to-workspace 10'
-
-[[on-window-detected]]
-if.app-id = 'dev.vencord.vesktop'
-run = 'move-node-to-workspace 10'
-
