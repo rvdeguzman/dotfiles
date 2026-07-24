@@ -103,6 +103,14 @@ command = "herdr plugin action invoke open-file-viewer-tab --plugin herdr-file-v
 
 
 [[keys.command]]
-key = "cmd+r"
+key = "prefix+r"
 type = "plugin_action"
 command = "persiyanov.reviewr.toggle"   # <plugin_id>.<action_id> — note the id, not the name
+
+# Close every workspace except the currently focused one, with confirmation.
+[[keys.command]]
+key = "prefix+shift+q"
+type = "popup"
+command = "/Users/rv/.config/herdr/close-other-workspaces.sh"
+width = 62
+height = 8

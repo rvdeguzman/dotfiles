@@ -1,0 +1,9 @@
+# Runtime state written by herdr into its config dir — never track.
+*.log
+*.sock
+.plugins.lock
+session.json
+release-notes.json
+# Plugin installs/registry are managed by herdr itself.
+plugins/
+plugins.json

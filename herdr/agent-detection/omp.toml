@@ -1,0 +1,33 @@
+# Local agent-detection override for omp (oh-my-pi).
+# herdr bundles no manifest for the "omp" label, so its panes run with
+# screen detection skipped and blocked states are never surfaced.
+# These rules mark omp as blocked while it waits on user input, which
+# also triggers herdr's Request sound / toast / sidebar attention.
+
+id = "omp"
+version = "2026.07.10.1"
+min_engine_version = 1
+updated_at = "2026-07-10T00:00:00Z"
+aliases = ["herdr:omp"]
+
+# Ask tool multiple-choice selector: the UI always appends this row.
+[[rules]]
+id = "ask_selector"
+state = "blocked"
+priority = 900
+region = "bottom_non_empty_lines(14)"
+visible_blocker = true
+contains = ["Other (type your own)"]
+
+# Tool-approval prompt: "Allow tool: <name>" with Approve/Deny options.
+[[rules]]
+id = "tool_approval_prompt"
+state = "blocked"
+priority = 890
+region = "bottom_non_empty_lines(14)"
+visible_blocker = true
+contains = ["Allow tool:"]
+any = [
+  { contains = ["Approve"] },
+  { contains = ["Deny"] },
+]

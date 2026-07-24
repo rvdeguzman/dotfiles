@@ -23,7 +23,9 @@ run, `chezmoi init` asks a few questions and writes the answers to
 
 chezmoi runs in **symlink mode**: files in `$HOME` are symlinks into this
 repository, so editing a config in place edits the checkout directly — commit
-with plain git. Platform gating is handled by `home/.chezmoiignore`: Aerospace,
+with plain git. Some directories are additionally linked *wholesale* (see
+[Layout](#layout)), so files added to them show up in `git status`
+immediately, with no `chezmoi add` required. Platform gating is handled by `home/.chezmoiignore`: Aerospace,
 cmux, Karabiner, and OmniWM apply only on macOS; Hyprland, the minibook
 variant, Mako, Waybar, and Wofi only on Linux.
 
@@ -42,7 +44,7 @@ To change your answers later (e.g. enable more package profiles), edit
 
 ### Manual steps
 
-The herdr keybinds in `home/dot_config/herdr` depend on a herdr-managed plugin
+The herdr keybinds in `herdr/` depend on a herdr-managed plugin
 (`setup` does not install it):
 
 ```sh
@@ -86,14 +88,46 @@ chmod 600 ~/.config/zsh/secrets.zsh
 
 ## Layout
 
-`home/` is the chezmoi source directory (selected by `.chezmoiroot`) and uses
-chezmoi's naming: `dot_` becomes a leading dot, `empty_` marks intentionally
-empty files:
+Two patterns are used, chosen by who writes to a directory:
+
+| who writes there        | pattern                     | examples |
+|-------------------------|-----------------------------|----------|
+| only me                 | **whole-directory symlink** | `nvim/`, `doom/`, `herdr/`, `pi/{skills,extensions,agents}` |
+| mostly the app (state, secrets) | **per-file management** | `~/.omp`, `~/.pi`, everything under `home/` |
+
+**Whole-directory symlinks.** The real content lives at the repository root
+(`nvim/`, `doom/`, `herdr/`, `pi/`); a `symlink_*.tmpl` entry under `home/`
+makes the live path (e.g. `~/.config/nvim`) a symlink to it. New files you
+create there appear as untracked in `git status` right away — just `git add`
+them. Runtime junk the app writes into those directories (logs, sockets,
+plugin installs, doom's `.local`) is excluded by a `.gitignore` inside each
+directory. Never `git add -f` around those ignores: some entries
+(`doom/secrets.el`, `doom/leetcode.el`) guard secrets.
+
+**Per-file management.** `home/` is the chezmoi source directory (selected by
+`.chezmoiroot`) and uses chezmoi's naming: `dot_` becomes a leading dot,
+`private_` restricts permissions, `empty_` marks intentionally empty files:
 
 ```text
-home/dot_config/tmux/tmux.conf   -> ~/.config/tmux/tmux.conf
-home/dot_config/ghostty/config   -> ~/.config/ghostty/config
+home/dot_config/tmux/tmux.conf            -> ~/.config/tmux/tmux.conf
+home/private_dot_pi/private_agent/settings.json -> ~/.pi/agent/settings.json
 ```
+
+State-heavy homes like `~/.pi` and `~/.omp` stay real directories so their
+sessions, caches, and auth tokens never enter the worktree; only the config
+files inside them are managed. Adding a new config there is
+`chezmoi add <path>` + `chezmoi apply`; `chezmoi unmanaged ~/.pi` lists what
+isn't managed yet. `~/.pi/agent/{skills,extensions,agents}` are the exception:
+they are whole-directory symlinks into `pi/`, since that is where new skills
+and extensions get added. The pointer skills inside `pi/skills/` link to
+`~/.agents/skills`, which must be cloned separately.
+
+**Syncing.** Commit and push with plain git. On another machine,
+`git pull && chezmoi apply` — pulled content is live immediately (configs
+resolve into the worktree); `chezmoi apply` only materializes structural
+changes (new symlink entries, ignore rules, package scripts). Note the
+corollary: whatever state this worktree is in — including a checked-out
+branch — *is* the live configuration.
 
 Generated logs, sessions, caches, databases, backups, authentication files,
 and nested Git metadata remain outside the repository.
