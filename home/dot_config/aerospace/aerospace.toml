@@ -9,7 +9,7 @@ persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 # Mouse follows focus: warp the pointer to the focused window on every focus
 # change (incl. cmd-tab to another app). Docs: guide#on-focus-changed-callbacks
 on-focus-changed = ['move-mouse window-lazy-center']
-on-focused-monitor-changed = ['move-mouse monitor-force-center']
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # focus-follows-mouse.enabled = true  # opposite direction: hover a window to focus it
 
 [gaps]
