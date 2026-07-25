@@ -156,7 +156,8 @@ live outside `$HOME`, so chezmoi can't do them); 3–4 are handled by `./setup`.
    DMI and symlinks `~/.config/hypr` → `hypr-minibook/` (rotation + touch transform).
 4. **Packages** — the auto-selected `minibook` profile installs `minibook-support-git`.
 
-Then re-verify everything with the `machine-setup` skill (`pi/skills/machine-setup/`).
+Then re-verify everything with the `machine-setup` skill
+(`.pi/skills/machine-setup/` — project-scoped, loads when working in this repo).
 
 ## 8. Quick reference — files touched
 | Layer            | File                                   | Key setting |

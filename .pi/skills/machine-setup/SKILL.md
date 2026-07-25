@@ -1,13 +1,19 @@
 ---
 name: machine-setup
-description: "Detect the current machine and verify/apply its dotfiles + system-level setup. Use when setting up a new machine, or auditing whether an existing machine matches this repo (chezmoi state, package lists, machine-specific system fixes like the MiniBook X rotation stack)."
+description: "Set up or audit the Chuwi MiniBook X against this dotfiles repo. Use when reinstalling/reconfiguring the MiniBook from a fresh Omarchy install, or when checking whether the live machine still matches the repo (chezmoi state, hypr variant, package profiles, the rotation stack and tablet-mode daemons)."
 ---
 
 # Machine Setup Skill
 
-Set up or audit a machine against this repo. **Detect first, never ask what you can
-determine.** Only prompt the user for genuine choices (which package profiles, whether
-to fix detected drift).
+Project-scoped to this dotfiles repo. Currently targets the **Chuwi MiniBook X** on
+Arch + Omarchy; that's the only machine wired up so far.
+
+**Detect first, never ask what you can determine.** Only prompt the user for genuine
+choices (which package profiles, how to reconcile drift). All paths below are relative
+to the repo root unless absolute.
+
+Background reading: `docs/minibook-x.md` (the rotation stack + tablet mode) and
+`docs/hyprland-keybinds.md` (what's ours vs Omarchy's).
 
 Repo layout facts you need:
 - chezmoi source root is `home/` (see `.chezmoiroot`), applied in **symlink mode** —
@@ -24,11 +30,9 @@ uname -s                                  # Darwin vs Linux
 cat /sys/class/dmi/id/sys_vendor /sys/class/dmi/id/product_name 2>/dev/null
 ```
 
-Map the result:
-- `product_name` contains `MiniBook X` → **Chuwi MiniBook X**, read `docs/minibook-x.md`
-  and run the MiniBook checks in Step 4.
-- `Darwin` → macOS profile (`packages/macos`, aerospace/karabiner configs).
-- Anything else → generic Linux; skip machine-specific fixes.
+Expect `MiniBook X` → run the checks in Step 4. Anything else is out of scope for this
+skill as written; stop and tell the user rather than guessing at fixes for a machine
+that isn't documented here.
 
 Also detect the environment so you can pick sane defaults instead of asking:
 ```bash
