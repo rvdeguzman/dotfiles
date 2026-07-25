@@ -6,7 +6,9 @@
     "npm:pi-subagents",
     "npm:pi-claude-auth",
     "npm:pi-web-search",
-    "npm:pi-diff-review"
+    "npm:pi-diff-review",
+    "npm:pi-goal-list-loop-audit",
+    "npm:pi-undo-redo"
   ],
   "quietStartup": true,
   "warnings": {
