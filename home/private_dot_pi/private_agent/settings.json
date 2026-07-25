@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.81.1",
+  "lastChangelogVersion": "0.82.0",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-fable-5",
+  "defaultModel": "claude-opus-5",
   "packages": [
     "npm:pi-subagents",
     "npm:pi-claude-auth",
@@ -12,11 +12,11 @@
   "warnings": {
     "anthropicExtraUsage": false
   },
-  "theme": "dark",
+  "theme": "gruvbox",
   "defaultThinkingLevel": "high",
   "enabledModels": [
     "anthropic/claude-fable-5",
-    "anthropic/claude-opus-4-8",
+    "anthropic/claude-opus-5",
     "anthropic/claude-sonnet-5",
     "openai-codex/gpt-5.6-luna",
     "openai-codex/gpt-5.6-sol"
@@ -24,14 +24,31 @@
   "subagents": {
     "defaultModel": "anthropic/claude-fable-5",
     "agentOverrides": {
-      "scout": { "model": "openai-codex/gpt-5.6-luna" },
-      "delegate": { "model": "openai-codex/gpt-5.6-luna" },
-      "planner": { "model": "anthropic/claude-fable-5" },
-      "oracle": { "model": "openai-codex/gpt-5.6-sol", "thinking": "high" },
-      "context-builder": { "model": "anthropic/claude-fable-5" },
-      "researcher": { "model": "anthropic/claude-fable-5" },
-      "worker": { "model": "openai-codex/gpt-5.6-sol" },
-      "reviewer": { "model": "openai-codex/gpt-5.6-sol" }
+      "scout": {
+        "model": "openai-codex/gpt-5.6-luna"
+      },
+      "delegate": {
+        "model": "openai-codex/gpt-5.6-luna"
+      },
+      "planner": {
+        "model": "anthropic/claude-fable-5"
+      },
+      "oracle": {
+        "model": "openai-codex/gpt-5.6-sol",
+        "thinking": "high"
+      },
+      "context-builder": {
+        "model": "anthropic/claude-fable-5"
+      },
+      "researcher": {
+        "model": "anthropic/claude-fable-5"
+      },
+      "worker": {
+        "model": "openai-codex/gpt-5.6-sol"
+      },
+      "reviewer": {
+        "model": "openai-codex/gpt-5.6-sol"
+      }
     }
   }
 }
