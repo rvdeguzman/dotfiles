@@ -74,6 +74,18 @@ Old version kept as `hypridle.conf.bak.1781420413`.
 AUR package `minibook-support-git` (v1.3.1.r14) by petitstrawberry is installed.
 Repo: https://github.com/petitstrawberry/minibook-support
 
+**Install:** declared in `packages/arch/minibook.txt`, and the `minibook` package
+profile is auto-selected on `chezmoi init` when DMI reports `MiniBook X`. So
+`chezmoi apply` installs it via paru/yay. To do it by hand:
+
+```bash
+yay -S minibook-support-git
+# the AUR .install hook enables keyboardd + tabletmoded automatically; verify:
+for s in tabletmoded keyboardd trackpadd; do
+  echo "$s: enabled=$(systemctl is-enabled $s 2>&1) active=$(systemctl is-active $s 2>&1)"
+done
+```
+
 It ships three C daemons + systemd services:
 
 | Daemon        | Service            | State (this box)        | Job |
@@ -129,7 +141,24 @@ special handling. Relevant community repos:
 Note: our unit reports as plain "MiniBook X" (older N-series). Some repos are
 N100/N150-specific — check the model before copying fixes.
 
-## 7. Quick reference — files touched
+## 7. Fresh-install checklist
+
+Rebuilding this machine from a clean Omarchy install. Items 1–2 are **manual** (they
+live outside `$HOME`, so chezmoi can't do them); 3–4 are handled by `./setup`.
+
+1. **Kernel cmdline** — add `video=DSI-1:panel_orientation=right_side_up`.
+   On Omarchy/limine this goes in the kernel entry; re-run the limine entry tool or
+   edit `/boot/limine.conf`. Verify: `grep panel_orientation /proc/cmdline`
+2. **Bootloader + modprobe** — `interface_rotation: 90` in `/boot/limine.conf`;
+   create `/etc/modprobe.d/hid_apple.conf` (`options hid_apple fnmode=2`) and
+   `/etc/modprobe.d/disable-usb-autosuspend.conf` (`options usbcore autosuspend=-1`).
+3. **Configs** — `./setup` from the repo root. The `minibook` flag auto-detects from
+   DMI and symlinks `~/.config/hypr` → `hypr-minibook/` (rotation + touch transform).
+4. **Packages** — the auto-selected `minibook` profile installs `minibook-support-git`.
+
+Then re-verify everything with the `machine-setup` skill (`pi/skills/machine-setup/`).
+
+## 8. Quick reference — files touched
 | Layer            | File                                   | Key setting |
 |------------------|----------------------------------------|-------------|
 | Boot menu        | `/boot/limine.conf`                    | `interface_rotation: 90` |

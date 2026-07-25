@@ -13,7 +13,8 @@
 {{-     $default := list "base" -}}
 {{-     if $hyprland -}}{{- $default = append $default "hyprland" -}}{{- end -}}
 {{-     if env "I3SOCK" -}}{{- $default = append $default "i3" -}}{{- end -}}
-{{-     $packages = promptMultichoiceOnce . "packages" "Arch package profiles" (list "base" "hyprland" "i3" "terminal") $default -}}
+{{-     if $minibook -}}{{- $default = append $default "minibook" -}}{{- end -}}
+{{-     $packages = promptMultichoiceOnce . "packages" "Arch package profiles" (list "base" "hyprland" "i3" "terminal" "minibook") $default -}}
 {{-   end -}}
 {{- end -}}
 # Symlink mode keeps the old workflow: files in $HOME are symlinks into this

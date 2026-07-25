@@ -1,0 +1,5 @@
+# Chuwi MiniBook X specific packages. See docs/minibook-x.md.
+# AUR: installs the tabletmoded/keyboardd/trackpadd daemons that handle
+# fold-to-tablet detection via the two mxc4005 accelerometers. Its .install
+# hook enables keyboardd + tabletmoded (trackpadd is pulled in by tabletmoded).
+minibook-support-git
