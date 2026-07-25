@@ -5,3 +5,4 @@ home/dot_zshrc
 home/dot_zshenv
 home/dot_zprofile
 *.local
+pi/node_modules/
