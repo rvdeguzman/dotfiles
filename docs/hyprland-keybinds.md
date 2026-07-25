@@ -4,8 +4,12 @@ Scope: the Hyprland keybind setup on the MiniBook X (Arch + Omarchy).
 The point of this doc is that **most bindings are Omarchy defaults** — only a small
 custom layer is ours, and that layer is what must survive a rebuild.
 
-Repo copy: `home/dot_config/hypr-minibook/bindings.conf`
+Repo copy: `hypr-minibook/bindings.conf` (top-level, symlinked to `~/.config/hypr`)
 Live copy: `~/.config/hypr/bindings.conf`
+
+**Bindings are ours, deliberately.** Omarchy is the source of truth for most config,
+but `bindings.conf` is the one file we keep our own version of — the vim-style layer
+below is real work and Omarchy's defaults are additive/unbindable, so ours wins.
 
 ## How bindings resolve
 
@@ -53,7 +57,7 @@ Note Omarchy ships both `tiling.conf` and `tiling-v2.conf`; we source **v2** onl
 
 ## Drift audit (live vs repo)
 
-Checked with `diff ~/repos/dotfiles/home/dot_config/hypr-minibook/bindings.conf ~/.config/hypr/bindings.conf`.
+Checked with `diff ~/repos/dotfiles/hypr-minibook/bindings.conf ~/.config/hypr/bindings.conf`.
 
 Result: **essentially no keybind drift.** All 14 unbinds identical; the vim layer,
 resize submap, and every app/webapp binding matched. Three lines differed, two now
@@ -63,38 +67,44 @@ reconciled into the repo:
 |---|---|---|---|
 | `SUPER SHIFT ALT M` Music TUI (cliamp) | present | **missing** | added to repo |
 | `SUPER S` toggle split | `layoutmsg, togglesplit` | `togglesplit,` | repo fixed to `layoutmsg` |
-| `SUPER SHIFT O` Obsidian launch flags | plain `obsidian` | `-disable-gpu --enable-wayland-ime` | **unresolved — see below** |
+| `SUPER SHIFT O` Obsidian launch flags | plain `obsidian` | `-disable-gpu --enable-wayland-ime` | **repo wins** (ours, deliberate) |
 
 On `SUPER S`: `layoutmsg, togglesplit` is the correct/canonical form — it's what
 Omarchy's own `tiling-v2.conf` uses, and `hyprctl binds` confirms the live bind
 resolves to `dispatcher: layoutmsg / arg: togglesplit` on Hyprland 0.55.2.
 
-**Open question — Obsidian flags.** The repo carries `-disable-gpu
---enable-wayland-ime`; live has neither. Those flags exist for a reason (Wayland IME
-input, GPU workaround), so this is a real decision, not drift to auto-fix: either live
-regressed and should get them back, or they were dropped deliberately. Left as-is
-pending a call.
+**Obsidian flags — resolved in the repo's favour.** The repo carries `-disable-gpu
+--enable-wayland-ime`; live had neither. Those flags exist for real reasons (Wayland IME
+input, GPU workaround) and bindings are ours, so the repo version is authoritative. Live
+will pick them up on the next apply.
 
-## Other (non-keybind) drift, for the record
+## Non-keybind files: Omarchy is source of truth
 
-- `input.conf`: live adds `foot` to the terminal scroll rule → `(Alacritty|kitty|foot)`.
-- `hyprland.conf`: live sources `~/.local/state/omarchy/toggles/hypr/*.conf`; repo doesn't.
-- `hypridle.conf`: live uses `omarchy-system-lock`/`omarchy-system-wake`; repo has the
-  older `loginctl`/`dpms` version. See `docs/minibook-x.md`.
+These were synced **from live into the repo**, because live reflects current Omarchy:
+
+- `input.conf` — adds `foot` to the terminal scroll rule → `(Alacritty|kitty|foot)`
+  (still carries our touch `transform = 3`, which is ours to keep)
+- `hyprland.conf` — sources `~/.local/state/omarchy/toggles/hypr/*.conf`
+- `hypridle.conf` — uses `omarchy-system-lock` / `omarchy-system-wake` instead of the
+  older `loginctl` / `dpms` calls. See `docs/minibook-x.md`.
 
 ## Caveats
 
-- `~/.config/hypr` on this machine is a **real directory, not a symlink** — chezmoi was
-  never initialized here (`~/.config/chezmoi/chezmoi.toml` absent), so live and repo can
-  drift silently. Re-run the audit before trusting the repo copy.
-- The repo also has a `home/dot_config/hypr/` variant (older monolithic style, e.g.
-  `bind = $mainMod, S, togglesplit`). The MiniBook uses **`hypr-minibook`**; don't
-  confuse the two when diffing.
+- `~/.config/hypr` on this machine is currently a **real directory, not a symlink** —
+  chezmoi was never initialized here (`~/.config/chezmoi/chezmoi.toml` absent), so live
+  and repo can drift silently. After the first `./setup` it becomes a symlink and this
+  class of drift goes away.
+- Two variants exist and are **mutually exclusive**, selected by the `minibook` flag:
+  - `hypr-minibook/` → Omarchy-style split config, rotated panel (this machine)
+  - `hypr/` → older vanilla-Arch monolithic config (`$mainMod`, wofi/mako, 240Hz desktop)
+
+  Both target `~/.config/hypr` via `home/dot_config/symlink_hypr.tmpl`. Make sure you
+  diff against the right one.
 
 ## Re-run the audit
 
 ```bash
-diff ~/repos/dotfiles/home/dot_config/hypr-minibook/bindings.conf ~/.config/hypr/bindings.conf
+diff ~/repos/dotfiles/hypr-minibook/bindings.conf ~/.config/hypr/bindings.conf
 grep -c '^bind' ~/.config/hypr/bindings.conf     # expect 45 bind lines
 hyprctl binds | grep -c bindd                    # effective total incl. omarchy defaults
 cd ~/.local/share/omarchy && git status --short   # empty => defaults unmodified

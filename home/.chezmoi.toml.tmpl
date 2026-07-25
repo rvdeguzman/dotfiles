@@ -7,7 +7,7 @@
 {{- else if eq .chezmoi.os "linux" -}}
 {{-   $hyprland = promptBoolOnce . "hyprland" "Manage Hyprland configs (hypr, mako, waybar, wofi)" (not (empty (env "HYPRLAND_INSTANCE_SIGNATURE"))) -}}
 {{-   if $hyprland -}}
-{{-     $minibook = promptBoolOnce . "minibook" "Also manage the minibook Hyprland variant" false -}}
+{{-     $minibook = promptBoolOnce . "minibook" "Use the MiniBook X Hyprland variant (rotated panel + touch)" (eq (output "sh" "-c" "cat /sys/class/dmi/id/product_name 2>/dev/null | tr -d '\n'") "MiniBook X") -}}
 {{-   end -}}
 {{-   if lookPath "pacman" -}}
 {{-     $default := list "base" -}}

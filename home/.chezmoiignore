@@ -10,9 +10,6 @@
 {{ end -}}
 {{ if ne .chezmoi.os "linux" -}}
 .config/hypr
-.config/hypr/**
-.config/hypr-minibook
-.config/hypr-minibook/**
 .config/mako
 .config/mako/**
 .config/waybar
@@ -22,16 +19,11 @@
 {{ else -}}
 {{ if not .hyprland -}}
 .config/hypr
-.config/hypr/**
 .config/mako
 .config/mako/**
 .config/waybar
 .config/waybar/**
 .config/wofi
 .config/wofi/**
-{{ end -}}
-{{ if not .minibook -}}
-.config/hypr-minibook
-.config/hypr-minibook/**
 {{ end -}}
 {{ end -}}
