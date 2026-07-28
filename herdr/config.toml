@@ -2,8 +2,13 @@ onboarding = false
 
 [theme]
 name = "vesper"
-
 auto_switch = false
+
+# Experimental local Kitty graphics rendering for attached clients.
+# Requires a host terminal speaking the Kitty graphics protocol (Ghostty, Kitty).
+[experimental]
+kitty_graphics = true
+
 [keys]
 prefix = "ctrl+a"
 
