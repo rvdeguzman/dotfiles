@@ -310,3 +310,8 @@
       :g "C-8" #'+workspace/switch-to-7
       :g "C-9" #'+workspace/switch-to-8
       :g "C-0" #'+workspace/switch-to-final)
+
+;; Doom leaves right-option as 'none for character composition (á, ≈, ñ...).
+;; Make both option keys Meta instead.
+(setq mac-right-option-modifier 'meta
+      ns-right-alternate-modifier 'meta)

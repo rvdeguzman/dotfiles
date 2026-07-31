@@ -8,6 +8,7 @@ Curated macOS and Linux configuration, managed with
 
 ```sh
 ./setup
+./update-skills
 ```
 
 `setup` installs chezmoi if missing (via Homebrew, pacman, or the official
@@ -120,7 +121,8 @@ files inside them are managed. Adding a new config there is
 isn't managed yet. `~/.pi/agent/{skills,extensions,agents}` are the exception:
 they are whole-directory symlinks into `pi/`, since that is where new skills
 and extensions get added. The pointer skills inside `pi/skills/` link to
-`~/.agents/skills`, which must be cloned separately.
+`~/.agents/skills`. Run `./update-skills` to install/update the pinned skills
+from Matt Pocock's and Emil Kowalski's skill repositories via `npx skills`.
 
 **Syncing.** Commit and push with plain git. On another machine,
 `git pull && chezmoi apply` — pulled content is live immediately (configs
