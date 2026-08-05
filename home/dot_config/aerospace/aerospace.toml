@@ -11,6 +11,8 @@ persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 on-focus-changed = ['move-mouse window-lazy-center']
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # focus-follows-mouse.enabled = true  # opposite direction: hover a window to focus it
+default-root-container-layout = "tiles"
+default-root-container-orientation = "horizontal"
 
 [gaps]
 inner.horizontal = 8

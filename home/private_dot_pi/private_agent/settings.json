@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.83.0",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-sonnet-5",
+  "defaultModel": "claude-fable-5",
   "packages": [
     "npm:pi-subagents",
     "npm:pi-claude-auth",
@@ -12,15 +12,15 @@
     "npm:pi-mcp-adapter",
     "npm:pi-messenger",
     "npm:@narumitw/pi-goal",
-    "npm:codex-computer-use-mcp@0.3.4",
     "npm:@juicesharp/rpiv-ask-user-question",
-    "git:github.com/DietrichGebert/ponytail"
+    "git:github.com/DietrichGebert/ponytail",
+    "npm:@injaneity/pi-computer-use"
   ],
   "quietStartup": true,
   "warnings": {
     "anthropicExtraUsage": false
   },
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "high",
   "enabledModels": [
     "anthropic/claude-fable-5",
     "anthropic/claude-sonnet-5",
@@ -51,7 +51,6 @@
         ]
       },
       "oracle": {
-        "model": "openai-codex/gpt-5.6-sol",
         "fallbackModels": [
           "anthropic/claude-opus-5"
         ],
