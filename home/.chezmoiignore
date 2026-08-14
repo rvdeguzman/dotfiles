@@ -8,22 +8,31 @@
 .config/omniwm
 .config/omniwm/**
 {{ end -}}
-{{ if ne .chezmoi.os "linux" -}}
+{{ if or (ne .chezmoi.os "linux") (not .hyprland) -}}
 .config/hypr
+.config/hypr/**
 .config/mako
 .config/mako/**
 .config/waybar
 .config/waybar/**
 .config/wofi
 .config/wofi/**
+.config/wallpapers
+.config/wallpapers/**
+{{ else if .minibook -}}
+{{/* minibook variant: no hyprpaper/scripts/wallpapers (omarchy handles those) */ -}}
+.config/hypr/hyprpaper.conf
+.config/hypr/scripts
+.config/hypr/scripts/**
+.config/wallpapers
+.config/wallpapers/**
 {{ else -}}
-{{ if not .hyprland -}}
-.config/hypr
-.config/mako
-.config/mako/**
-.config/waybar
-.config/waybar/**
-.config/wofi
-.config/wofi/**
-{{ end -}}
+{{/* desktop variant: minibook-only files stay out */ -}}
+.config/hypr/autostart.conf
+.config/hypr/bindings.conf
+.config/hypr/hyprsunset.conf
+.config/hypr/input.conf
+.config/hypr/looknfeel.conf
+.config/hypr/monitors.conf
+.config/hypr/xdph.conf
 {{ end -}}

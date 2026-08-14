@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.84.2",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-sonnet-5",
+  "defaultModel": "claude-fable-5",
   "packages": [
     "npm:pi-claude-auth",
     "npm:@juicesharp/rpiv-ask-user-question",

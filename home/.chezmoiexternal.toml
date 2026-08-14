@@ -1,0 +1,19 @@
+# Living config trees vendored as their own git repos.
+# The destination directory IS a normal git checkout: edit and commit there
+# directly. `chezmoi apply` clones them if missing and pulls at most once
+# per refreshPeriod (force with `chezmoi apply -R`).
+
+[".config/nvim"]
+    type = "git-repo"
+    url = "https://github.com/rvdeguzman/nvim.git"
+    refreshPeriod = "1h"
+
+[".config/doom"]
+    type = "git-repo"
+    url = "https://github.com/rvdeguzman/doom.git"
+    refreshPeriod = "1h"
+
+["repos/pi-config"]
+    type = "git-repo"
+    url = "https://github.com/rvdeguzman/pi-config.git"
+    refreshPeriod = "1h"

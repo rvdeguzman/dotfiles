@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Bootstrap: installs chezmoi if missing, then inits + applies this repo.
-# Extra arguments are passed to `chezmoi init` (e.g. ./setup --dry-run).
+# Bootstrap: installs chezmoi if missing, then inits this repo.
+# Nothing is applied: review with `chezmoi diff`, apply with `chezmoi apply`.
+# Extra arguments are passed to `chezmoi init`.
 set -e
 
 REPO_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
@@ -16,4 +17,5 @@ if ! command -v chezmoi >/dev/null 2>&1; then
   fi
 fi
 
-exec chezmoi init --apply --source "$REPO_DIR" "$@"
+chezmoi init --source "$REPO_DIR" "$@"
+echo "Initialized. Review with 'chezmoi diff', then run 'chezmoi apply'."

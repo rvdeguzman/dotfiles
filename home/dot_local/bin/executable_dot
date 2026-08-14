@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# dot: chezmoi wrapper that never changes the machine without showing a diff.
+#   dot apply   diff, confirm, then chezmoi apply
+#   dot sync    re-add drifted managed files into the repo, show repo status
+#   dot <cmd>   pass through to chezmoi (diff, add, status, managed, ...)
+set -euo pipefail
+
+case "${1:-}" in
+apply)
+  shift
+  diff=$(chezmoi diff "$@")
+  if [ -z "$diff" ]; then
+    echo "dot: nothing to apply"
+    exit 0
+  fi
+  printf '%s\n' "$diff"
+  read -rp "Apply these changes? [y/N] " answer
+  [ "$answer" = "y" ] || { echo "dot: aborted"; exit 1; }
+  chezmoi apply "$@"
+  ;;
+sync)
+  chezmoi re-add
+  git -C "$(chezmoi source-path)/.." status --short
+  ;;
+"")
+  echo "usage: dot apply | dot sync | dot <chezmoi-command>" >&2
+  exit 1
+  ;;
+*)
+  exec chezmoi "$@"
+  ;;
+esac
