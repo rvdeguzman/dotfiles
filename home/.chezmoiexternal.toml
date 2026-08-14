@@ -13,7 +13,7 @@
     url = "https://github.com/rvdeguzman/doom.git"
     refreshPeriod = "1h"
 
-["repos/pi-config"]
+[".pi/agent"]
     type = "git-repo"
     url = "https://github.com/rvdeguzman/pi-config.git"
     refreshPeriod = "1h"

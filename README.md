@@ -44,12 +44,14 @@ The heavy-churn configs are their own repositories, declared in
 |---------------------|-------------------------|
 | `~/.config/nvim`    | rvdeguzman/nvim         |
 | `~/.config/doom`    | rvdeguzman/doom         |
-| `~/repos/pi-config` | rvdeguzman/pi-config    |
+| `~/.pi/agent`       | rvdeguzman/pi-config    |
 
 Each is a normal git checkout: edit in place, commit and push there.
-`~/.pi/agent/{skills,extensions,agents}` are chezmoi-managed symlinks into
-`~/repos/pi-config` (pi's state-heavy `~/.pi/agent` can't itself be a
-checkout). `update-skills` lives in pi-config.
+Everything pi-related lives in pi-config, checked out directly at
+`~/.pi/agent`: skills, extensions, agents, tools, `update-skills`, and the
+config files (`AGENTS.md`, `settings.json`, `models.json`,
+`web-search.json`). Its whitelist `.gitignore` keeps the machine state
+living in the same directory (auth, sessions, caches) untracked.
 
 ## Packages
 
