@@ -1,66 +1,76 @@
 symbolPreset: nerd
-theme:
+theme: 
   dark: dark-gruvbox
 setupVersion: 1
-modelRoles:
-  default: openai-codex/gpt-5.6-sol:medium
+modelRoles: 
   plan: anthropic/claude-fable-5:high
-  designer: anthropic/claude-opus-4-8:xhigh
+  designer: kimi-code/k3:high
   commit: anthropic/claude-sonnet-4-6:low
   vision: openai-codex/gpt-5.5:xhigh
-  smol: openai-codex/gpt-5.6-luna:medium
+  smol: kimi-code/k3:high
   advisor: anthropic/claude-fable-5:low
   slow: anthropic/claude-fable-5:high
   task: openai-codex/gpt-5.6-terra:high
+  default: openai-codex/gpt-5.6-sol:high
 defaultThinkingLevel: auto
-advisor:
+advisor: 
   enabled: false
   subagents: false
-task:
+task: 
   maxConcurrency: 4
-  agentModelOverrides:
+  agentModelOverrides: 
     fable_orchestrator: anthropic/claude-fable-5:high
     luna_scout: openai-codex/gpt-5.6-luna:medium
     terra_builder: openai-codex/gpt-5.6-terra:high
     sol_builder: openai-codex/gpt-5.6-sol:high
     verification_gate: openai-codex/gpt-5.6-luna:high
     fable_reviewer: anthropic/claude-fable-5:high
-  disabledAgents: []
-  isolation:
+  disabledAgents: 
+    []
+  isolation: 
     mode: auto
     commits: ai
     merge: branch
   eager: default
   showResolvedModelBadge: true
-tier:
+tier: 
   openai: default
   google: priority
-statusLine:
+statusLine: 
   separator: none
   transparent: true
 hideThinkingBlock: false
-dev:
-  autoqa:
-    consent: denied
-tools:
+dev: 
+  autoqaConsent: denied
+tools: 
   approvalMode: yolo
 steeringMode: one-at-a-time
-providers:
-  anthropic:
+providers: 
+  anthropic: 
     serverSideFallback: true
   webSearchGeminiModel: ""
-browser:
+browser: 
   headless: false
-power:
+power: 
   sleepPrevention: idle
 readLineNumbers: false
-inspect_image:
+inspect_image: 
+  mode: "on"
+checkpoint: 
   enabled: true
-checkpoint:
+github: 
   enabled: true
-github:
-  enabled: true
-tui:
+tui: 
   hyperlinks: auto
   tight: true
-
+skills: 
+  enabled: true
+  enableClaudeUser: false
+  enableClaudeProject: false
+  enableCodexUser: false
+  enablePiUser: false
+  enablePiProject: false
+  enableAgentsUser: false
+  enableAgentsProject: true
+  customDirectories: 
+    - /Users/rv/.omp/skills
