@@ -168,3 +168,23 @@ Then re-verify everything with the `machine-setup` skill
 | Touch            | `~/.config/hypr/input.conf`            | `touchdevice { transform=3; output=DSI-1 }` |
 | Keyboard F-keys  | `/etc/modprobe.d/hid_apple.conf`       | `fnmode=2` |
 | USB stability    | `/etc/modprobe.d/disable-usb-autosuspend.conf` | `usbcore autosuspend=-1` |
+
+## One-time cutover to the copy-mode setup (Aug 2025 refactor)
+
+Delete this section once done. On the MiniBook:
+
+```sh
+cd ~/repos/dotfiles && git pull
+cp doom/secrets.el ~/doom-secrets.bak.el 2>/dev/null || true
+./setup                                  # re-init; keeps stored hyprland/minibook answers
+rm ~/.config/{nvim,doom,herdr,hypr}      # old symlinks into this repo
+rm ~/.pi/agent/{skills,extensions,agents}
+# pi-config checks out in place (~/.pi/agent already exists):
+git clone --no-checkout https://github.com/rvdeguzman/pi-config /tmp/pc
+mv /tmp/pc/.git ~/.pi/agent/.git && rm -rf /tmp/pc
+git -C ~/.pi/agent checkout .
+chezmoi apply --force                    # one-time: symlinks -> real copies, clones nvim/doom
+mv ~/doom-secrets.bak.el ~/.config/doom/secrets.el 2>/dev/null || true
+```
+
+Afterwards `chezmoi diff` should be empty; day-to-day is `dot apply` / `dot sync`.
