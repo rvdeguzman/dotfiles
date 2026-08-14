@@ -8,8 +8,16 @@
     },
     "openai-codex": {
       "modelOverrides": {
-        "gpt-5.6-sol": {},
-        "gpt-5.6-luna": {}
+        "gpt-5.6-sol": {
+          "samplingParams": {
+            "service_tier": "priority"
+          }
+        },
+        "gpt-5.6-luna": {
+          "samplingParams": {
+            "service_tier": "priority"
+          }
+        }
       }
     }
   }

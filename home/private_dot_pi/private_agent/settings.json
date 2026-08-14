@@ -1,20 +1,15 @@
 {
-  "lastChangelogVersion": "0.83.0",
+  "lastChangelogVersion": "0.84.2",
   "defaultProvider": "anthropic",
-  "defaultModel": "claude-fable-5",
+  "defaultModel": "claude-sonnet-5",
   "packages": [
-    "npm:pi-subagents",
     "npm:pi-claude-auth",
-    "npm:pi-diff-review",
-    "npm:pi-annotate",
-    "npm:pi-web-access",
-    "npm:pi-side-chat",
-    "npm:pi-mcp-adapter",
-    "npm:pi-messenger",
-    "npm:@narumitw/pi-goal",
     "npm:@juicesharp/rpiv-ask-user-question",
     "git:github.com/DietrichGebert/ponytail",
-    "npm:@injaneity/pi-computer-use"
+    "npm:pi-web-search",
+    "npm:@injaneity/pi-computer-use",
+    "npm:pi-exa",
+    "npm:@zaganjade/pi-usage"
   ],
   "quietStartup": true,
   "warnings": {
@@ -29,65 +24,6 @@
     "kimi-coding/k3",
     "anthropic/claude-opus-5"
   ],
-  "subagents": {
-    "defaultModel": "anthropic/claude-fable-5",
-    "agentOverrides": {
-      "scout": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "fallbackModels": [
-          "anthropic/claude-sonnet-5"
-        ]
-      },
-      "delegate": {
-        "model": "openai-codex/gpt-5.6-luna",
-        "fallbackModels": [
-          "anthropic/claude-sonnet-5"
-        ]
-      },
-      "planner": {
-        "model": "anthropic/claude-fable-5",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol"
-        ]
-      },
-      "oracle": {
-        "fallbackModels": [
-          "anthropic/claude-opus-5"
-        ],
-        "thinking": "high"
-      },
-      "context-builder": {
-        "model": "anthropic/claude-fable-5",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol"
-        ]
-      },
-      "researcher": {
-        "model": "anthropic/claude-fable-5",
-        "fallbackModels": [
-          "openai-codex/gpt-5.6-sol"
-        ]
-      },
-      "worker": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "fallbackModels": [
-          "anthropic/claude-opus-5"
-        ]
-      },
-      "reviewer": {
-        "model": "openai-codex/gpt-5.6-sol",
-        "fallbackModels": [
-          "anthropic/claude-opus-5"
-        ]
-      }
-    },
-    "watchdog": {
-      "enabled": true,
-      "main": {
-        "enabled": true
-      }
-    }
-  },
   "hideThinkingBlock": true,
   "theme": "dark"
 }

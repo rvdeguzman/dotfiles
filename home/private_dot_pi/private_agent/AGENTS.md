@@ -10,3 +10,9 @@ When cloning repositories for reference or investigation, place them in a `.repo
 - If the user explicitly asks to develop in one of those repositories, use a dedicated branch or isolated worktree and confine all writes and commits to that requested workspace.
 - Do not build or run exploratory repositories unless explicitly requested.
 - Follow project-specific instructions when they define another location.
+
+## Grilling before building
+
+- Before implementing any non-trivial build or design change (new feature, redesign, architecture decision), apply the `grilling` skill first: interview me until the design tree is settled. Skip grilling for quick fixes, questions, investigations, and one-liner tasks.
+- When grilling, deliver each round's frontier questions through the ask tool in a single call — numbered questions, your recommended answer listed as the first option.
+- Never implement during a grilling session until I confirm shared understanding.
