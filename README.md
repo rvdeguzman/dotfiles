@@ -55,15 +55,17 @@ living in the same directory (auth, sessions, caches) untracked.
 
 ## Packages
 
-Package profiles are plain data, installed **only** by hand:
+Package lists are plain data, installed **only** by hand:
 
 ```sh
-./install-packages core terminal      # macOS: brew bundle --no-upgrade
-./install-packages base hyprland      # Arch: paru/yay -S --needed
+./install-packages                    # macOS: brew bundle --no-upgrade, packages/macos/Brewfile
+./install-packages base hyprland      # Arch: paru/yay -S --needed, packages/arch/*.txt profiles
 ```
 
-Profiles: `packages/macos/*.Brewfile`, `packages/arch/*.txt`. Nothing is ever
-removed or upgraded, and nothing installs during apply.
+macOS is a single `packages/macos/Brewfile`; Arch keeps per-purpose profiles
+in `packages/arch/*.txt` since different Arch machines need different subsets
+(desktop vs headless, Hyprland vs i3). Nothing is ever removed or upgraded,
+and nothing installs during apply.
 
 ## Secrets
 
