@@ -3,8 +3,6 @@
 .config/aerospace/**
 .config/cmux
 .config/cmux/**
-.config/karabiner
-.config/karabiner/**
 .config/omniwm
 .config/omniwm/**
 {{ end -}}

@@ -79,8 +79,8 @@ repo until an explicit `dot add`/`dot sync` — review before committing.
 naming: `dot_` = leading dot, `private_` = restricted permissions,
 `executable_` = +x, `.tmpl` = template.
 
-- Platform gating lives in `home/.chezmoiignore` (Aerospace/Karabiner/cmux/
-  OmniWM on macOS; Hyprland/Mako/Waybar/Wofi/wallpapers on Linux).
+- Platform gating lives in `home/.chezmoiignore` (Aerospace/cmux/OmniWM on
+  macOS; Hyprland/Mako/Waybar/Wofi/wallpapers on Linux).
 - The Hyprland desktop and MiniBook variants share `home/dot_config/hypr/`:
   variant-only files are ignore-gated, the three shared filenames
   (`hyprland.conf`, `hypridle.conf`, `hyprlock.conf`) are templates switching
