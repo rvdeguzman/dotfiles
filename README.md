@@ -67,6 +67,9 @@ in `packages/arch/*.txt` since different Arch machines need different subsets
 (desktop vs headless, Hyprland vs i3). Nothing is ever removed or upgraded,
 and nothing installs during apply.
 
+Tools that don't come from brew/pacman (`pi`, `herdr`) are installed by
+`./install-extras`, macOS only for now.
+
 ## Secrets
 
 `~/.zshrc`, `~/.zshenv`, and `~/.zprofile` are intentionally unmanaged local

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Install tools that don't come from brew/pacman. Never runs automatically.
+# macOS only for now.
+#   ./install-extras
+set -euo pipefail
+
+command -v pi >/dev/null 2>&1 || npm install -g @earendil-works/pi-coding-agent
+command -v herdr >/dev/null 2>&1 || curl -fsSL https://herdr.dev/install.sh | sh
+[ -d "${ZSH:-$HOME/.oh-my-zsh}" ] || RUNZSH=no CHSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
