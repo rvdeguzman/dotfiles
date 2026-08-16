@@ -12,6 +12,8 @@
 .config/waybar/**
 .config/wallpapers
 .config/wallpapers/**
+.config/omarchy
+.config/omarchy/**
 {{ else if .minibook -}}
 {{/* Omarchy handles wallpapers on the MiniBook. */ -}}
 .config/wallpapers
