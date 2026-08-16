@@ -10,19 +10,7 @@
 .config/wallpapers
 .config/wallpapers/**
 {{ else if .minibook -}}
-{{/* minibook variant: no hyprpaper/scripts/wallpapers (omarchy handles those) */ -}}
-.config/hypr/hyprpaper.conf
-.config/hypr/scripts
-.config/hypr/scripts/**
+{{/* Omarchy handles wallpapers on the MiniBook. */ -}}
 .config/wallpapers
 .config/wallpapers/**
-{{ else -}}
-{{/* desktop variant: minibook-only files stay out */ -}}
-.config/hypr/autostart.conf
-.config/hypr/bindings.conf
-.config/hypr/hyprsunset.conf
-.config/hypr/input.conf
-.config/hypr/looknfeel.conf
-.config/hypr/monitors.conf
-.config/hypr/xdph.conf
 {{ end -}}
