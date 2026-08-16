@@ -1,0 +1,26 @@
+# Copy this file to ~/.bashrc on Omarchy. It is intentionally an example, not a managed file.
+
+# If not running interactively, don't do anything (leave this at the top of this file)
+[[ $- != *i* ]] && return
+
+# All the default Omarchy aliases and functions
+# (don't mess with these directly, just overwrite them here!)
+source ~/.local/share/omarchy/default/bash/rc
+
+export PATH="$HOME/.config/emacs/bin:$PATH"
+
+alias g="lazygit"
+alias l="ls -la"
+alias t="tmux"
+alias vim="nvim"
+alias vi="nvim"
+alias mkvenv="uv venv .venv && source .venv/bin/activate && uv pip install -r requirements.txt"
+alias venv="source .venv/bin/activate"
+alias cls="clear"
+alias h="herdr"
+alias mp="npx skills@latest add mattpocock/skills"
+alias ek="npx skills@latest add emilkowalski/skills"
+
+# Secrets stay local: copy secrets.bash.example to ~/.config/bash/secrets.bash,
+# fill it in, chmod 600. Never add it to Git.
+[ -f "$HOME/.config/bash/secrets.bash" ] && source "$HOME/.config/bash/secrets.bash"
