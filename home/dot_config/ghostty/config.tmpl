@@ -1,0 +1,67 @@
+# Theme and font
+{{ if eq .chezmoi.os "linux" -}}
+# Omarchy owns theme colors and the active font on Arch.
+config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
+font-family = "Iosevka Nerd Font Mono"
+font-style = Regular
+font-size = 12
+{{ else if eq .chezmoi.os "darwin" -}}
+# Standalone macOS GUI appearance.
+config-file = ?"~/.config/ghostty/gruvbox.conf"
+font-family = "Iosevka Nerd Font Mono"
+font-style = Regular
+font-size = 16
+font-feature = -calt
+font-feature = -liga
+font-feature = -dlig
+macos-option-as-alt = true
+{{ end }}
+
+# Window
+window-theme = ghostty
+window-padding-x = 14
+window-padding-y = 14
+confirm-close-surface=false
+resize-overlay = never
+gtk-toolbar-style = flat
+
+# Cursor styling
+cursor-style = "block"
+cursor-style-blink = false
+
+# Cursor styling + SSH session terminfo
+# (all shell integration options must be passed together)
+shell-integration-features = no-cursor,ssh-env
+
+# Keyboard bindings
+keybind = shift+insert=paste_from_clipboard
+keybind = control+insert=copy_to_clipboard
+{{ if eq .chezmoi.os "linux" -}}
+# Let TUIs and tmux distinguish modified Enter from Enter.
+keybind = shift+enter=csi:13;2u
+keybind = alt+shift+enter=csi:13;4u
+{{ else if eq .chezmoi.os "darwin" -}}
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:down
+keybind = performable:ctrl+k=goto_split:up
+keybind = performable:ctrl+l=goto_split:right
+{{ end -}}
+keybind = super+control+shift+alt+arrow_down=resize_split:down,100
+keybind = super+control+shift+alt+arrow_up=resize_split:up,100
+keybind = super+control+shift+alt+arrow_left=resize_split:left,100
+keybind = super+control+shift+alt+arrow_right=resize_split:right,100
+
+# Slow down mouse scrolling.
+mouse-scroll-multiplier = 0.95
+
+# Animated cursor shared by Arch and macOS.
+custom-shader = "shaders/cursor_warp.glsl"
+
+{{ if eq .chezmoi.os "linux" -}}
+# Fix general slowness on Hyprland.
+# https://github.com/ghostty-org/ghostty/discussions/3224
+async-backend = epoll
+{{ else if eq .chezmoi.os "darwin" -}}
+mouse-hide-while-typing = true
+quit-after-last-window-closed = true
+{{ end -}}

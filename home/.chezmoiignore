@@ -1,6 +1,9 @@
 {{ if ne .chezmoi.os "darwin" -}}
 .config/aerospace
 .config/aerospace/**
+# Standalone Ghostty color schemes are for the macOS GUI profile.
+.config/ghostty/gruvbox.conf
+.config/ghostty/miasma.conf
 {{ end -}}
 {{ if or (ne .chezmoi.os "linux") (not .hyprland) -}}
 .config/hypr
