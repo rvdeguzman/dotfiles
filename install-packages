@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install packages. Never runs automatically.
 #   macOS: ./install-packages                 (single Brewfile, brew bundle --no-upgrade)
-#   Arch:  ./install-packages base hyprland    (packages/arch/<profile>.txt via paru/yay -S --needed)
+#   Arch:  ./install-packages base minibook    (Omarchy extras via paru/yay -S --needed)
 set -euo pipefail
 cd "$(dirname "$0")"
 
