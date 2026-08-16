@@ -36,6 +36,13 @@ This repository manages the user's dotfiles with chezmoi in copy mode. Read
 - Do not remove or replace a conflicting package without explaining the choice
   and receiving approval.
 
+## Omarchy machines
+
+- After apply on an Omarchy (Arch + Hyprland) machine, follow
+  `docs/omarchy.md`: activate the `vague-black` theme and set the per-machine
+  defaults (ghostty terminal, brave browser). Those defaults are machine-local
+  state, not chezmoi-managed, so they must be re-run on each new machine.
+
 ## Doom Emacs
 
 - The `~/.config/doom` external is only the user's Doom configuration; cloning
