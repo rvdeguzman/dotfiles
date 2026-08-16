@@ -1,0 +1,26 @@
+# vague-black: vague.nvim palette on pure black, amber accent
+# (recreates the pre-Omarchy hypr/waybar look from this repo's history)
+
+accent = "#fbcb97"
+cursor = "#c1c1c1"
+foreground = "#c1c1c1"
+background = "#000000"
+selection_foreground = "#000000"
+selection_background = "#fbcb97"
+
+color0 = "#252530"
+color1 = "#d8647e"
+color2 = "#7fa563"
+color3 = "#f3be7c"
+color4 = "#7e98e8"
+color5 = "#bb9dbd"
+color6 = "#5f8787"
+color7 = "#c1c1c1"
+color8 = "#606079"
+color9 = "#d8647e"
+color10 = "#7fa563"
+color11 = "#f3be7c"
+color12 = "#7e98e8"
+color13 = "#bb9dbd"
+color14 = "#9bb4bc"
+color15 = "#cdcdcd"
