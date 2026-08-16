@@ -17,3 +17,14 @@
     type = "git-repo"
     url = "https://github.com/rvdeguzman/pi-config.git"
     refreshPeriod = "1h"
+
+# Omarchy themes installed as git clones.
+[".config/omarchy/themes/archwave"]
+    type = "git-repo"
+    url = "https://github.com/davidguttman/archwave"
+    refreshPeriod = "168h"
+
+[".config/omarchy/themes/ash"]
+    type = "git-repo"
+    url = "https://github.com/bjarneo/omarchy-ash-theme"
+    refreshPeriod = "168h"
