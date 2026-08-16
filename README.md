@@ -18,6 +18,16 @@ On Linux, `chezmoi init` asks whether to manage Hyprland configs and whether
 to use the MiniBook X variant; macOS asks nothing. Re-run `chezmoi init` to
 answer again, or edit `~/.config/chezmoi/chezmoi.toml`.
 
+The Doom external provides only `~/.config/doom` (the personal config). On a
+new machine, install the Doom Emacs core and its packages after apply:
+
+```sh
+git clone --depth 1 https://github.com/doomemacs/core ~/.config/emacs
+~/.config/emacs/bin/doom install
+```
+
+Run `~/.config/emacs/bin/doom sync` after later module or package changes.
+
 ## Daily workflow
 
 The `dot` wrapper (installed to `~/.local/bin/dot`) keeps everything

@@ -17,8 +17,14 @@ Darwin)
     exit 1
   fi
   mgr=$(command -v paru || command -v yay) || { echo "Error: need paru or yay" >&2; exit 1; }
+  packages=()
   for p in "$@"; do
-    grep -hvE '^[[:space:]]*(#|$)' "packages/arch/$p.txt"
-  done | xargs "$mgr" -S --needed
+    profile="packages/arch/$p.txt"
+    [[ -f "$profile" ]] || { echo "Error: unknown profile: $p" >&2; exit 1; }
+    while IFS= read -r package; do
+      packages+=("$package")
+    done < <(grep -vE '^[[:space:]]*(#|$)' "$profile")
+  done
+  "$mgr" -S --needed "${packages[@]}"
   ;;
 esac
