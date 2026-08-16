@@ -4,7 +4,7 @@ Scope: the Hyprland keybind setup on the MiniBook X (Arch + Omarchy).
 The point of this doc is that **most bindings are Omarchy defaults** — only a small
 custom layer is ours, and that layer is what must survive a rebuild.
 
-Repo copy: `hypr-minibook/bindings.conf` (top-level, symlinked to `~/.config/hypr`)
+Repo copy: `home/dot_config/hypr/bindings.conf`
 Live copy: `~/.config/hypr/bindings.conf`
 
 **Bindings are ours, deliberately.** Omarchy is the source of truth for most config,
@@ -57,7 +57,7 @@ Note Omarchy ships both `tiling.conf` and `tiling-v2.conf`; we source **v2** onl
 
 ## Drift audit (live vs repo)
 
-Checked with `diff ~/repos/dotfiles/hypr-minibook/bindings.conf ~/.config/hypr/bindings.conf`.
+Checked with `diff ~/repos/dotfiles/home/dot_config/hypr/bindings.conf ~/.config/hypr/bindings.conf`.
 
 Result: **essentially no keybind drift.** All 14 unbinds identical; the vim layer,
 resize submap, and every app/webapp binding matched. Three lines differed, two now
@@ -90,21 +90,18 @@ These were synced **from live into the repo**, because live reflects current Oma
 
 ## Caveats
 
-- `~/.config/hypr` on this machine is currently a **real directory, not a symlink** —
-  chezmoi was never initialized here (`~/.config/chezmoi/chezmoi.toml` absent), so live
-  and repo can drift silently. After the first `./setup` it becomes a symlink and this
-  class of drift goes away.
-- Two variants exist and are **mutually exclusive**, selected by the `minibook` flag:
-  - `hypr-minibook/` → Omarchy-style split config, rotated panel (this machine)
-  - `hypr/` → older vanilla-Arch monolithic config (`$mainMod`, wofi/mako, 240Hz desktop)
+- `~/.config/hypr` is a **real directory, not a symlink**: this repo uses chezmoi
+  copy mode. Use `chezmoi diff`/`dot apply` to review and apply repo changes.
+- Two variants share `home/dot_config/hypr/` and are selected by the `minibook` flag:
+  - `minibook=true` → Omarchy-style split config with the rotated panel
+  - `minibook=false` → classic desktop config
 
-  Both target `~/.config/hypr` via `home/dot_config/symlink_hypr.tmpl`. Make sure you
-  diff against the right one.
+  Templates and ignore rules select the variant; both use the same source tree.
 
 ## Re-run the audit
 
 ```bash
-diff ~/repos/dotfiles/hypr-minibook/bindings.conf ~/.config/hypr/bindings.conf
+diff ~/repos/dotfiles/home/dot_config/hypr/bindings.conf ~/.config/hypr/bindings.conf
 grep -c '^bind' ~/.config/hypr/bindings.conf     # expect 45 bind lines
 hyprctl binds | grep -c bindd                    # effective total incl. omarchy defaults
 cd ~/.local/share/omarchy && git status --short   # empty => defaults unmodified

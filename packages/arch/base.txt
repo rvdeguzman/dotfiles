@@ -18,6 +18,7 @@ zsh
 syncthing
 zathura
 zathura-pdf-poppler
+1password
 aspell
 aspell-en
 ispell
@@ -38,7 +39,6 @@ go
 ttf-jetbrains-mono-nerd
 ttf-iosevka-nerd
 brightnessctl
-yazi
 bob
 dunst
 eza
@@ -46,6 +46,7 @@ htop
 ly
 openssh
 python
+uv
 npm
 nvm
 wget

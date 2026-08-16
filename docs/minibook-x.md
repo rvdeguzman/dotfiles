@@ -153,7 +153,8 @@ live outside `$HOME`, so chezmoi can't do them); 3–4 are handled by `./setup`.
    create `/etc/modprobe.d/hid_apple.conf` (`options hid_apple fnmode=2`) and
    `/etc/modprobe.d/disable-usb-autosuspend.conf` (`options usbcore autosuspend=-1`).
 3. **Configs** — `./setup` from the repo root. The `minibook` flag auto-detects from
-   DMI and symlinks `~/.config/hypr` → `hypr-minibook/` (rotation + touch transform).
+   DMI and selects the MiniBook templates in `home/dot_config/hypr/` (rotation + touch
+   transform); chezmoi applies them as real files in `~/.config/hypr`.
 4. **Packages** — the auto-selected `minibook` profile installs `minibook-support-git`.
 
 Then re-verify everything with the `machine-setup` skill

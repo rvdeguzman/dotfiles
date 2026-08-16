@@ -38,11 +38,9 @@ fi
 # Personal aliases.
 alias g="lazygit"
 alias t="tmux"
-alias y="yazi"
 alias vim="nvim"
 alias vi="nvim"
-alias ogh="open-github"
-alias mkvenv="python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt"
+alias mkvenv="uv venv .venv && source .venv/bin/activate && uv pip install -r requirements.txt"
 alias venv="source .venv/bin/activate"
 alias tl='bash ~/.config/tmux/layout.sh'
 alias cc="claude --dangerously-skip-permissions"

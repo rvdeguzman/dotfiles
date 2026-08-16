@@ -14,5 +14,4 @@ ripgrep
 tldr
 tmux
 tree
-yazi
 zoxide

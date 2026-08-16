@@ -67,6 +67,9 @@ in `packages/arch/*.txt` since different Arch machines need different subsets
 (desktop vs headless, Hyprland vs i3). Nothing is ever removed or upgraded,
 and nothing installs during apply.
 
+Python projects use `uv` for virtual environments and dependencies; it is
+installed with the package profiles.
+
 Tools that don't come from brew/pacman (`pi`, `herdr`) are installed by
 `./install-extras`, macOS only for now.
 
@@ -84,8 +87,8 @@ repo until an explicit `dot add`/`dot sync` — review before committing.
 naming: `dot_` = leading dot, `private_` = restricted permissions,
 `executable_` = +x, `.tmpl` = template.
 
-- Platform gating lives in `home/.chezmoiignore` (Aerospace/cmux/OmniWM on
-  macOS; Hyprland/Mako/Waybar/Wofi/wallpapers on Linux).
+- Platform gating lives in `home/.chezmoiignore` (Aerospace on macOS;
+  Hyprland/Waybar/wallpapers on Linux).
 - The Hyprland desktop and MiniBook variants share `home/dot_config/hypr/`:
   variant-only files are ignore-gated, the three shared filenames
   (`hyprland.conf`, `hypridle.conf`, `hyprlock.conf`) are templates switching

@@ -1,20 +1,12 @@
 {{ if ne .chezmoi.os "darwin" -}}
 .config/aerospace
 .config/aerospace/**
-.config/cmux
-.config/cmux/**
-.config/omniwm
-.config/omniwm/**
 {{ end -}}
 {{ if or (ne .chezmoi.os "linux") (not .hyprland) -}}
 .config/hypr
 .config/hypr/**
-.config/mako
-.config/mako/**
 .config/waybar
 .config/waybar/**
-.config/wofi
-.config/wofi/**
 .config/wallpapers
 .config/wallpapers/**
 {{ else if .minibook -}}
