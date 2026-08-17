@@ -1,0 +1,35 @@
+# geoffgarside-style prompt: user@hostname:dir:(branch) status $
+# (previous config saved as starship.toml.bak)
+add_newline = false
+command_timeout = 200
+format = "$username$hostname$directory$git_branch$git_status$character"
+
+[username]
+show_always = true
+format = "[$user](cyan)[@](white)"
+
+[hostname]
+ssh_only = false
+format = "[$hostname](purple)[:](white)"
+
+[directory]
+truncation_length = 1
+truncate_to_repo = false
+format = "[$path](blue)"
+
+[git_branch]
+format = "[:](white)[\\($branch](yellow)"
+
+[git_status]
+format = "[$all_status](yellow)[$ahead_behind](cyan)[\\)](yellow)"
+conflicted = "*"
+untracked = "*"
+modified = "*"
+staged = "*"
+renamed = "*"
+deleted = "*"
+typechanged = "*"
+
+[character]
+success_symbol = " \\$"
+error_symbol = " \\$"
