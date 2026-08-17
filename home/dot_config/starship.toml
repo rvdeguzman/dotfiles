@@ -1,25 +1,29 @@
-# geoffgarside-style prompt: [HH:MM:SS] user:dir git:(branch) $
+# geoffgarside-style prompt: user@hostname:dir (branch) status $
 # (previous config saved as starship.toml.bak)
 add_newline = false
 command_timeout = 200
-format = "$time$username$directory$git_branch$character"
-
-[time]
-disabled = false
-format = "\\[$time\\] "
-time_format = "%T"
+format = "$username$hostname$directory$git_branch${custom.git_dirty}$character"
 
 [username]
 show_always = true
-format = "[$user](cyan):"
+format = "[$user](cyan)[@](white)"
+
+[hostname]
+ssh_only = false
+format = "[$hostname](purple)[:](white)"
 
 [directory]
 truncation_length = 1
 truncate_to_repo = false
-format = "[$path](green)"
+format = "[$path](blue)"
 
 [git_branch]
-format = " [git:\\($branch\\)](yellow)"
+format = " [\\($branch](yellow)"
+
+[custom.git_dirty]
+when = "git rev-parse --is-inside-work-tree >/dev/null 2>&1"
+command = "git status --porcelain | grep -q . && printf '*)' || printf ')'"
+format = "[$output](yellow)"
 
 [character]
 success_symbol = " \\$"
