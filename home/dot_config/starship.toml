@@ -15,7 +15,7 @@ format = "[$hostname](purple)[:](white)"
 [directory]
 truncation_length = 1
 truncate_to_repo = false
-format = "[$path](blue)"
+format = "[$path](green)"
 
 [git_branch]
 format = " [\\($branch](yellow)"
