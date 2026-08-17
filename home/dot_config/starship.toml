@@ -1,0 +1,26 @@
+# geoffgarside-style prompt: [HH:MM:SS] user:dir git:(branch) $
+# (previous config saved as starship.toml.bak)
+add_newline = false
+command_timeout = 200
+format = "$time$username$directory$git_branch$character"
+
+[time]
+disabled = false
+format = "\\[$time\\] "
+time_format = "%T"
+
+[username]
+show_always = true
+format = "[$user](cyan):"
+
+[directory]
+truncation_length = 1
+truncate_to_repo = false
+format = "[$path](green)"
+
+[git_branch]
+format = " [git:\\($branch\\)](yellow)"
+
+[character]
+success_symbol = " \\$"
+error_symbol = " \\$"
