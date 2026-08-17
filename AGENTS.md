@@ -42,6 +42,10 @@ This repository manages the user's dotfiles with chezmoi in copy mode. Read
   `docs/omarchy.md`: activate the `vague-black` theme and set the per-machine
   defaults (ghostty terminal, brave browser). Those defaults are machine-local
   state, not chezmoi-managed, so they must be re-run on each new machine.
+- Fonts: use `Iosevka Nerd Font`, NOT `Iosevka Nerd Font Mono`. The quickbar
+  (omarchy-shell bar) resolves `monospace` via fontconfig, so set it with
+  `omarchy font set "Iosevka Nerd Font"` on each machine; ghostty on Linux is
+  pinned to the same family in `home/dot_config/ghostty/config.tmpl`.
 
 ## Doom Emacs
 
