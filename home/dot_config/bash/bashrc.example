@@ -11,6 +11,16 @@ export PATH="$HOME/.config/emacs/bin:$PATH"
 
 alias g="lazygit"
 alias l="ls -la"
+alias ll="ls -lh"
+alias lsa="ls -lah"
+alias sl="ls"
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
+alias md='mkdir -p'
+alias rd='rmdir'
 alias t="tmux"
 alias vim="nvim"
 alias vi="nvim"
@@ -24,3 +34,5 @@ alias ek="npx skills@latest add emilkowalski/skills"
 # Secrets stay local: copy secrets.bash.example to ~/.config/bash/secrets.bash,
 # fill it in, chmod 600. Never add it to Git.
 [ -f "$HOME/.config/bash/secrets.bash" ] && source "$HOME/.config/bash/secrets.bash"
+
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init bash)"
