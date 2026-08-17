@@ -5,7 +5,31 @@ export PATH="$HOME/.config/emacs/bin:$PATH"
 ZSH_THEME=""
 plugins=(git)
 source "$ZSH/oh-my-zsh.sh"
-command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
+
+setopt AUTO_CD AUTO_MENU AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_MINUS
+
+autoload -Uz compinit && compinit
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*' matcher-list \
+  'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
+  'r:|=*' \
+  'l:|=* r:|=*'
+
+bindkey -e
+
+alias ..='cd ..'
+alias -g ...='../..'
+alias -g ....='../../..'
+alias -g .....='../../../..'
+alias -g ......='../../../../..'
+alias -- -='cd -'
+alias md='mkdir -p'
+alias rd='rmdir'
+alias sl='ls'
+alias l='ls -lah'
+alias ll='ls -lh'
+alias la='ls -lAh'
+alias lsa='ls -lah'
 
 alias g="lazygit"
 alias t="tmux"
@@ -17,3 +41,6 @@ alias cls="clear"
 alias h="herdr"
 alias mp="npx skills@latest add mattpocock/skills"
 alias ek="npx skills@latest add emilkowalski/skills"
+
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
