@@ -2,9 +2,10 @@
 
 export ZSH="${ZSH:-$HOME/.oh-my-zsh}"
 export PATH="$HOME/.config/emacs/bin:$PATH"
-ZSH_THEME="geoffgarside"
+ZSH_THEME=""
 plugins=(git)
 source "$ZSH/oh-my-zsh.sh"
+command -v starship >/dev/null 2>&1 && eval "$(starship init zsh)"
 
 alias g="lazygit"
 alias t="tmux"
