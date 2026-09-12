@@ -9,10 +9,12 @@ brew "colima"
 brew "coreutils"
 brew "docker"
 brew "fd"
+brew "findutils" # Doom recommends GNU find on macOS
 brew "fzf"
 brew "gh"
 brew "git"
 brew "go"
+brew "gnu-tar" # Doom recommends GNU tar on macOS
 brew "ispell"
 brew "lazygit"
 brew "neovim"
@@ -31,7 +33,10 @@ brew "typst"
 brew "uv"
 brew "xcodegen"
 brew "zoxide"
-brew "railwaycat/emacsmacport/emacs-mac@29"
+# Doom's preferred macOS port; explicitly select Emacs 29 (29.1+ required).
+# Dynamic modules are enabled by default; do not pass the obsolete --with-modules.
+# GUI registration and Doom core installation remain explicit: docs/doom-emacs.md.
+brew "railwaycat/emacsmacport/emacs-mac@29", args: ["with-native-compilation"]
 
 cask "nikitabobko/tap/aerospace"
 cask "alt-tab"

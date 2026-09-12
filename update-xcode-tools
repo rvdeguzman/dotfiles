@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Explicit macOS Command Line Tools maintenance. Never runs during chezmoi apply.
+set -euo pipefail
+
+usage() {
+  echo 'usage: ./update-xcode-tools [--check | --install LABEL | --bootstrap]'
+}
+
+mode=${1:---check}
+case "$mode" in
+  --check|--bootstrap) [[ $# -le 1 ]] || { usage >&2; exit 2; } ;;
+  --install) [[ $# -eq 2 ]] || { usage >&2; exit 2; } ;;
+  --help|-h) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+[[ $(uname -s) == Darwin ]] || { echo 'This helper requires macOS.' >&2; exit 1; }
+
+if [[ $mode == --bootstrap ]]; then
+  if xcode-select -p >/dev/null 2>&1; then
+    echo 'Developer tools already selected; use --check to look for CLT updates.'
+  else
+    xcode-select --install
+    echo 'Finish the Apple installer, then run make xcode-check.'
+  fi
+  exit 0
+fi
+
+printf 'Active developer directory: '
+xcode-select -p || { echo 'No developer tools selected. Run make xcode-install.' >&2; exit 1; }
+printf 'Active macOS SDK: '
+xcrun --show-sdk-path || echo 'SDK lookup failed; check the selected tools after updating.' >&2
+
+# Do not hide softwareupdate errors in a pipeline or interpret them as no updates.
+listing=$(LC_ALL=C softwareupdate --list 2>&1) || { printf '%s\n' "$listing" >&2; exit 1; }
+labels=()
+while IFS= read -r line; do
+  if [[ $line =~ ^[[:space:]]*\*[[:space:]]Label:[[:space:]](Command\ Line\ Tools.*)$ ]]; then
+    labels+=("${BASH_REMATCH[1]}")
+  fi
+done <<< "$listing"
+
+if [[ $mode == --check ]]; then
+  if [[ ${#labels[@]} -eq 0 ]]; then
+    printf '%s\n' "$listing"
+    echo 'No Command Line Tools update labels detected. Full Xcode updates are separate.'
+  else
+    printf '\nAvailable Command Line Tools updates:\n'
+    printf '  %s\n' "${labels[@]}"
+    echo 'Install one with: make xcode-update LABEL="<exact label above>"'
+  fi
+  exit 0
+fi
+
+label=$2
+found=false
+if [[ ${#labels[@]} -gt 0 ]]; then
+  for candidate in "${labels[@]}"; do
+    [[ $candidate != "$label" ]] || found=true
+  done
+fi
+if [[ $found != true ]]; then
+  echo 'Refusing: label is not an available Command Line Tools update. Run make xcode-check.' >&2
+  exit 1
+fi
+printf 'Install %s? [y/N] ' "$label"
+IFS= read -r answer || exit 1
+[[ $answer == y || $answer == Y ]] || { echo 'Cancelled.'; exit 0; }
+# sudo prompts directly in the user's terminal; never read or store a password.
+sudo softwareupdate --install "$label"
+printf '\nVerify active developer directory and SDK:\n'
+xcode-select -p
+xcrun --show-sdk-path
+clang --version
+echo 'If using Doom, rerun ~/.config/emacs/bin/doom sync and ~/.config/emacs/bin/doom doctor.'

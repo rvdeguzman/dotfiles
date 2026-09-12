@@ -5,6 +5,11 @@ This repository manages the user's dotfiles with chezmoi in copy mode. Read
 
 ## Installation workflow
 
+Follow `docs/machine-setup.md` for the complete sequence and approval checkpoints.
+Start and finish with `make doctor` (local-only, read-only; Python 3 required,
+3.11+ for external manifest checks). Review warnings and skipped checks even
+when it exits zero. It does not replace reviewed diffs or functional checks.
+
 1. Inspect the OS, hardware, existing configs, and `git status`; preserve all
    user changes. Never discard or overwrite files without explicit approval.
 2. Run `./setup` to install/initialize chezmoi. It intentionally does not apply
@@ -36,8 +41,31 @@ This repository manages the user's dotfiles with chezmoi in copy mode. Read
 - Do not remove or replace a conflicting package without explaining the choice
   and receiving approval.
 
+## macOS developer tools
+
+- Use `make xcode-check` to inspect Command Line Tools updates and
+  `make xcode-update LABEL="<exact offered CLT label>"` for an explicitly
+  approved update. `make xcode-install` opens the first-time Apple installer.
+- Never use `softwareupdate --all` for a CLT-only request, delete the existing
+  tools, or switch the developer directory without explicit approval.
+- Let the user enter any sudo password directly in their terminal. Full Xcode
+  updates are separate from CLT maintenance. Linux support remains until an
+  explicit macOS-only migration is requested.
+
 ## Doom Emacs
 
+- Follow `docs/doom-emacs.md` for the complete installation and verification
+  sequence. Install the Emacs application before installing Doom core.
+- On macOS, use Railwaycat's stable `emacs-mac@29` from the Brewfile (Doom
+  requires 29.1+). Newer Railwaycat `exp` formulas are experimental; do not
+  switch to them merely for a higher version number. Recheck upstream advice
+  when intentionally changing versions.
+- Dynamic modules are enabled by default in the current formula; the older
+  Doom guide's `--with-modules` flag is obsolete. Use `brew --prefix emacs-mac@29`
+  for the app path, not a hard-coded Intel/Apple Silicon prefix. Never replace
+  an existing `/Applications/Emacs.app` without inspecting it and approval.
+- Verify the selected CLI Emacs, module support, GUI startup, and `doom doctor`.
+  Run `doom sync` after changing the Emacs build/version as well as config.
 - The `~/.config/doom` external is only the user's Doom configuration; cloning
   it does not install the Doom Emacs core or its packages.
 - After chezmoi has cloned `~/.config/doom`, install Doom with the current

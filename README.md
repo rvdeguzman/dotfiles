@@ -8,25 +8,37 @@ apply you confirmed.
 
 ## Setup
 
+Start with [the machine setup runbook](docs/machine-setup.md), including
+prerequisite inspection, approval checkpoints, backups, and functional checks.
+
 ```sh
-./setup          # installs chezmoi if missing, runs chezmoi init (no apply)
-chezmoi diff     # review what apply would do
-chezmoi apply    # materialize configs, clone the vendored repos
+make doctor                     # read-only local preflight (requires Python 3)
+./setup                         # installs chezmoi if missing; init, no apply
+chezmoi apply ~/.local/bin/dot   # bootstrap wrapper after inspecting the target
+dot diff                        # review every affected area and external target
+dot apply                       # only after approval; asks again before applying
+chezmoi status                  # report remaining drift
 ```
+
+Doctor never installs, fetches, or applies. Failures return a nonzero status;
+warnings and skipped checks still need review. Python 3.11+ enables external
+manifest checks. See the runbook for fresh machines without Python/developer tools.
 
 On Linux, `chezmoi init` asks whether to manage Hyprland configs and whether
 to use the MiniBook X variant; macOS asks nothing. Re-run `chezmoi init` to
 answer again, or edit `~/.config/chezmoi/chezmoi.toml`.
 
-The Doom external provides only `~/.config/doom` (the personal config). On a
-new machine, install the Doom Emacs core and its packages after apply:
+### Emacs and Doom
 
-```sh
-git clone --depth 1 https://github.com/doomemacs/core ~/.config/emacs
-~/.config/emacs/bin/doom install
-```
+Follow [the Emacs/Doom installation guide](docs/doom-emacs.md): install Emacs
+first, apply the personal configuration after reviewing the diff, then install
+Doom core and its packages separately. The macOS Brewfile selects Railwaycat's
+stable Emacs 29, Doom's preferred macOS port, with modules enabled by default.
+The guide covers prerequisites, safe GUI app registration, existing-install
+checks, and `doom install` / `doom sync` / `doom doctor` verification.
 
-Run `~/.config/emacs/bin/doom sync` after later module or package changes.
+The Doom external provides only `~/.config/doom`; it does **not** install
+Emacs or Doom core (`~/.config/emacs`).
 
 ## Daily workflow
 
@@ -82,6 +94,36 @@ installed with the package profiles.
 
 Tools that don't come from brew/pacman (`pi`, `herdr`) are installed by
 `./install-extras`, macOS only for now.
+
+### Clio shell history
+
+[Clio](https://github.com/rvdeguzman/clio) is the personal, local-only Atuin
+replacement for zsh. It remains a separate manually managed checkout, not a
+chezmoi external. See [installation and migration instructions](docs/clio.md)
+for `make install`, optional history import **before** enabling the hook, and
+explicit `~/.zshrc` integration. Shell history stays private and unmanaged.
+
+### macOS developer tools
+
+Maintain Apple's Command Line Tools explicitly (never during setup/apply):
+
+```sh
+make xcode-install   # first-time Apple installer, only if tools are missing
+make xcode-check     # show selected tools/SDK and available CLT update labels
+make xcode-update LABEL="<exact Command Line Tools label from xcode-check>"
+```
+
+The update target rescans, validates the exact CLT label, asks for confirmation,
+then invokes `sudo softwareupdate` in your terminal. Enter any password there,
+not in chat. It does not install unrelated macOS updates, restart the machine,
+remove developer tools, or change `xcode-select`. Full Xcode is updated separately
+through the App Store or Apple Developer downloads. If no CLT label is offered
+but the SDK is broken, check System Settings → General → Software Update and
+Apple's developer downloads; this helper does not force hidden updates.
+
+Keep Command Line Tools current after macOS upgrades, especially for Emacs native
+compilation. See [Doom troubleshooting](docs/doom-emacs.md). Linux support remains
+in place; migration to macOS-only is a separate change.
 
 ## Secrets
 
