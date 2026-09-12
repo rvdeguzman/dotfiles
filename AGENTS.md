@@ -1,7 +1,8 @@
 # Agent instructions
 
-This repository manages the user's dotfiles with chezmoi in copy mode. Read
-`README.md` before assisting with setup or installation.
+This repository manages macOS-only dotfiles with chezmoi in copy mode. Read
+`README.md` before assisting with setup or installation. Do not restore Linux
+profiles or desktop configs unless explicitly requested. Homebrew is required.
 
 ## Installation workflow
 
@@ -33,9 +34,8 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 ## Packages
 
 - Package installation is always explicit; chezmoi does not install packages.
-- On Arch, inspect `packages/arch/*.txt` and run `./install-packages base` plus
-  only the machine profiles that actually apply. Do not install `minibook` on
-  other hardware.
+- Review the root `Brewfile`, then run `./install-packages` with approval.
+  There are no package profiles; the installer uses `brew bundle --no-upgrade`.
 - Package installation may require the user to enter a sudo password or answer
   conflict prompts. Never request, capture, or store their password.
 - Do not remove or replace a conflicting package without explaining the choice
@@ -49,8 +49,7 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 - Never use `softwareupdate --all` for a CLT-only request, delete the existing
   tools, or switch the developer directory without explicit approval.
 - Let the user enter any sudo password directly in their terminal. Full Xcode
-  updates are separate from CLT maintenance. Linux support remains until an
-  explicit macOS-only migration is requested.
+  updates are separate from CLT maintenance.
 
 ## Doom Emacs
 
@@ -86,7 +85,7 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
   checkouts. Preserve their local changes; a pull may fail when they are dirty.
 - Edit chezmoi templates in this repository, not only their rendered files in
   `$HOME`. `dot sync` re-adds managed non-template files but skips templates.
-- Do not modify Omarchy source under `~/.local/share/omarchy/`.
-- After applied Hyprland changes, run `hyprctl reload` and
-  `hyprctl configerrors`. After Waybar changes, restart Waybar with the Omarchy
-  command appropriate for the installed version.
+- Removing old platform files from the source does not authorize deleting any
+  existing live configuration. Review drift and request approval before apply.
+- After approved Aerospace changes, verify configuration loading, workspace
+  bindings, and accessibility permissions; preserve `executable_` script names.

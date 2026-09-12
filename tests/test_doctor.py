@@ -25,6 +25,14 @@ class DoctorTests(unittest.TestCase):
         self.redirect.__enter__()
         self.addCleanup(self.redirect.__exit__, None, None, None)
 
+    def test_unsupported_host_stops_before_checks(self):
+        with patch.object(doctor.platform, "system", return_value="Linux"), \
+             patch.object(doctor, "run") as run, \
+             patch.object(self.checker, "command") as command:
+            self.assertEqual(self.checker.check(), 1)
+        run.assert_not_called()
+        command.assert_not_called()
+
     def test_origin_normalization(self):
         for remote in ("https://github.com/rvdeguzman/doom.git",
                        "git@github.com:rvdeguzman/doom.git",
@@ -93,9 +101,7 @@ class DoctorTests(unittest.TestCase):
             self.assertEqual(doctor.run("git"), (1, ""))
 
     def test_missing_packages_no_bundle(self):
-        directory = self.root / "packages/macos"
-        directory.mkdir(parents=True)
-        (directory / "Brewfile").write_text('brew "tap/repo/emacs-mac@29"\nbrew "fd"\ncask "ghostty"\n')
+        (self.root / "Brewfile").write_text('brew "tap/repo/emacs-mac@29"\nbrew "fd"\ncask "ghostty"\n')
         with patch.object(doctor, "run", side_effect=[(0, "emacs-mac@29"), (1, ""), (0, "ghostty")]) as run:
             self.checker.packages()
         self.assertEqual(self.checker.warnings, 1)
@@ -104,9 +110,7 @@ class DoctorTests(unittest.TestCase):
             self.assertIn(call.args[:2], (("brew", "list"), ("brew", "--prefix")))
 
     def test_formula_alias_is_not_missing(self):
-        directory = self.root / "packages/macos"
-        directory.mkdir(parents=True)
-        (directory / "Brewfile").write_text('brew "python"\n')
+        (self.root / "Brewfile").write_text('brew "python"\n')
         with patch.object(doctor, "run", side_effect=[
             (0, "python@3.14"), (0, "/opt/homebrew/opt/python@3.14"), (0, "")
         ]):

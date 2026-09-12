@@ -1,8 +1,8 @@
 # Machine setup runbook
 
 Use this order for humans and agents. Start in the dotfiles checkout and read
-`AGENTS.md`. macOS is the main path below; Linux support is still present and
-must not be removed or applied to unrelated hardware by assumption.
+`AGENTS.md`. This repository supports macOS only (Apple Silicon and Intel).
+Installers and chezmoi templates reject other operating systems.
 
 ## 1. Inspect without changing anything
 
@@ -33,7 +33,7 @@ contents of shell configs, secrets, history, or generated Doom environments.
   skips secret templates. Error details and changed paths are suppressed.
 - Package presence is not version/build-option verification. GUI behavior,
   native compilation, fonts, and interactive shell integration require manual
-  follow-up. Linux package profiles are not automatically audited.
+  follow-up. Unsupported operating systems fail immediately.
 
 Also establish the intended machine role and optional tools with the user.
 Do not print secrets or history to diagnose installation. Preserve unrelated
@@ -43,8 +43,6 @@ work in this checkout and external repositories.
 requested features, and proposed changes before installing or replacing anything.
 
 ## 2. Prerequisites and explicit package installation
-
-### macOS
 
 1. Check `xcode-select -p`. If tools are missing, approve and run
    `make xcode-install`, then finish Apple's GUI installer.
@@ -56,20 +54,13 @@ requested features, and proposed changes before installing or replacing anything
    [Homebrew installation instructions](https://brew.sh/) if absent. Ensure
    the intended Homebrew is on PATH; do not introduce a second installation
    or replace user shell configuration to solve PATH problems.
-4. Review `packages/macos/Brewfile`, then explicitly approve and run
+4. Review the root `Brewfile`, then explicitly approve and run
    `./install-packages`. It installs the full list with `--no-upgrade`.
    Existing Emacs builds may require a separately approved reinstall to enable
    native compilation; see [Doom setup](doom-emacs.md).
 5. Review `install-extras` before running it with approval. It installs missing
    pi, Herdr, and Oh My Zsh, and uses downloaded installer scripts. Do not assume
    these tools are installed just because their configuration is present.
-
-### Arch / Omarchy
-
-Inspect `packages/arch/*.txt`. Approve `./install-packages base` plus only
-profiles appropriate for the actual machine. Never select `minibook` on other
-hardware or modify Omarchy's own source. Follow `docs/minibook-x.md` only when
-applicable; migration steps there are not generic fresh-install commands.
 
 The user must handle sudo/password/conflict prompts directly in their terminal.
 Never request, capture, store, or pipe their password. Stop on package conflicts;
@@ -82,8 +73,9 @@ explain any proposed replacement and obtain approval.
 ```
 
 This can install chezmoi if missing and initializes its source; it does not
-apply configuration. Linux prompts determine desktop/hardware configuration.
-Inspect the existing `~/.local/bin/dot` before replacing it. With approval,
+apply configuration. Homebrew must already be installed; there are no
+machine-profile prompts. Inspect the existing `~/.local/bin/dot` before
+replacing it. With approval,
 bootstrap only the wrapper:
 
 ```sh
@@ -161,9 +153,6 @@ check. Then perform the relevant functional checks:
   not proof of correct font configuration.
 - Aerospace: accessibility permissions, configuration loading, and workspace
   bindings work. Do not treat package installation as permission approval.
-- On Linux, after applied Hyprland changes run `hyprctl reload` and
-  `hyprctl configerrors`; after Waybar changes restart it with the command for
-  the installed Omarchy version.
 - `chezmoi status` shows only understood remaining drift. External Git changes
   remain intact. No secrets, caches, or history were staged.
 

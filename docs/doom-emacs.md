@@ -104,5 +104,4 @@ After module/package changes or changing the Emacs build/version, run:
 ~/.config/emacs/bin/doom doctor
 ```
 
-Restart Emacs afterward. On Arch, `./install-packages base` supplies Emacs
-and the shared dependencies; the same separate Doom core steps still apply.
+Restart Emacs afterward.

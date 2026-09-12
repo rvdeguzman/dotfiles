@@ -1,6 +1,6 @@
 # Dotfiles
 
-macOS and Linux configuration, managed with [chezmoi](https://www.chezmoi.io)
+macOS-only configuration, managed with [chezmoi](https://www.chezmoi.io)
 in **copy mode**: files in `$HOME` are real files, not symlinks. Nothing moves
 in either direction without an explicit command — editing a live config does
 not touch this repo, and this repo never touches the machine outside of an
@@ -24,9 +24,10 @@ Doctor never installs, fetches, or applies. Failures return a nonzero status;
 warnings and skipped checks still need review. Python 3.11+ enables external
 manifest checks. See the runbook for fresh machines without Python/developer tools.
 
-On Linux, `chezmoi init` asks whether to manage Hyprland configs and whether
-to use the MiniBook X variant; macOS asks nothing. Re-run `chezmoi init` to
-answer again, or edit `~/.config/chezmoi/chezmoi.toml`.
+Homebrew is required. Setup has no machine-profile prompts; setup, installers,
+and chezmoi templates reject non-macOS hosts. Previous Linux configuration is
+available in Git history, not managed by the current tree. Existing local files
+are not deleted by this repository cutover.
 
 ### Emacs and Doom
 
@@ -77,23 +78,20 @@ living in the same directory (auth, sessions, caches) untracked.
 
 ## Packages
 
-Package lists are plain data, installed **only** by hand:
+The root `Brewfile` is the single package list, installed **only** by hand:
 
 ```sh
-./install-packages                    # macOS: brew bundle --no-upgrade, packages/macos/Brewfile
-./install-packages base minibook      # Arch: Omarchy extras via paru/yay -S --needed
+./install-packages   # brew bundle --no-upgrade --file=Brewfile
 ```
 
-macOS is a single `packages/macos/Brewfile`; Arch assumes Omarchy and lists
-only cross-platform tools, personal extras, and machine-specific packages in
-`packages/arch/*.txt`. Omarchy owns the desktop and base system packages.
-Nothing is ever removed or upgraded, and nothing installs during apply.
+There are no package profiles. This installer never removes or upgrades
+existing packages, and nothing installs during apply.
 
 Python projects use `uv` for virtual environments and dependencies; it is
-installed with the package profiles.
+included in the Brewfile.
 
-Tools that don't come from brew/pacman (`pi`, `herdr`) are installed by
-`./install-extras`, macOS only for now.
+Tools outside Homebrew (`pi`, `herdr`, Oh My Zsh) are installed explicitly by
+`./install-extras`.
 
 ### Clio shell history
 
@@ -122,8 +120,7 @@ but the SDK is broken, check System Settings → General → Software Update and
 Apple's developer downloads; this helper does not force hidden updates.
 
 Keep Command Line Tools current after macOS upgrades, especially for Emacs native
-compilation. See [Doom troubleshooting](docs/doom-emacs.md). Linux support remains
-in place; migration to macOS-only is a separate change.
+compilation. See [Doom troubleshooting](docs/doom-emacs.md).
 
 ## Secrets
 
@@ -139,13 +136,15 @@ repo until an explicit `dot add`/`dot sync` — review before committing.
 naming: `dot_` = leading dot, `private_` = restricted permissions,
 `executable_` = +x, `.tmpl` = template.
 
-- Platform gating lives in `home/.chezmoiignore` (Aerospace on macOS;
-  Hyprland/Waybar/wallpapers on Linux).
-- The Hyprland desktop and MiniBook variants share `home/dot_config/hypr/`:
-  variant-only files are ignore-gated, the three shared filenames
-  (`hyprland.conf`, `hypridle.conf`, `hyprlock.conf`) are templates switching
-  on the `minibook` flag. Template files are skipped by `re-add` — edit them
-  in the repo (or `chezmoi edit`), not via sync.
+- `home/.chezmoiignore` guards against use on non-macOS hosts; there are no
+  per-platform config branches.
+- `home/dot_config/` contains Aerospace, Ghostty, tmux, zsh examples, and other
+  application settings. Aerospace scripts use `executable_` source names so
+  chezmoi installs them with executable permissions.
+- `home/dot_config/wallpapers/` keeps the wallpaper collection, installed at
+  `~/.config/wallpapers`. Selecting a macOS desktop background is manual.
+- `Brewfile` declares packages; `docs/` documents explicit installation and
+  verification. Edit any chezmoi templates in the source, not rendered files.
 
 **Syncing machines:** commit and push with plain git; on the other machine
 `git pull && dot apply`.

@@ -1,30 +1,9 @@
 #!/usr/bin/env bash
-# Install packages. Never runs automatically.
-#   macOS: ./install-packages                 (single Brewfile, brew bundle --no-upgrade)
-#   Arch:  ./install-packages base minibook    (Omarchy extras via paru/yay -S --needed)
+# Install the macOS Brewfile explicitly. Never runs during setup or apply.
 set -euo pipefail
-cd "$(dirname "$0")"
 
-case "$(uname)" in
-Darwin)
-  brew bundle --no-upgrade --file="packages/macos/Brewfile"
-  ;;
-*)
-  if [ $# -eq 0 ]; then
-    echo "usage: ./install-packages <profile>..." >&2
-    echo "profiles:" >&2
-    ls packages/arch >&2
-    exit 1
-  fi
-  mgr=$(command -v paru || command -v yay) || { echo "Error: need paru or yay" >&2; exit 1; }
-  packages=()
-  for p in "$@"; do
-    profile="packages/arch/$p.txt"
-    [[ -f "$profile" ]] || { echo "Error: unknown profile: $p" >&2; exit 1; }
-    while IFS= read -r package; do
-      packages+=("$package")
-    done < <(grep -vE '^[[:space:]]*(#|$)' "$profile")
-  done
-  "$mgr" -S --needed "${packages[@]}"
-  ;;
-esac
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+[[ $# -eq 0 ]] || { echo 'usage: ./install-packages (no profiles; uses Brewfile)' >&2; exit 2; }
+command -v brew >/dev/null 2>&1 || { echo 'Install Homebrew first: https://brew.sh/' >&2; exit 1; }
+cd "$(dirname "$0")"
+brew bundle --no-upgrade --file=Brewfile

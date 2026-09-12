@@ -2,7 +2,7 @@
 config-file = ?"~/.config/ghostty/gruvbox.conf"
 
 # Font
-font-family = "Iosevka Nerd Font Mono"
+font-family = "Iosevka Nerd Font"
 font-style = Regular
 font-size = 16
 font-feature = -calt

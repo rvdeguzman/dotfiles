@@ -19,7 +19,7 @@ xcode-update:
 
 lint:
 	bash -n setup install-packages install-extras update-xcode-tools
-	shellcheck update-xcode-tools
+	shellcheck setup install-packages install-extras update-xcode-tools
 
 test:
 	python3 -B -m unittest discover -s tests -p 'test_*.py'

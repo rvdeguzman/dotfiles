@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Install tools that don't come from brew/pacman. Never runs automatically.
-# macOS only for now.
+# Install macOS tools outside Homebrew. Never runs automatically.
 #   ./install-extras
 set -euo pipefail
+
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+[[ $# -eq 0 ]] || { echo 'usage: ./install-extras' >&2; exit 2; }
 
 command -v pi >/dev/null 2>&1 || npm install -g @earendil-works/pi-coding-agent
 command -v herdr >/dev/null 2>&1 || curl -fsSL https://herdr.dev/install.sh | sh

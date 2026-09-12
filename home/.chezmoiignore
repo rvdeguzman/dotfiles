@@ -1,16 +1,4 @@
+{{/* Refuse direct chezmoi operations on unsupported hosts, even without ./setup. */ -}}
 {{ if ne .chezmoi.os "darwin" -}}
-.config/aerospace
-.config/aerospace/**
-{{ end -}}
-{{ if or (ne .chezmoi.os "linux") (not .hyprland) -}}
-.config/hypr
-.config/hypr/**
-.config/waybar
-.config/waybar/**
-.config/wallpapers
-.config/wallpapers/**
-{{ else if .minibook -}}
-{{/* Omarchy handles wallpapers on the MiniBook. */ -}}
-.config/wallpapers
-.config/wallpapers/**
+{{ fail "This dotfiles repository supports macOS only." -}}
 {{ end -}}

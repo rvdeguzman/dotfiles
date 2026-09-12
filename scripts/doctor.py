@@ -94,7 +94,7 @@ class Doctor:
     def packages(self):
         # Current Brewfile is declarative; don't evaluate arbitrary Ruby or run bundle.
         try:
-            text = (self.root / "packages/macos/Brewfile").read_text()
+            text = (self.root / "Brewfile").read_text()
         except OSError:
             self.report("FAIL", "Cannot read macOS Brewfile")
             return
@@ -147,15 +147,15 @@ class Doctor:
     def check(self):
         print(f"Machine: {platform.system()} {platform.release()} / {platform.machine()}")
         print("Local checks only; no update scans, builds, applies, or history reads.")
+        if platform.system() != "Darwin":
+            self.report("FAIL", "This repository supports macOS only; no further checks performed")
+            return 1
         git = self.command("git")
         for tool in ("zsh", "rg", "fd", "emacs"):
             self.command(tool)
         for tool in ("dot", "cargo", "clio"):
             self.command(tool, required=False)
-        if platform.system() == "Darwin":
-            self.macos()
-        else:
-            self.report("WARN", "macOS package/SDK checks skipped; on Arch review only applicable profiles manually")
+        self.macos()
         if git:
             self.checkout(self.root)
             self.externals()

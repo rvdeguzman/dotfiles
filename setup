@@ -1,21 +1,15 @@
 #!/usr/bin/env bash
-# Bootstrap: installs chezmoi if missing, then inits this repo.
-# Nothing is applied: review with `chezmoi diff`, apply with `chezmoi apply`.
-# Extra arguments are passed to `chezmoi init`.
-set -e
+# macOS bootstrap: install chezmoi if missing and initialize this repo. No apply.
+# Extra arguments are passed to chezmoi init.
+set -euo pipefail
 
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+command -v brew >/dev/null 2>&1 || { echo 'Install Homebrew first: https://brew.sh/' >&2; exit 1; }
 REPO_DIR=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
 
 if ! command -v chezmoi >/dev/null 2>&1; then
-  if command -v brew >/dev/null 2>&1; then
-    brew install chezmoi
-  elif command -v pacman >/dev/null 2>&1; then
-    sudo pacman -S --needed --noconfirm chezmoi
-  else
-    sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
-    export PATH="$HOME/.local/bin:$PATH"
-  fi
+  brew install chezmoi
 fi
 
 chezmoi init --source "$REPO_DIR" "$@"
-echo "Initialized. Review with 'chezmoi diff', then run 'chezmoi apply'."
+echo 'Initialized without applying. Follow docs/machine-setup.md to bootstrap dot, review, and apply.'
