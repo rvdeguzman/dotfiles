@@ -29,6 +29,8 @@ brew "tldr"
 brew "tmux"
 brew "tree"
 brew "tree-sitter-cli"
+# Provides latex and dvisvgm for Org-mode formula previews.
+brew "texlive"
 brew "typst"
 brew "uv"
 brew "xcodegen"

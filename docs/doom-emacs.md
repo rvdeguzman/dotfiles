@@ -28,12 +28,14 @@ changing versions, and avoid unstable/pre-release builds.
    workarounds. See the README's macOS developer tools section for limitations.
 2. With Homebrew installed, run `./install-packages` from this repo. This
    explicitly installs the entire Brewfile, including Railwaycat Emacs 29,
-   Git, ripgrep, fd, coreutils (GNU ls), findutils, and GNU tar, without
-   upgrading existing packages. For an Emacs-only installation instead:
+   Git, ripgrep, fd, coreutils (GNU ls), findutils, GNU tar, ispell, and TeX
+   Live, without upgrading existing packages. TeX Live provides the `latex`
+   and `dvisvgm` executables used by Org formula previews. For an Emacs-only
+   installation instead:
 
    ```sh
    brew tap railwaycat/emacsmacport
-   brew install git ripgrep fd coreutils findutils gnu-tar
+   brew install git ripgrep fd coreutils findutils gnu-tar ispell texlive
    brew install railwaycat/emacsmacport/emacs-mac@29 --with-native-compilation
    ```
 
