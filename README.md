@@ -93,6 +93,16 @@ included in the Brewfile.
 Tools outside Homebrew (`pi`, `herdr`, Oh My Zsh) are installed explicitly by
 `./install-extras`.
 
+Herdr plugins required by the managed configuration are declared separately and
+installed explicitly after Herdr itself:
+
+```sh
+make herdr-plugins
+```
+
+This runs `./install-herdr-plugins`; it currently installs the Vim/Herdr pane
+navigation plugin and never runs during setup or chezmoi apply.
+
 ### Clio shell history
 
 [Clio](https://github.com/rvdeguzman/clio) is the personal, local-only Atuin
@@ -139,8 +149,7 @@ naming: `dot_` = leading dot, `private_` = restricted permissions,
 - `home/.chezmoiignore` guards against use on non-macOS hosts; there are no
   per-platform config branches.
 - `home/dot_config/` contains Aerospace, Ghostty, tmux, zsh examples, and other
-  application settings. Aerospace scripts use `executable_` source names so
-  chezmoi installs them with executable permissions.
+  application settings. Aerospace uses native commands without helper scripts.
 - `home/dot_config/wallpapers/` keeps the wallpaper collection, installed at
   `~/.config/wallpapers`. Selecting a macOS desktop background is manual.
 - `Brewfile` declares packages; `docs/` documents explicit installation and

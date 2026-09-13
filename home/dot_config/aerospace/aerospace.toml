@@ -1,6 +1,5 @@
 config-version = 2
 start-at-login = true
-# after-startup-command = ['exec-and-forget "$HOME/.config/aerospace/sort-apps.sh"']
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
@@ -83,7 +82,6 @@ alt-shift-c = 'reload-config'
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main']
-s = ['exec-and-forget "$HOME/.config/aerospace/sort-apps.sh"', 'mode main']
 f = ['layout floating tiling', 'mode main']
 
 alt-shift-h = ['join-with left', 'mode main']

@@ -17,7 +17,7 @@ class MacosSetupTests(unittest.TestCase):
         self.env = dict(os.environ, PATH=f"{self.root}:{os.environ['PATH']}",
                         LOG=str(self.root / "log"))
         self.tool("uname", "echo Darwin")
-        for name in ("brew", "chezmoi", "npm", "curl"):
+        for name in ("brew", "chezmoi", "npm", "curl", "herdr"):
             self.tool(name, f'printf "%s\\n" "{name} $*" >> "$LOG"')
 
     def tool(self, name, body):
@@ -31,7 +31,8 @@ class MacosSetupTests(unittest.TestCase):
 
     def test_all_installers_reject_non_macos_before_mutation(self):
         self.tool("uname", "echo Linux")
-        for name in ("setup", "install-packages", "install-extras"):
+        for name in ("setup", "install-packages", "install-extras",
+                     "install-herdr-plugins"):
             with self.subTest(name=name):
                 result = self.run_script(name)
                 self.assertNotEqual(result.returncode, 0)
@@ -48,6 +49,14 @@ class MacosSetupTests(unittest.TestCase):
         result = self.run_script("install-packages", "base", "minibook")
         self.assertEqual(result.returncode, 2)
         self.assertFalse((self.root / "log").exists())
+
+    def test_herdr_plugins_are_installed_explicitly(self):
+        result = self.run_script("install-herdr-plugins")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            (self.root / "log").read_text(),
+            "herdr plugin install paulbkim-dev/vim-herdr-navigation --yes\n",
+        )
 
     def test_setup_initializes_without_applying(self):
         result = self.run_script("setup")

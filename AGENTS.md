@@ -41,6 +41,15 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 - Do not remove or replace a conflicting package without explaining the choice
   and receiving approval.
 
+## Herdr plugins
+
+- Herdr plugins used by the managed configuration are declared in
+  `install-herdr-plugins`. Review that file, then run `make herdr-plugins` with
+  approval after Herdr itself is installed. The installer is explicit and never
+  runs during setup or chezmoi apply.
+- Add future required plugins to that script rather than issuing undocumented
+  one-off install commands, and keep its invocation covered by tests.
+
 ## macOS developer tools
 
 - Use `make xcode-check` to inspect Command Line Tools updates and
@@ -88,4 +97,5 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 - Removing old platform files from the source does not authorize deleting any
   existing live configuration. Review drift and request approval before apply.
 - After approved Aerospace changes, verify configuration loading, workspace
-  bindings, and accessibility permissions; preserve `executable_` script names.
+  bindings, and accessibility permissions. Aerospace uses native commands,
+  without helper scripts.

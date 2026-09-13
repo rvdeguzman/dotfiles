@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Install the Herdr plugins used by this dotfiles configuration. Never runs automatically.
+#   ./install-herdr-plugins
+set -euo pipefail
+
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+[[ $# -eq 0 ]] || { echo 'usage: ./install-herdr-plugins' >&2; exit 2; }
+command -v herdr >/dev/null 2>&1 || {
+  echo 'Herdr is required. Install it first with ./install-extras.' >&2
+  exit 1
+}
+
+plugins=(
+  paulbkim-dev/vim-herdr-navigation
+)
+
+for plugin in "${plugins[@]}"; do
+  herdr plugin install "$plugin" --yes
+done
