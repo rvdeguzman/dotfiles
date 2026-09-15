@@ -17,6 +17,7 @@ brew "go"
 brew "gnu-tar" # Doom recommends GNU tar on macOS
 brew "ispell"
 brew "lazygit"
+brew "libtool"
 brew "neovim"
 brew "node"
 brew "python"
