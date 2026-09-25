@@ -8,7 +8,6 @@ source "$ZSH/oh-my-zsh.sh"
 
 setopt AUTO_CD AUTO_MENU AUTO_PUSHD PUSHD_IGNORE_DUPS PUSHD_MINUS
 
-autoload -Uz compinit && compinit
 zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*' matcher-list \
   'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' \
