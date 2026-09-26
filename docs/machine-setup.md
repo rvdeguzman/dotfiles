@@ -132,7 +132,12 @@ Report errors and remaining drift. Do not hide failures by forcing an apply.
 - **zsh:** `~/.zshrc`, `~/.zshenv`, and `~/.zprofile` are unmanaged. Back up and
   review before any explicit copy from `home/dot_config/zsh/zshrc.example`.
   Verify Oh My Zsh first. Prefer merging needed lines over replacing an existing
-  shell setup. Clio binds Ctrl-R; inspect competing Atuin/plugin bindings.
+  shell setup. The example loads installed Clio on Ctrl-R and Up; inspect
+  competing Atuin/plugin bindings. It also sources local `secrets.zsh` and
+  uses Oh My Zsh's built-in NVM lazy loading (first Node/NVM command, not shell
+  startup). Direct Node-based scripts may need a `lazy-cmd` trigger; see README.
+  With approval, use
+  `make nvm-install` to install NVM and set Node 24 LTS as its default.
 - **Secrets:** create/populate local secrets interactively, not in agent output.
   Keep `~/.config/zsh/secrets.zsh` mode `600`, outside Git. Generated environment
   snapshots can contain secrets too.

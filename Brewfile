@@ -15,6 +15,7 @@ brew "gh"
 brew "git"
 brew "go"
 brew "gnu-tar" # Doom recommends GNU tar on macOS
+brew "hunk"
 brew "ispell"
 brew "lazygit"
 brew "libtool"

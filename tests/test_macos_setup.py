@@ -32,7 +32,7 @@ class MacosSetupTests(unittest.TestCase):
     def test_all_installers_reject_non_macos_before_mutation(self):
         self.tool("uname", "echo Linux")
         for name in ("setup", "install-packages", "install-extras",
-                     "install-herdr-plugins"):
+                     "install-herdr-plugins", "install-nvm"):
             with self.subTest(name=name):
                 result = self.run_script(name)
                 self.assertNotEqual(result.returncode, 0)
@@ -57,6 +57,42 @@ class MacosSetupTests(unittest.TestCase):
             (self.root / "log").read_text(),
             "herdr plugin install paulbkim-dev/vim-herdr-navigation --yes\n",
         )
+
+    def test_nvm_reuses_existing_install_and_selects_node_24(self):
+        nvm_dir = self.root / "nvm"
+        nvm_dir.mkdir()
+        (nvm_dir / "nvm.sh").write_text(
+            'nvm() { printf "nvm %s\\n" "$*" >> "$LOG"; }\n'
+        )
+        self.env["NVM_DIR"] = str(nvm_dir)
+        result = self.run_script("install-nvm")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.root / "log").read_text(),
+                         "nvm install 24\nnvm alias default 24\n")
+
+    def test_nvm_refuses_conflicting_directory(self):
+        nvm_dir = self.root / "nvm"
+        nvm_dir.mkdir()
+        self.env["NVM_DIR"] = str(nvm_dir)
+        result = self.run_script("install-nvm")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("inspect it before installing", result.stderr)
+        self.assertFalse((self.root / "log").exists())
+
+    def test_nvm_fresh_install_uses_pinned_upstream(self):
+        nvm_dir = self.root / "nvm"
+        self.env["NVM_DIR"] = str(nvm_dir)
+        self.tool("git", '''
+printf 'git %s\\n' "$*" >> "$LOG"
+mkdir -p "$NVM_DIR"
+printf '%s\\n' 'nvm() { printf "nvm %s\\n" "$*" >> "$LOG"; }' > "$NVM_DIR/nvm.sh"
+''')
+        result = self.run_script("install-nvm")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.root / "log").read_text(),
+                         "git clone --depth 1 --branch v0.40.8 "
+                         f"https://github.com/nvm-sh/nvm.git {nvm_dir}\n"
+                         "nvm install 24\nnvm alias default 24\n")
 
     def test_setup_initializes_without_applying(self):
         result = self.run_script("setup")

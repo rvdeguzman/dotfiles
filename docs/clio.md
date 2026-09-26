@@ -5,7 +5,8 @@ replacement: a Rust binary and zsh hook providing a local prefix-history picker
 on Ctrl-R. No daemon, sync, account, network features, or fzf dependency.
 
 Clio stays a separate, manually managed repository. Dotfiles does not clone it,
-build it, import history, or enable its shell hook during setup/apply.
+build it, import history, or change the live shell hook during setup/apply.
+The opt-in zsh example loads the hook when both Clio and the hook are installed.
 
 ## Install
 
@@ -60,10 +61,16 @@ history until migration is verified.
 After Oh My Zsh, `bindkey -e`, and other keybinding setup, add:
 
 ```zsh
-source "${XDG_DATA_HOME:-$HOME/.local/share}/clio/clio.zsh"
+if command -v clio >/dev/null 2>&1 && [[ -r "${XDG_DATA_HOME:-$HOME/.local/share}/clio/clio.zsh" ]]; then
+  source "${XDG_DATA_HOME:-$HOME/.local/share}/clio/clio.zsh"
+  bindkey '^[[A' clio-history
+  bindkey '^[OA' clio-history
+fi
 ```
 
-Start a new zsh. Press Ctrl-R to search: Enter executes a selection, Tab places
+Both common Up-arrow sequences open Clio instead of stepping through history.
+These bindings are also included in `home/dot_config/zsh/zshrc.example`.
+Start a new zsh. Press Ctrl-R or Up to search: Enter executes a selection, Tab places
 it in the command line for editing, and Esc cancels. Prefer Tab when checking
 imported commands to avoid accidentally executing one.
 

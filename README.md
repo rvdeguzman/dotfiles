@@ -93,6 +93,22 @@ included in the Brewfile.
 Tools outside Homebrew (`pi`, `herdr`, Oh My Zsh) are installed explicitly by
 `./install-extras`.
 
+For NVM-managed Node, explicitly run `make nvm-install`. This installs upstream
+NVM v0.40.8 if absent, installs Node 24 LTS, and sets it as NVM's default. Existing
+NVM installations are reused without updating; other Node installations are
+left untouched. The zsh example uses [Oh My Zsh's built-in NVM lazy loading](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/nvm#lazy-startup):
+NVM and its completion load on the first `nvm`, `node`, `npm`, `npx`, `pnpm`,
+`pnpx`, `yarn`, or `corepack` command, rather than at shell startup. The first
+command pays the initialization cost and activates NVM's default Node. No
+custom cache or additional plugin is needed.
+
+Direct scripts using `#!/usr/bin/env node` (and commands such as `env node`)
+bypass shell functions: before a trigger runs, they use the existing PATH.
+For another Node-based CLI, add its command name to
+`zstyle ':omz:plugins:nvm' lazy-cmd ...` **before** sourcing Oh My Zsh, or run
+`_omz_nvm_load` explicitly first. `.nvmrc` auto-switching is not enabled.
+The example also sources local `~/.config/zsh/secrets.zsh` when present.
+
 Herdr plugins required by the managed configuration are declared separately and
 installed explicitly after Herdr itself:
 
@@ -131,6 +147,31 @@ Apple's developer downloads; this helper does not force hidden updates.
 
 Keep Command Line Tools current after macOS upgrades, especially for Emacs native
 compilation. See [Doom troubleshooting](docs/doom-emacs.md).
+
+## Optional iCloud Drive shortcut
+
+Create `~/icloud` as a symlink to iCloud Drive on each Mac. First enable iCloud
+Drive in System Settings and open it in Finder. Then copy and paste:
+
+```sh
+(
+  target="$HOME/Library/Mobile Documents/com~apple~CloudDocs"
+  link="$HOME/icloud"
+  if [ ! -d "$target" ]; then
+    printf '%s\n' 'iCloud Drive is not available yet; enable it and open Finder first.'
+  elif [ -e "$link" ] || [ -L "$link" ]; then
+    printf '%s\n' '~/icloud already exists; inspect it before changing anything.'
+  else
+    ln -s "$target" "$link"
+  fi
+)
+```
+
+The command leaves any existing file, directory, or symlink untouched. Verify
+with `readlink "$HOME/icloud"`, then use `cd ~/icloud`. This is only a shortcut;
+files still live in iCloud Drive and may need downloading before offline use.
+The link is machine-local: setup and chezmoi apply do not create it. Do not add
+iCloud contents to chezmoi or this repository.
 
 ## Secrets
 

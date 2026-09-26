@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Explicit NVM + Node 24 LTS installation; never runs during setup/apply.
+set -eo pipefail
+
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+[[ $# -eq 0 ]] || { echo 'usage: ./install-nvm' >&2; exit 2; }
+
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [[ -e "$NVM_DIR" || -L "$NVM_DIR" ]]; then
+  [[ -s "$NVM_DIR/nvm.sh" ]] || {
+    echo "Existing NVM_DIR has no nvm.sh; inspect it before installing: $NVM_DIR" >&2
+    exit 1
+  }
+else
+  git clone --depth 1 --branch v0.40.8 https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+fi
+
+# NVM does not support nounset. Reuse existing installations without updating them.
+# shellcheck disable=SC1091
+source "$NVM_DIR/nvm.sh"
+nvm install 24
+nvm alias default 24

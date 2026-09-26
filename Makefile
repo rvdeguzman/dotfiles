@@ -1,8 +1,11 @@
-.PHONY: doctor herdr-plugins xcode-check xcode-install xcode-update test lint
+.PHONY: doctor nvm-install herdr-plugins xcode-check xcode-install xcode-update test lint
 
 # Python 3.11+ enables external-manifest checks; older Python 3 reports a skip.
 doctor:
 	python3 -B scripts/doctor.py
+
+nvm-install:
+	./install-nvm
 
 herdr-plugins:
 	./install-herdr-plugins
@@ -21,8 +24,10 @@ xcode-update:
 	./update-xcode-tools --install "$$XCODE_TOOLS_LABEL"
 
 lint:
-	bash -n setup install-packages install-extras install-herdr-plugins update-xcode-tools
-	shellcheck setup install-packages install-extras install-herdr-plugins update-xcode-tools
+	bash -n setup install-packages install-extras install-nvm install-herdr-plugins update-xcode-tools
+	shellcheck setup install-packages install-extras install-nvm install-herdr-plugins update-xcode-tools
+	zsh -n home/dot_config/zsh/zshrc.example
+	zsh -n home/dot_config/zsh/secrets.zsh.example
 
 test:
 	python3 -B -m unittest discover -s tests -p 'test_*.py'
