@@ -37,10 +37,10 @@ brew "typst"
 brew "uv"
 brew "xcodegen"
 brew "zoxide"
-# Doom's preferred macOS port; explicitly select Emacs 29 (29.1+ required).
-# Dynamic modules are enabled by default; do not pass the obsolete --with-modules.
-# GUI registration and Doom core installation remain explicit: docs/doom-emacs.md.
-brew "railwaycat/emacsmacport/emacs-mac@29", args: ["with-native-compilation"]
+# Railwaycat's experimental Emacs 31 snapshot (not HEAD); see docs/doom-emacs.md.
+# Tree-sitter and dynamic modules are enabled by default; no --with-modules.
+# GUI registration and Doom core installation remain explicit.
+brew "railwaycat/emacsmacport/emacs-mac@31exp", args: ["with-native-compilation", "with-librsvg", "with-xwidgets", "with-starter"]
 
 cask "nikitabobko/tap/aerospace"
 cask "alt-tab"

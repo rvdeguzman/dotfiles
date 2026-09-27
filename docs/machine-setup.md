@@ -56,8 +56,10 @@ requested features, and proposed changes before installing or replacing anything
    or replace user shell configuration to solve PATH problems.
 4. Review the root `Brewfile`, then explicitly approve and run
    `./install-packages`. It installs the full list with `--no-upgrade`.
-   Existing Emacs builds may require a separately approved reinstall to enable
-   native compilation; see [Doom setup](doom-emacs.md).
+   Existing Emacs builds may require a separately approved reinstall to match
+   the selected native-compilation, librsvg, xwidgets, and starter options;
+   see [Doom setup](doom-emacs.md) for the experimental 31 snapshot and safe
+   migration from an installed Emacs 29.
 5. Review `install-extras` before running it with approval. It installs missing
    pi, Herdr, and Oh My Zsh, and uses downloaded installer scripts. Do not assume
    these tools are installed just because their configuration is present.

@@ -12,11 +12,26 @@ ranks Railwaycat's `emacs-mac` first, `emacs-plus` second, and terminal-only
 Homebrew `emacs` third. It warns against emacsformacosx.com (including its
 Homebrew cask), AquaMacs, and XEmacs.
 
-This repo deliberately selects `railwaycat/emacsmacport/emacs-mac@29`.
-Emacs 29.1+ meets Doom's starter-kit minimum; 29 is our version choice, not
-Doom's latest recommended version. Consult the upstream
-[prerequisites](https://github.com/doomemacs/doomemacs#prerequisites) before
-changing versions, and avoid unstable/pre-release builds.
+This repo deliberately selects `railwaycat/emacsmacport/emacs-mac@31exp`,
+matching the current machine's experimental Emacs Mac 31.1.50 installation:
+
+- Formula snapshot: `emacs-31-20260901`, **not HEAD**.
+- Options: `--with-native-compilation --with-librsvg --with-xwidgets --with-starter`.
+- Tree-sitter and dynamic modules (needed by vterm) are enabled by default.
+- Both the CLI and `/Applications/Emacs.app` select 31; Emacs 29.4 remains
+  installed but unlinked as a fallback. Fresh installs do not need 29.
+
+This is an intentional experimental-build choice, not a stable release or
+Doom's recommendation. Doom's upstream
+[prerequisites](https://github.com/doomemacs/core#prerequisites) advise against
+pre-release versions such as `.50`; compatibility may lag. Recheck them before
+changing versions.
+
+The [formula](https://github.com/railwaycat/homebrew-emacsmacport/blob/master/Formula/emacs-mac@31exp.rb)
+uses a fixed source snapshot unless `--HEAD` is requested. The Brewfile selects
+the formula and options, **not an immutable snapshot date**: future tap updates
+can change what a fresh install builds. Do not add `--HEAD`. Homebrew's receipt
+may call the non-HEAD spec `stable`; that does not make this Emacs release stable.
 
 1. Ensure Apple's command-line tools are installed: `xcode-select -p`.
    If missing, run `make xcode-install` and finish the Apple installer. Run
@@ -27,7 +42,7 @@ changing versions, and avoid unstable/pre-release builds.
    command-line tools and verify `xcrun --show-sdk-path` before adding SDK-path
    workarounds. See the README's macOS developer tools section for limitations.
 2. With Homebrew installed, run `./install-packages` from this repo. This
-   explicitly installs the entire Brewfile, including Railwaycat Emacs 29,
+   explicitly installs the entire Brewfile, including Railwaycat Emacs 31 experimental,
    Git, ripgrep, fd, coreutils (GNU ls), findutils, GNU tar, ispell, and TeX
    Live, without upgrading existing packages. TeX Live provides the `latex`
    and `dvisvgm` executables used by Org formula previews. For an Emacs-only
@@ -36,22 +51,39 @@ changing versions, and avoid unstable/pre-release builds.
    ```sh
    brew tap railwaycat/emacsmacport
    brew install git ripgrep fd coreutils findutils gnu-tar ispell texlive
-   brew install railwaycat/emacsmacport/emacs-mac@29 --with-native-compilation
+   brew install railwaycat/emacsmacport/emacs-mac@31exp \
+     --with-native-compilation --with-librsvg --with-xwidgets --with-starter
    ```
 
-   The current Railwaycat formula enables dynamic modules by default
-   (`--without-modules` disables them). Do not copy the older Doom guide's
-   `--with-modules` flag. This Brewfile enables native compilation for better
-   performance, as recommended by `doom doctor`. It is not a Doom requirement
-   and adds compiler dependencies/build time. `--no-upgrade` does not retrofit
-   build options onto an existing install: explicitly approve and run
-   `brew reinstall railwaycat/emacsmacport/emacs-mac@29 --with-native-compilation`
-   when migrating a build without it, then run `doom sync` and restart Emacs.
-   Inspect other Emacs installations first; do not force-link over conflicts.
+   The current Railwaycat formula enables tree-sitter and dynamic modules by
+   default (`--without-tree-sitter` and `--without-modules` disable them). Do not
+   copy the older Doom guide's obsolete `--with-modules` flag. Native compilation
+   improves performance but adds compiler dependencies/build time; librsvg adds
+   SVG support, xwidgets adds embedded widgets, and starter makes the `emacs`
+   command use the app's GUI launcher (use `emacs -nw` for terminal mode).
+   Starter does not register `/Applications/Emacs.app`.
+
+   `--no-upgrade` does not retrofit build options onto an existing install.
+   Inspect `brew info railwaycat/emacsmacport/emacs-mac@31exp` and
+   `brew list --versions emacs-mac@31exp emacs-mac@29` first. If options are
+   missing, separately approve a rebuild with all four flags:
+
+   ```sh
+   brew reinstall railwaycat/emacsmacport/emacs-mac@31exp \
+     --with-native-compilation --with-librsvg --with-xwidgets --with-starter
+   ```
+
+   Reinstall uses the current tap formula, which may be a newer snapshot.
+   After changing the build/version, run `doom sync` and restart Emacs.
+   Inspect other Emacs installations before installing; do not force-link over
+   conflicts. If 29 is currently linked, separately approve `brew unlink emacs-mac@29`
+   and `brew link emacs-mac@31exp` when switching the CLI. Keep 29 installed if
+   it is the fallback; no uninstall or cleanup is required. GUI registration
+   is a separate step below.
 3. Register the GUI application, only if the destination is absent:
 
    ```sh
-   app="$(brew --prefix emacs-mac@29)/Emacs.app"
+   app="$(brew --prefix emacs-mac@31exp)/Emacs.app"
    if [ ! -d "$app" ]; then
      printf 'Missing Emacs application: %s\n' "$app"
    elif [ -e /Applications/Emacs.app ] || [ -L /Applications/Emacs.app ]; then
@@ -70,12 +102,18 @@ changing versions, and avoid unstable/pre-release builds.
    ```sh
    command -v emacs
    emacs --version
-   emacs --batch -Q --eval '(princ (list :version emacs-version :modules module-file-suffix))'
+   emacs --batch -Q --eval '(princ (list :version emacs-version :modules module-file-suffix :native-comp (native-comp-available-p) :tree-sitter (treesit-available-p) :svg (image-type-available-p (quote svg)) :xwidgets (featurep (quote xwidget-internal))))'
+   ls -l "$(command -v emacs)" /Applications/Emacs.app
    ```
 
-   Expect Emacs 29.1+ and a non-nil module suffix. Fix PATH or Homebrew link
-   conflicts explicitly if another Emacs is selected. GNU tools also expose
-   prefixed commands (`gls`, `gfind`, `gtar`); do not replace system binaries.
+   For the recorded snapshot, expect Emacs 31.1.50, a non-nil module suffix,
+   and non-nil feature checks. Confirm both CLI and GUI paths select `31exp`;
+   a version string alone does not identify the snapshot or install options.
+   Fix PATH or Homebrew link conflicts explicitly if another Emacs is selected.
+   In the GUI, also check `M-x emacs-version`, Doom startup, and the features
+   you use (including vterm and xwidgets); batch checks do not prove GUI behavior.
+   GNU tools expose prefixed commands (`gls`, `gfind`, `gtar`); do not replace
+   system binaries.
 
 ## Install Doom after reviewing and applying the personal config
 

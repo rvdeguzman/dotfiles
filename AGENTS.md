@@ -64,14 +64,18 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 
 - Follow `docs/doom-emacs.md` for the complete installation and verification
   sequence. Install the Emacs application before installing Doom core.
-- On macOS, use Railwaycat's stable `emacs-mac@29` from the Brewfile (Doom
-  requires 29.1+). Newer Railwaycat `exp` formulas are experimental; do not
-  switch to them merely for a higher version number. Recheck upstream advice
-  when intentionally changing versions.
-- Dynamic modules are enabled by default in the current formula; the older
-  Doom guide's `--with-modules` flag is obsolete. Use `brew --prefix emacs-mac@29`
-  for the app path, not a hard-coded Intel/Apple Silicon prefix. Never replace
-  an existing `/Applications/Emacs.app` without inspecting it and approval.
+- On macOS, use the explicitly selected Railwaycat `emacs-mac@31exp` from the
+  Brewfile, with native compilation, librsvg, xwidgets, and starter enabled.
+  This is an experimental fixed snapshot, not HEAD or a stable Emacs release;
+  Doom advises against pre-release builds. The Brewfile does not pin the snapshot
+  date. Do not switch versions or to HEAD without approval; recheck upstream
+  advice when intentionally changing versions. Preserve any unlinked Emacs 29
+  fallback unless its removal is explicitly approved.
+- Tree-sitter and dynamic modules are enabled by default in the current formula;
+  the older Doom guide's `--with-modules` flag is obsolete. Use
+  `brew --prefix emacs-mac@31exp` for the app path, not a hard-coded Intel/Apple
+  Silicon prefix. Never replace an existing `/Applications/Emacs.app` without
+  inspecting it and approval.
 - Verify the selected CLI Emacs, module support, GUI startup, and `doom doctor`.
   Run `doom sync` after changing the Emacs build/version as well as config.
 - The `~/.config/doom` external is only the user's Doom configuration; cloning

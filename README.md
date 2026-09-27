@@ -34,7 +34,11 @@ are not deleted by this repository cutover.
 Follow [the Emacs/Doom installation guide](docs/doom-emacs.md): install Emacs
 first, apply the personal configuration after reviewing the diff, then install
 Doom core and its packages separately. The macOS Brewfile selects Railwaycat's
-stable Emacs 29, Doom's preferred macOS port, with modules enabled by default.
+experimental `emacs-mac@31exp` snapshot (not HEAD), with native compilation,
+librsvg, xwidgets, and the CLI GUI starter. Tree-sitter and dynamic modules
+(for vterm) are enabled by default. This deliberately uses a pre-release build;
+Doom recommends avoiding those. The formula's snapshot can change with tap
+updates; the Brewfile does not pin its date.
 The guide covers prerequisites, safe GUI app registration, existing-install
 checks, and `doom install` / `doom sync` / `doom doctor` verification.
 

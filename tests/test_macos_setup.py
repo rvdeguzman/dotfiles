@@ -1,6 +1,7 @@
 """Installer platform guards and macOS command routing, without real installs."""
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -44,6 +45,19 @@ class MacosSetupTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.root / "log").read_text(),
                          "brew bundle --no-upgrade --file=Brewfile\n")
+
+    def test_emacs_formula_and_build_options(self):
+        brewfile = (ROOT / "Brewfile").read_text()
+        entries = re.findall(r'^brew "([^"]*emacs[^"]*)"(.*)$',
+                             brewfile, re.MULTILINE)
+        self.assertEqual(len(entries), 1)
+        formula, options = entries[0]
+        self.assertEqual(formula, "railwaycat/emacsmacport/emacs-mac@31exp")
+        self.assertEqual(set(re.findall(r'"([^"]+)"', options)), {
+            "with-native-compilation", "with-librsvg",
+            "with-xwidgets", "with-starter",
+        })
+        self.assertNotIn("head:", options)
 
     def test_old_profiles_rejected(self):
         result = self.run_script("install-packages", "base", "minibook")
