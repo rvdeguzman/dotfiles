@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Move Rex's app-menu "Hide" off cmd+h so init.lua can bind cmd+h. Never runs automatically.
+# Takes effect after quitting and reopening Rex.
+#   ./configure-rex
+# Undo: defaults delete com.superlogical.rex NSUserKeyEquivalents
+set -euo pipefail
+
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+[[ $# -eq 0 ]] || { echo 'usage: ./configure-rex' >&2; exit 2; }
+
+# @~^$h = ctrl+opt+shift+cmd+h (literal, not a shell expansion)
+# shellcheck disable=SC2016
+defaults write com.superlogical.rex NSUserKeyEquivalents \
+  -dict "Hide Rex Beta" '@~^$h' "Hide Rex" '@~^$h'

@@ -123,6 +123,16 @@ make herdr-plugins
 This runs `./install-herdr-plugins`; it currently installs the Vim/Herdr pane
 navigation plugin and never runs during setup or chezmoi apply.
 
+Rex keybindings live in `~/.config/rex/init.lua`. Binding `cmd+h` there also
+requires moving the macOS "Hide Rex" menu shortcut, which is an app default:
+
+```sh
+make rex-keys
+```
+
+This runs `./configure-rex`, which remaps Hide to `ctrl+opt+shift+cmd+h`. Quit
+and reopen Rex afterward. Rex.app settings (font, colors, padding) are not managed.
+
 ### Clio shell history
 
 [Clio](https://github.com/rvdeguzman/clio) is the personal, local-only Atuin

@@ -18,7 +18,7 @@ class MacosSetupTests(unittest.TestCase):
         self.env = dict(os.environ, PATH=f"{self.root}:{os.environ['PATH']}",
                         LOG=str(self.root / "log"))
         self.tool("uname", "echo Darwin")
-        for name in ("brew", "chezmoi", "npm", "curl", "herdr"):
+        for name in ("brew", "chezmoi", "npm", "curl", "herdr", "defaults"):
             self.tool(name, f'printf "%s\\n" "{name} $*" >> "$LOG"')
 
     def tool(self, name, body):
@@ -33,7 +33,7 @@ class MacosSetupTests(unittest.TestCase):
     def test_all_installers_reject_non_macos_before_mutation(self):
         self.tool("uname", "echo Linux")
         for name in ("setup", "install-packages", "install-extras",
-                     "install-herdr-plugins", "install-nvm"):
+                     "install-herdr-plugins", "install-nvm", "configure-rex"):
             with self.subTest(name=name):
                 result = self.run_script(name)
                 self.assertNotEqual(result.returncode, 0)
@@ -70,6 +70,15 @@ class MacosSetupTests(unittest.TestCase):
         self.assertEqual(
             (self.root / "log").read_text(),
             "herdr plugin install paulbkim-dev/vim-herdr-navigation --yes\n",
+        )
+
+    def test_rex_hide_moves_off_cmd_h(self):
+        result = self.run_script("configure-rex")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            (self.root / "log").read_text(),
+            "defaults write com.superlogical.rex NSUserKeyEquivalents -dict "
+            "Hide Rex Beta @~^$h Hide Rex @~^$h\n",
         )
 
     def test_nvm_reuses_existing_install_and_selects_node_24(self):
