@@ -33,5 +33,9 @@ end
 -- cmd+k opens the session switcher ("Change Session…").
 rex.bind("cmd+k", "session.switch")
 
+-- cmd+r renames the current session; cmd+shift+r refreshes sessions.
+rex.bind("cmd+r", "session.rename")
+rex.bind("cmd+shift+r", "session.refresh")
+
 -- cmd+o shows the Activity sidebar (in addition to Rex's default cmd+.).
 rex.bind("cmd+o", "client.sidebar.activity.toggle")
