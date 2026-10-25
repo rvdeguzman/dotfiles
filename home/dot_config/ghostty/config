@@ -29,11 +29,44 @@ shell-integration-features = no-cursor,ssh-env
 
 # Keyboard bindings
 keybind = shift+insert=paste_from_clipboard
+keybind = super+enter=toggle_split_zoom
+keybind = super+shift+enter=toggle_fullscreen
 keybind = control+insert=copy_to_clipboard
 keybind = super+control+shift+alt+arrow_down=resize_split:down,100
 keybind = super+control+shift+alt+arrow_up=resize_split:up,100
 keybind = super+control+shift+alt+arrow_left=resize_split:left,100
 keybind = super+control+shift+alt+arrow_right=resize_split:right,100
+# Resize mode: cmd+r, then h/j/k/l; esc or q exits
+keybind = super+r=activate_key_table:resize
+keybind = resize/h=resize_split:left,20
+keybind = resize/j=resize_split:down,20
+keybind = resize/k=resize_split:up,20
+keybind = resize/l=resize_split:right,20
+keybind = resize/escape=deactivate_key_table
+keybind = resize/q=deactivate_key_table
+keybind = resize/catch_all=ignore
+
+# Nav mode: cmd+u enters (and scrolls up half a page); esc or q exits
+keybind = super+u=activate_key_table:nav
+keybind = chain=scroll_page_fractional:-0.5
+keybind = nav/ctrl+u=scroll_page_fractional:-0.5
+keybind = nav/ctrl+d=scroll_page_fractional:0.5
+keybind = nav/u=scroll_page_fractional:-0.5
+keybind = nav/d=scroll_page_fractional:0.5
+keybind = nav/k=scroll_page_lines:-1
+keybind = nav/j=scroll_page_lines:1
+keybind = nav/g=scroll_to_top
+keybind = nav/shift+g=scroll_to_bottom
+keybind = nav/[=jump_to_prompt:-1
+keybind = nav/]=jump_to_prompt:1
+keybind = nav/ctrl+h=goto_split:left
+keybind = nav/ctrl+j=goto_split:down
+keybind = nav/ctrl+k=goto_split:up
+keybind = nav/ctrl+l=goto_split:right
+keybind = nav/escape=deactivate_key_table
+keybind = nav/q=deactivate_key_table
+keybind = nav/catch_all=ignore
+
 keybind = performable:ctrl+h=goto_split:left
 keybind = performable:ctrl+j=goto_split:down
 keybind = performable:ctrl+k=goto_split:up

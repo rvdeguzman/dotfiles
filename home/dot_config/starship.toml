@@ -1,7 +1,7 @@
 # geoffgarside-style prompt: user@hostname:dir (branch) status $
 # (previous config saved as starship.toml.bak)
 add_newline = false
-command_timeout = 200
+command_timeout = 500
 format = "$username$hostname$directory$git_branch${custom.git_dirty}$character"
 
 [username]
