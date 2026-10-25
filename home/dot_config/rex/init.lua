@@ -19,7 +19,7 @@ for key, dir in pairs({ h = "left", j = "down", k = "up", l = "right" }) do
   rex.bind("ctrl+" .. key, "pane.focus", { direction = dir, wrap = false })
 end
 
--- cmd+h/l also move left/right between splits (cmd+j/k keep Rex's defaults;
+-- cmd+h/l also move left/right between splits (cmd+j/k switch sessions, see below;
 -- use ctrl+j/k to move up/down). macOS's app-menu "Hide" (cmd+h) can't be changed from
 -- init.lua; it's moved to ctrl+opt+shift+cmd+h via a per-app menu override
 -- (takes effect after quitting and reopening Rex):
@@ -30,12 +30,16 @@ for key, dir in pairs({ h = "left", l = "right" }) do
   rex.bind("cmd+" .. key, "pane.focus", { direction = dir, wrap = false })
 end
 
--- cmd+k opens the session switcher ("Change Session…").
-rex.bind("cmd+k", "session.switch")
+-- cmd+o opens the session switcher ("Change Session…").
+rex.bind("cmd+o", "session.switch")
+
+-- cmd+j / cmd+k go to the next / previous session.
+rex.bind("cmd+j", "session.next")
+rex.bind("cmd+k", "session.previous")
 
 -- cmd+r renames the current session; cmd+shift+r refreshes sessions.
 rex.bind("cmd+r", "session.rename")
 rex.bind("cmd+shift+r", "session.refresh")
 
--- cmd+o shows the Activity sidebar (in addition to Rex's default cmd+.).
-rex.bind("cmd+o", "client.sidebar.activity.toggle")
+-- cmd+shift+o shows the Activity sidebar (in addition to Rex's default cmd+.).
+rex.bind("cmd+shift+o", "client.sidebar.activity.toggle")
