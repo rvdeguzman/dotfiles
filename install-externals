@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Clone the config repos listed in ./externals into $HOME when they are missing.
+# Existing paths are never touched; pull inside each checkout to update it.
+#   ./install-externals
+set -euo pipefail
+
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+[[ $# -eq 0 ]] || { echo 'usage: ./install-externals' >&2; exit 2; }
+REPO=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
+
+while read -r path url; do
+  [[ -z ${path:-} || $path == \#* ]] && continue
+  dest=$HOME/$path
+  if [[ -e $dest || -L $dest ]]; then
+    echo "exists: ~/$path (left untouched; make doctor checks its origin)"
+    continue
+  fi
+  mkdir -p "$(dirname "$dest")"
+  git clone "$url" "$dest"
+done < "$REPO/externals"

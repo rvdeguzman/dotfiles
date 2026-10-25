@@ -1,4 +1,0 @@
-{{/* Refuse direct chezmoi operations on unsupported hosts, even without ./setup. */ -}}
-{{ if ne .chezmoi.os "darwin" -}}
-{{ fail "This dotfiles repository supports macOS only." -}}
-{{ end -}}

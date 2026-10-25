@@ -2,7 +2,7 @@
 
 Use this order for humans and agents. Start in the dotfiles checkout and read
 `AGENTS.md`. This repository supports macOS only (Apple Silicon and Intel).
-Installers and chezmoi templates reject other operating systems.
+Installers and `./dot` reject other operating systems.
 
 ## 1. Inspect without changing anything
 
@@ -11,14 +11,14 @@ git status --short
 make doctor
 ```
 
-`make doctor` requires Python 3; Python 3.11+ enables TOML-based external checks.
+`make doctor` requires Python 3.
 If Python or make is missing on a fresh Mac, perform the prerequisite inspection
 manually before approving their installation. Doctor is not a bootstrapper.
 
 Doctor checks OS/architecture, tools on PATH, selected macOS developer tools/SDK,
 local Homebrew package presence, Git checkout roots/origins/local changes,
-Doom core, common configuration conflicts, and chezmoi managed-file drift.
-External targets come from `home/.chezmoiexternal.toml`, not a duplicated list.
+Doom core, common configuration conflicts, and managed-file drift (`./dot status`).
+External targets come from the root `externals` file, not a duplicated list.
 Equivalent GitHub HTTPS and SSH origins are accepted. It does not inspect the
 contents of shell configs, secrets, history, or generated Doom environments.
 
@@ -29,8 +29,7 @@ contents of shell configs, secrets, history, or generated Doom environments.
   complete or that applying changes is approved.**
 - No installs, update scans, network fetches, builds, or apply operations.
   Git optional locks and Homebrew automatic updates/analytics are disabled.
-  ChezMoi status uses dry-run, no external refresh, excludes externals, and
-  skips secret templates. Error details and changed paths are suppressed.
+  Error details and changed paths are suppressed.
 - Package presence is not version/build-option verification. GUI behavior,
   native compilation, fonts, and interactive shell integration require manual
   follow-up. Unsupported operating systems fail immediately.
@@ -68,38 +67,29 @@ The user must handle sudo/password/conflict prompts directly in their terminal.
 Never request, capture, store, or pipe their password. Stop on package conflicts;
 explain any proposed replacement and obtain approval.
 
-## 3. Initialize chezmoi — no full apply yet
+## 3. Review changes, external targets, and backups
+
+`home/` mirrors `$HOME`: `home/.config/rex/init.lua` installs to
+`~/.config/rex/init.lua`. Files are copied, not symlinked.
 
 ```sh
-./setup
+make status   # A = missing in $HOME, M = content or executable bit differs
+make diff     # what apply would change
 ```
 
-This can install chezmoi if missing and initializes its source; it does not
-apply configuration. Homebrew must already be installed; there are no
-machine-profile prompts. Inspect the existing `~/.local/bin/dot` before
-replacing it. With approval,
-bootstrap only the wrapper:
+Summarize **every affected area**. Avoid copying sensitive diff content into
+chat. When a live file is newer than the repo (for example, an edit made in
+place), capture it with `make sync PATHS=<path>` and commit it instead of
+overwriting it.
 
-```sh
-chezmoi apply ~/.local/bin/dot
-```
-
-Ensure `~/.local/bin` is on PATH, or invoke the installed wrapper by its full
-path. Do not run a full apply to bootstrap the wrapper.
-
-## 4. Review changes, external targets, and backups
-
-Run `dot diff` (or `chezmoi diff`) locally. Summarize **every affected area**,
-including scripts, application configs, and external checkouts. Avoid copying
-sensitive diff content into chat. A reviewed diff is not approval to apply it.
-
-Inspect every target in `home/.chezmoiexternal.toml` before applying. Each
-existing target must be an actual Git working-tree root with its expected
-origin. A nested directory, bare repo, unrelated origin, or ad-hoc local commit
+Inspect every target in the root `externals` file. Each existing target must be
+an actual Git working-tree root with its expected origin (`make doctor` checks
+this). A nested directory, bare repo, unrelated origin, or ad-hoc local commit
 is not enough. Preserve dirty checkouts; do not force-reset or pull over them.
 Never attach a remote to a directory tracking auth, sessions, caches, or history.
 
-For any conflicting path, get approval for the specific backup and replacement:
+For any conflicting external path, get approval for the specific backup and
+replacement:
 
 - Choose a timestamped backup outside managed paths, preferably under a private
   backup directory created with `umask 077` (directory mode `700`).
@@ -111,16 +101,18 @@ For any conflicting path, get approval for the specific backup and replacement:
 - Restore only with approval: preserve the current replacement first, then copy
   the verified backup back. Never blindly overwrite post-install user changes.
 
-**Approval checkpoint:** present the final diff summary and any backup plan.
-Only after approval:
+## 4. Apply
 
 ```sh
-dot apply
-chezmoi status
+make apply                          # or: make apply PATHS=".config/rex"
+make externals                      # clone missing external repos
+make status                         # should print nothing
 ```
 
-Use a targeted `chezmoi apply <path>` when only one managed file is intended.
-Report errors and remaining drift. Do not hide failures by forcing an apply.
+`make apply` copies only differing files and backs up each overwritten live
+file to `~/.local/state/dotfiles/backups/<timestamp>/` first. It never deletes
+files. `make externals` only clones missing paths; it never pulls or replaces
+existing checkouts. Report errors and remaining drift.
 
 ## 5. Install application layers and shell integration
 
@@ -132,7 +124,7 @@ Report errors and remaining drift. Do not hide failures by forcing an apply.
   managed checkout. `make install` is explicit. Optional history import must
   precede enabling the hook; never import or print history automatically.
 - **zsh:** `~/.zshrc`, `~/.zshenv`, and `~/.zprofile` are unmanaged. Back up and
-  review before any explicit copy from `home/dot_config/zsh/zshrc.example`.
+  review before any explicit copy from `home/.config/zsh/zshrc.example`.
   Verify Oh My Zsh first. Prefer merging needed lines over replacing an existing
   shell setup. The example loads installed Clio on Ctrl-R and Up; inspect
   competing Atuin/plugin bindings. It also sources local `secrets.zsh` and
@@ -160,7 +152,7 @@ check. Then perform the relevant functional checks:
   not proof of correct font configuration.
 - Aerospace: accessibility permissions, configuration loading, and workspace
   bindings work. Do not treat package installation as permission approval.
-- `chezmoi status` shows only understood remaining drift. External Git changes
+- `make status` shows only understood remaining drift. External Git changes
   remain intact. No secrets, caches, or history were staged.
 
 Report what changed, verification results, remaining optional tools/drift,
@@ -171,6 +163,6 @@ GUI or interactive checks passed unless actually observed.
 
 Do not rerun a broad bootstrap or upgrade everything to fix one tool. Review
 and approve each: Homebrew package upgrades, CLT updates, external-repo pulls,
-Doom changes plus `doom sync`, or Clio pull plus `make install`. ChezMoi apply
-can refresh external repos; review their state first. Preserve version choices
+Doom changes plus `doom sync`, or Clio pull plus `make install`. Update an
+external repo with `git pull` inside it after reviewing its state. Preserve version choices
 and local work, and consult each tool's current upgrade instructions.

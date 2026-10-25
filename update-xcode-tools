@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Explicit macOS Command Line Tools maintenance. Never runs during chezmoi apply.
+# Explicit macOS Command Line Tools maintenance. Never runs during make apply.
 set -euo pipefail
 
 usage() {

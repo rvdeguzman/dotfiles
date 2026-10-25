@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-EXAMPLE = ROOT / "home/dot_config/zsh/zshrc.example"
+EXAMPLE = ROOT / "home/.config/zsh/zshrc.example"
 OMZ_NVM = Path.home() / ".oh-my-zsh/plugins/nvm/nvm.plugin.zsh"
 
 

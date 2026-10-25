@@ -1,39 +1,51 @@
 # Agent instructions
 
-This repository manages macOS-only dotfiles with chezmoi in copy mode. Read
-`README.md` before assisting with setup or installation. Do not restore Linux
-profiles or desktop configs unless explicitly requested. Homebrew is required.
+This repository manages macOS-only dotfiles in copy mode. `home/` mirrors
+`$HOME`, and `./dot` (via `make status|diff|apply|sync`) copies files between
+them. There is no chezmoi. Read `README.md` before assisting with setup or
+installation. Do not restore Linux profiles or desktop configs unless explicitly
+requested. Homebrew is required.
+
+## Managing dotfiles
+
+Agents apply and maintain these dotfiles for the user.
+
+- Edit configs in `home/`, then `make apply` (optionally `PATHS=".config/x"`).
+  When the user or an app edited a live file in place, `make sync` it back into
+  `home/` instead.
+- Before `apply` or `sync`, run `make status` and `make diff`. When both sides
+  changed, compare them and keep the newer intent; each command overwrites the
+  other side. Never discard a live edit without the user's approval.
+- `apply` backs up overwritten files to `~/.local/state/dotfiles/backups/`; it
+  never deletes. Removing a file from `home/` does not remove the live file.
+- To manage a new file, copy it into the matching path under `home/`. Never
+  add secrets, auth, sessions, caches, or history.
+- Commit repo changes with clear messages and push them to the remote.
+- Finish with `make status` empty or the remaining drift explained.
 
 ## Installation workflow
 
 Follow `docs/machine-setup.md` for the complete sequence and approval checkpoints.
-Start and finish with `make doctor` (local-only, read-only; Python 3 required,
-3.11+ for external manifest checks). Review warnings and skipped checks even
-when it exits zero. It does not replace reviewed diffs or functional checks.
+Start and finish with `make doctor` (local-only, read-only; Python 3 required).
+Review warnings and skipped checks even when it exits zero. It does not replace
+reviewed diffs or functional checks.
 
 1. Inspect the OS, hardware, existing configs, and `git status`; preserve all
    user changes. Never discard or overwrite files without explicit approval.
-2. Run `./setup` to install/initialize chezmoi. It intentionally does not apply
-   anything.
-3. Bootstrap the recommended wrapper with:
-   `chezmoi apply ~/.local/bin/dot`
-4. Run `chezmoi diff` (or `dot diff`) and summarize every affected area. Do not
-   run a full apply until the user approves the reviewed diff.
-5. Before applying, inspect every external target from
-   `home/.chezmoiexternal.toml`. A target is valid only when it is a Git
-   checkout with the expected `origin`; a bare local commit or unrelated repo
-   does not qualify. If a target conflicts, first make a timestamped `cp -a`
-   backup with user approval and restrict backup permissions to the user. Then
-   replace/repair the checkout and preserve only required ignored machine
-   state. Never silently delete a target, push an ad-hoc local repository, or
-   connect a repository that tracks auth data, sessions, or caches to a remote.
-6. Apply with `dot apply`. Use a targeted `chezmoi apply <path>` when only one
-   file should be installed.
-7. Verify `chezmoi status` afterward and report failures or remaining drift.
+2. Run `make diff` and summarize every affected area, then `make apply`.
+3. Before `make externals`, inspect every target in `externals`. A target is
+   valid only when it is a Git checkout with the expected `origin`; a bare local
+   commit or unrelated repo does not qualify. If a target conflicts, first make
+   a timestamped `cp -a` backup with user approval and restrict backup
+   permissions to the user. Then replace/repair the checkout and preserve only
+   required ignored machine state. Never silently delete a target, push an
+   ad-hoc local repository, or connect a repository that tracks auth data,
+   sessions, or caches to a remote.
+4. Verify `make status` afterward and report failures or remaining drift.
 
 ## Packages
 
-- Package installation is always explicit; chezmoi does not install packages.
+- Package installation is always explicit; `make apply` does not install packages.
 - Review the root `Brewfile`, then run `./install-packages` with approval.
   There are no package profiles; the installer uses `brew bundle --no-upgrade`.
 - Package installation may require the user to enter a sudo password or answer
@@ -46,7 +58,7 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 - Herdr plugins used by the managed configuration are declared in
   `install-herdr-plugins`. Review that file, then run `make herdr-plugins` with
   approval after Herdr itself is installed. The installer is explicit and never
-  runs during setup or chezmoi apply.
+  runs during `make apply`.
 - Add future required plugins to that script rather than issuing undocumented
   one-off install commands, and keep its invocation covered by tests.
 
@@ -80,7 +92,7 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
   Run `doom sync` after changing the Emacs build/version as well as config.
 - The `~/.config/doom` external is only the user's Doom configuration; cloning
   it does not install the Doom Emacs core or its packages.
-- After chezmoi has cloned `~/.config/doom`, install Doom with the current
+- After `make externals` has cloned `~/.config/doom`, install Doom with the current
   upstream commands:
   `git clone --depth 1 https://github.com/doomemacs/core ~/.config/emacs`
   followed by `~/.config/emacs/bin/doom install`.
@@ -92,14 +104,11 @@ when it exits zero. It does not replace reviewed diffs or functional checks.
 
 - `~/.zshrc`, `~/.zshenv`, and `~/.zprofile` are intentionally unmanaged. To
   install the example zsh config, back up the existing file and explicitly copy
-  `home/dot_config/zsh/zshrc.example`; verify Oh My Zsh exists first.
+  `home/.config/zsh/zshrc.example`; verify Oh My Zsh exists first.
 - Never add secrets. Keep `~/.config/zsh/secrets.zsh` local with mode `600`.
 - External repositories (`nvim`, `doom`, and `pi-config`) are normal Git
   checkouts. Preserve their local changes; a pull may fail when they are dirty.
-- Edit chezmoi templates in this repository, not only their rendered files in
-  `$HOME`. `dot sync` re-adds managed non-template files but skips templates.
-- Removing old platform files from the source does not authorize deleting any
-  existing live configuration. Review drift and request approval before apply.
+- Removing files from `home/` does not authorize deleting the live copies.
 - After approved Aerospace changes, verify configuration loading, workspace
   bindings, and accessibility permissions. Aerospace uses native commands,
   without helper scripts.

@@ -18,7 +18,7 @@ class MacosSetupTests(unittest.TestCase):
         self.env = dict(os.environ, PATH=f"{self.root}:{os.environ['PATH']}",
                         LOG=str(self.root / "log"))
         self.tool("uname", "echo Darwin")
-        for name in ("brew", "chezmoi", "npm", "curl", "herdr", "defaults"):
+        for name in ("brew", "npm", "curl", "herdr", "defaults"):
             self.tool(name, f'printf "%s\\n" "{name} $*" >> "$LOG"')
 
     def tool(self, name, body):
@@ -32,7 +32,7 @@ class MacosSetupTests(unittest.TestCase):
 
     def test_all_installers_reject_non_macos_before_mutation(self):
         self.tool("uname", "echo Linux")
-        for name in ("setup", "install-packages", "install-extras",
+        for name in ("dot", "install-externals", "install-packages", "install-extras",
                      "install-herdr-plugins", "install-nvm", "configure-rex"):
             with self.subTest(name=name):
                 result = self.run_script(name)
@@ -117,37 +117,66 @@ printf '%s\\n' 'nvm() { printf "nvm %s\\n" "$*" >> "$LOG"; }' > "$NVM_DIR/nvm.sh
                          f"https://github.com/nvm-sh/nvm.git {nvm_dir}\n"
                          "nvm install 24\nnvm alias default 24\n")
 
-    def test_setup_initializes_without_applying(self):
-        result = self.run_script("setup")
+    def test_install_externals_clones_only_missing_paths(self):
+        home = self.root / "home"
+        (home / ".config/nvim").mkdir(parents=True)
+        self.env["HOME"] = str(home)
+        self.tool("git", 'printf "git %s\\n" "$*" >> "$LOG"')
+        result = self.run_script("install-externals")
         self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("exists: ~/.config/nvim", result.stdout)
         self.assertEqual((self.root / "log").read_text(),
-                         f"chezmoi init --source {ROOT}\n")
+                         f"git clone https://github.com/rvdeguzman/doom.git {home}/.config/doom\n"
+                         f"git clone https://github.com/rvdeguzman/pi-config.git {home}/.pi/agent\n")
 
 
-@unittest.skipUnless(shutil.which("chezmoi"), "chezmoi required for template checks")
-class PlatformTemplateTests(unittest.TestCase):
-    def render(self, name, os_name):
-        # Override the template context explicitly; do not initialize/apply live config.
-        template = '{{ $ctx := dict "chezmoi" (dict "os" "' + os_name + '" "workingTree" "/example") }}{{ with $ctx }}'
-        template += (ROOT / "home" / name).read_text() + '{{ end }}'
-        return subprocess.run(["chezmoi", "--no-tty", "--dry-run",
-                               "--refresh-externals=never", "execute-template", template],
-                              capture_output=True, text=True, timeout=30)
+class DotTests(unittest.TestCase):
+    """Run ./dot from a throwaway repo copy so the real home/ and $HOME are never touched."""
 
-    def test_macos_templates(self):
-        config = self.render(".chezmoi.toml.tmpl", "darwin")
-        self.assertEqual(config.returncode, 0, config.stderr)
-        self.assertEqual(config.stdout.strip(), 'sourceDir = "/example"')
-        ignore = self.render(".chezmoiignore", "darwin")
-        self.assertEqual(ignore.returncode, 0, ignore.stderr)
-        self.assertEqual(ignore.stdout.strip(), "")
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        self.repo = Path(tmp.name) / "repo"
+        self.home = Path(tmp.name) / "home"
+        (self.repo / "home/.config/app").mkdir(parents=True)
+        self.home.mkdir()
+        shutil.copy2(ROOT / "dot", self.repo / "dot")
+        subprocess.run(["git", "init", "-q", str(self.repo)], check=True)
+        self.env = dict(os.environ, HOME=str(self.home), XDG_STATE_HOME=str(self.home / "state"))
 
-    def test_templates_reject_other_hosts(self):
-        for name in (".chezmoi.toml.tmpl", ".chezmoiignore"):
-            with self.subTest(name=name):
-                result = self.render(name, "linux")
-                self.assertNotEqual(result.returncode, 0)
-                self.assertIn("macOS only", result.stderr)
+    def write(self, base, rel, text):
+        path = base / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+        return path
+
+    def dot(self, *args):
+        result = subprocess.run([str(self.repo / "dot"), *args], capture_output=True,
+                                text=True, env=self.env, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return result.stdout
+
+    def test_apply_installs_and_backs_up_overwritten_file(self):
+        self.write(self.repo / "home", ".config/app/new.conf", "new\n")
+        self.write(self.repo / "home", ".config/app/edit.conf", "repo\n")
+        self.write(self.home, ".config/app/edit.conf", "live\n")
+        unmanaged = self.write(self.home, ".config/app/local.conf", "mine\n")
+        self.assertEqual(self.dot("status"), "M .config/app/edit.conf\nA .config/app/new.conf\n")
+        self.dot("apply")
+        self.assertEqual((self.home / ".config/app/new.conf").read_text(), "new\n")
+        self.assertEqual((self.home / ".config/app/edit.conf").read_text(), "repo\n")
+        self.assertEqual(unmanaged.read_text(), "mine\n")
+        backups = list((self.home / "state/dotfiles/backups").glob("*/.config/app/edit.conf"))
+        self.assertEqual([b.read_text() for b in backups], ["live\n"])
+        self.assertEqual(self.dot("status"), "")
+
+    def test_sync_copies_live_edits_back_without_adding_new_files(self):
+        repo_file = self.write(self.repo / "home", ".config/app/edit.conf", "repo\n")
+        self.write(self.home, ".config/app/edit.conf", "live\n")
+        self.write(self.home, ".config/app/secret.conf", "token\n")
+        self.dot("sync")
+        self.assertEqual(repo_file.read_text(), "live\n")
+        self.assertFalse((self.repo / "home/.config/app/secret.conf").exists())
 
 
 if __name__ == "__main__":

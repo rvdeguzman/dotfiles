@@ -1,9 +1,9 @@
 # Doom Emacs installation
 
 There are three separate pieces: the Emacs application, Doom core in
-`~/.config/emacs`, and personal configuration in `~/.config/doom`. Applying
-chezmoi only clones the personal configuration; it does not install Emacs,
-Doom core, or Doom packages.
+`~/.config/emacs`, and personal configuration in `~/.config/doom`.
+`make externals` only clones the personal configuration; it does not install
+Emacs, Doom core, or Doom packages.
 
 ## macOS: install Emacs first
 
@@ -115,9 +115,9 @@ may call the non-HEAD spec `stable`; that does not make this Emacs release stabl
    GNU tools expose prefixed commands (`gls`, `gfind`, `gtar`); do not replace
    system binaries.
 
-## Install Doom after reviewing and applying the personal config
+## Install Doom after cloning the personal config
 
-Follow the README's diff-first chezmoi workflow. Confirm `~/.config/doom` is
+Run `make externals` (see the README). Confirm `~/.config/doom` is
 its expected Git checkout (`https://github.com/rvdeguzman/doom.git`), preserving
 local changes. Before cloning core, inspect both `~/.config/emacs` and
 `~/.emacs.d` (including symlinks). Never clone over or delete an existing

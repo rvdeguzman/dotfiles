@@ -1,33 +1,30 @@
 # Dotfiles
 
-macOS-only configuration, managed with [chezmoi](https://www.chezmoi.io)
-in **copy mode**: files in `$HOME` are real files, not symlinks. Nothing moves
-in either direction without an explicit command — editing a live config does
-not touch this repo, and this repo never touches the machine outside of an
-apply you confirmed.
+macOS-only configuration. `home/` mirrors `$HOME`, and `./dot` copies files
+between them: `home/.config/rex/init.lua` installs to `~/.config/rex/init.lua`.
+Live files are real copies, not symlinks. Nothing moves in either direction
+without an explicit command.
 
 ## Setup
 
 Start with [the machine setup runbook](docs/machine-setup.md), including
-prerequisite inspection, approval checkpoints, backups, and functional checks.
+prerequisite inspection, backups, and functional checks.
 
 ```sh
-make doctor                     # read-only local preflight (requires Python 3)
-./setup                         # installs chezmoi if missing; init, no apply
-chezmoi apply ~/.local/bin/dot   # bootstrap wrapper after inspecting the target
-dot diff                        # review every affected area and external target
-dot apply                       # only after approval; asks again before applying
-chezmoi status                  # report remaining drift
+make doctor      # read-only local preflight (requires Python 3)
+make diff        # review what apply would change
+make apply       # copy differing files into $HOME (backs up overwritten files)
+make externals   # clone missing nvim, doom, and pi-config checkouts
+make status      # report remaining drift
 ```
 
 Doctor never installs, fetches, or applies. Failures return a nonzero status;
-warnings and skipped checks still need review. Python 3.11+ enables external
-manifest checks. See the runbook for fresh machines without Python/developer tools.
+warnings and skipped checks still need review. See the runbook for fresh
+machines without Python/developer tools.
 
-Homebrew is required. Setup has no machine-profile prompts; setup, installers,
-and chezmoi templates reject non-macOS hosts. Previous Linux configuration is
-available in Git history, not managed by the current tree. Existing local files
-are not deleted by this repository cutover.
+Homebrew is required. Installers and `./dot` reject non-macOS hosts. Previous
+Linux configuration is available in Git history, not managed by the current
+tree.
 
 ### Emacs and Doom
 
@@ -42,30 +39,33 @@ updates; the Brewfile does not pin its date.
 The guide covers prerequisites, safe GUI app registration, existing-install
 checks, and `doom install` / `doom sync` / `doom doctor` verification.
 
-The Doom external provides only `~/.config/doom`; it does **not** install
+`make externals` clones only `~/.config/doom`; it does **not** install
 Emacs or Doom core (`~/.config/emacs`).
 
 ## Daily workflow
 
-The `dot` wrapper (installed to `~/.local/bin/dot`) keeps everything
-diff-first:
-
 ```sh
-dot apply        # chezmoi diff, ask y/N, then apply
-dot sync         # chezmoi re-add: pull edits to *managed* files back into
-                 # the repo, then show git status — commit with plain git
-dot add ~/.config/foo/bar.toml   # start managing a new file (explicit only)
-dot diff / dot status / ...      # any other chezmoi command passes through
+make status                      # A = missing in $HOME, M = differs
+make diff                        # repo -> $HOME changes that apply would make
+make apply                       # copy them; overwritten files go to
+                                 # ~/.local/state/dotfiles/backups/<timestamp>/
+make sync                        # copy edits to managed live files back into home/,
+                                 # then commit with plain git
+make apply PATHS=".config/rex"   # limit any command to some paths
 ```
 
-`re-add` only updates files that are already managed. New files — including
-anything secret — never enter the repo unless you `dot add` them.
+A managed file is any tracked or untracked, non-ignored file under `home/`.
+To start managing a new config, copy it into the matching path under `home/`.
+`sync` never adds files, so new live files (including secrets) stay out of the
+repo. `apply` never deletes files.
+
+When both sides changed, check which is newer before choosing `apply` or
+`sync`; each overwrites the other side.
 
 ## Vendored repos
 
-The heavy-churn configs are their own repositories, declared in
-`home/.chezmoiexternal.toml` and cloned/pulled by `chezmoi apply`
-(at most once per hour; force with `chezmoi apply -R`):
+The heavy-churn configs are their own repositories, listed in `externals` and
+cloned by `make externals` when missing. Existing checkouts are never touched:
 
 | checkout            | repo                    |
 |---------------------|-------------------------|
@@ -73,8 +73,8 @@ The heavy-churn configs are their own repositories, declared in
 | `~/.config/doom`    | rvdeguzman/doom         |
 | `~/.pi/agent`       | rvdeguzman/pi-config    |
 
-Each is a normal git checkout: edit in place, commit and push there.
-Everything pi-related lives in pi-config, checked out directly at
+Each is a normal git checkout: edit in place, then commit, pull, and push
+there. Everything pi-related lives in pi-config, checked out directly at
 `~/.pi/agent`: skills, extensions, agents, tools, `update-skills`, and the
 config files (`AGENTS.md`, `settings.json`, `models.json`,
 `web-search.json`). Its whitelist `.gitignore` keeps the machine state
@@ -89,7 +89,7 @@ The root `Brewfile` is the single package list, installed **only** by hand:
 ```
 
 There are no package profiles. This installer never removes or upgrades
-existing packages, and nothing installs during apply.
+existing packages, and nothing installs during `make apply`.
 
 Python projects use `uv` for virtual environments and dependencies; it is
 included in the Brewfile.
@@ -121,7 +121,7 @@ make herdr-plugins
 ```
 
 This runs `./install-herdr-plugins`; it currently installs the Vim/Herdr pane
-navigation plugin and never runs during setup or chezmoi apply.
+navigation plugin and never runs during `make apply`.
 
 Rex keybindings live in `~/.config/rex/init.lua`. Binding `cmd+h` there also
 requires moving the macOS "Hide Rex" menu shortcut, which is an app default:
@@ -136,14 +136,14 @@ and reopen Rex afterward. Rex.app settings (font, colors, padding) are not manag
 ### Clio shell history
 
 [Clio](https://github.com/rvdeguzman/clio) is the personal, local-only Atuin
-replacement for zsh. It remains a separate manually managed checkout, not a
-chezmoi external. See [installation and migration instructions](docs/clio.md)
+replacement for zsh. It remains a separate manually managed checkout, not an
+external. See [installation and migration instructions](docs/clio.md)
 for `make install`, optional history import **before** enabling the hook, and
 explicit `~/.zshrc` integration. Shell history stays private and unmanaged.
 
 ### macOS developer tools
 
-Maintain Apple's Command Line Tools explicitly (never during setup/apply):
+Maintain Apple's Command Line Tools explicitly (never during apply):
 
 ```sh
 make xcode-install   # first-time Apple installer, only if tools are missing
@@ -184,31 +184,27 @@ Drive in System Settings and open it in Finder. Then copy and paste:
 The command leaves any existing file, directory, or symlink untouched. Verify
 with `readlink "$HOME/icloud"`, then use `cd ~/icloud`. This is only a shortcut;
 files still live in iCloud Drive and may need downloading before offline use.
-The link is machine-local: setup and chezmoi apply do not create it. Do not add
-iCloud contents to chezmoi or this repository.
+The link is machine-local: `make apply` does not create it. Do not add
+iCloud contents to this repository.
 
 ## Secrets
 
 `~/.zshrc`, `~/.zshenv`, and `~/.zprofile` are intentionally unmanaged local
 files. Secrets go in `~/.config/zsh/secrets.zsh` (start from the managed
 `secrets.zsh.example`, then `chmod 600`). `*.local` files are gitignored.
-Copy mode means a secret pasted into a live config still stays out of the
-repo until an explicit `dot add`/`dot sync` — review before committing.
+A secret pasted into a managed live config enters `home/` on the next
+`make sync`, so review `git diff` before committing.
 
 ## Layout
 
-`home/` is the chezmoi source directory (`.chezmoiroot`), using chezmoi
-naming: `dot_` = leading dot, `private_` = restricted permissions,
-`executable_` = +x, `.tmpl` = template.
-
-- `home/.chezmoiignore` guards against use on non-macOS hosts; there are no
-  per-platform config branches.
-- `home/dot_config/` contains Aerospace, Ghostty, tmux, zsh examples, and other
-  application settings. Aerospace uses native commands without helper scripts.
-- `home/dot_config/wallpapers/` keeps the wallpaper collection, installed at
+- `home/` mirrors `$HOME`. `home/.config/` contains Aerospace, Ghostty, Herdr,
+  Rex, tmux, zsh examples, and other application settings. Aerospace uses
+  native commands without helper scripts.
+- `home/.config/wallpapers/` keeps the wallpaper collection, installed at
   `~/.config/wallpapers`. Selecting a macOS desktop background is manual.
-- `Brewfile` declares packages; `docs/` documents explicit installation and
-  verification. Edit any chezmoi templates in the source, not rendered files.
+- `dot` copies between `home/` and `$HOME`; `externals` lists separate config
+  repos; `Brewfile` declares packages; `docs/` documents explicit installation
+  and verification.
 
 **Syncing machines:** commit and push with plain git; on the other machine
-`git pull && dot apply`.
+`git pull && make apply`.

@@ -69,7 +69,7 @@ fi
 ```
 
 Both common Up-arrow sequences open Clio instead of stepping through history.
-These bindings are also included in `home/dot_config/zsh/zshrc.example`.
+These bindings are also included in `home/.config/zsh/zshrc.example`.
 Start a new zsh. Press Ctrl-R or Up to search: Enter executes a selection, Tab places
 it in the command line for editing, and Esc cancels. Prefer Tab when checking
 imported commands to avoid accidentally executing one.
@@ -91,6 +91,6 @@ Start a new shell to load the updated hook. Do not re-import history on updates.
 
 History lives at `${XDG_DATA_HOME:-$HOME/.local/share}/clio/history` and may
 contain credentials or other sensitive command text. Never add that directory
-to chezmoi, Git, an external checkout, or a sync service. Keep source code in
+to this repository, Git, an external checkout, or a sync service. Keep source code in
 `~/repos/clio`, separate from runtime data. Do not print history into agent logs
 for installation verification.

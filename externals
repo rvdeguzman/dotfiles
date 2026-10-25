@@ -1,0 +1,5 @@
+# Config repos cloned into $HOME by `make externals` (path relative to $HOME, then origin).
+# Each is a normal Git checkout: edit, commit, pull, and push inside it.
+.config/nvim  https://github.com/rvdeguzman/nvim.git
+.config/doom  https://github.com/rvdeguzman/doom.git
+.pi/agent     https://github.com/rvdeguzman/pi-config.git

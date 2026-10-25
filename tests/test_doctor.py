@@ -62,39 +62,20 @@ class DoctorTests(unittest.TestCase):
         self.assertEqual(self.checker.warnings, 1)
         self.assertNotIn("private-history", self.output.getvalue())
 
-    @unittest.skipIf(doctor.tomllib is None, "needs Python 3.11 TOML support")
     def test_external_manifest_drives_checks(self):
-        (self.root / "home").mkdir()
-        (self.root / "home/.chezmoiexternal.toml").write_text(
-            '[".config/example"]\ntype = "git-repo"\nurl = "https://github.com/u/r.git"\n')
+        (self.root / "externals").write_text(
+            "# comment\n.config/example  https://github.com/u/r.git\n../escape  https://github.com/u/x.git\n")
         with patch.object(self.checker, "checkout") as checkout:
             self.checker.externals()
         checkout.assert_called_once_with(self.root / ".config/example", "https://github.com/u/r.git")
+        self.assertEqual(self.checker.errors, 1)
 
-    def test_old_python_reports_skip(self):
-        with patch.object(doctor, "tomllib", None):
-            self.checker.externals()
-        self.assertEqual(self.checker.warnings, 1)
-
-    def test_drift_safe_flags_and_suppression(self):
-        with patch.object(self.checker, "command", return_value="chezmoi"), \
-             patch.object(doctor, "run", side_effect=[
-                 (0, str(self.root / "home")), (0, "MM private-file")
-             ]) as run:
+    def test_drift_counts_without_printing_paths(self):
+        with patch.object(doctor, "run", return_value=(0, "M .config/private-file\nA .config/b")):
             self.checker.drift()
-        args = run.call_args.args
-        self.assertIn("--refresh-externals=never", args)
-        self.assertIn("--dry-run", args)
-        self.assertIn("--skip-secrets", args)
-        self.assertIn("--exclude=externals", args)
+        self.assertEqual(self.checker.warnings, 1)
+        self.assertIn("2 managed files differ", self.output.getvalue())
         self.assertNotIn("private-file", self.output.getvalue())
-
-    def test_other_chezmoi_source_skips_status(self):
-        with patch.object(self.checker, "command", return_value="chezmoi"), \
-             patch.object(doctor, "run", return_value=(0, "/different/source")) as run:
-            self.checker.drift()
-        self.assertEqual(run.call_count, 1)
-        self.assertEqual(self.checker.warnings, 1)
 
     def test_timeout_is_failure(self):
         with patch.object(doctor.subprocess, "run", side_effect=subprocess.TimeoutExpired("git", 30)):

@@ -1,8 +1,14 @@
-.PHONY: doctor nvm-install herdr-plugins rex-keys xcode-check xcode-install xcode-update test lint
+.PHONY: doctor status diff apply sync externals nvm-install herdr-plugins rex-keys xcode-check xcode-install xcode-update test lint
 
-# Python 3.11+ enables external-manifest checks; older Python 3 reports a skip.
 doctor:
 	python3 -B scripts/doctor.py
+
+# Copy-mode sync between home/ and $HOME. Limit to paths with PATHS=".config/rex ...".
+status diff apply sync:
+	./dot $@ $(PATHS)
+
+externals:
+	./install-externals
 
 nvm-install:
 	./install-nvm
@@ -27,10 +33,10 @@ xcode-update:
 	./update-xcode-tools --install "$$XCODE_TOOLS_LABEL"
 
 lint:
-	bash -n setup install-packages install-extras install-nvm install-herdr-plugins configure-rex update-xcode-tools
-	shellcheck setup install-packages install-extras install-nvm install-herdr-plugins configure-rex update-xcode-tools
-	zsh -n home/dot_config/zsh/zshrc.example
-	zsh -n home/dot_config/zsh/secrets.zsh.example
+	bash -n dot install-externals install-packages install-extras install-nvm install-herdr-plugins configure-rex update-xcode-tools
+	shellcheck dot install-externals install-packages install-extras install-nvm install-herdr-plugins configure-rex update-xcode-tools
+	zsh -n home/.config/zsh/zshrc.example
+	zsh -n home/.config/zsh/secrets.zsh.example
 
 test:
 	python3 -B -m unittest discover -s tests -p 'test_*.py'

@@ -1,5 +1,0 @@
-{{/* macOS-only source configuration. No machine-profile prompts. */ -}}
-{{ if ne .chezmoi.os "darwin" -}}
-{{ fail "This dotfiles repository supports macOS only." -}}
-{{ end -}}
-sourceDir = {{ .chezmoi.workingTree | quote }}

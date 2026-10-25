@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Copy-mode sync between home/ (a mirror of $HOME) and the live files in $HOME.
+# Managed files are the tracked and untracked-but-not-ignored files under home/.
+#   ./dot status [path...]  list differing files: A = missing in $HOME, M = content or +x differs
+#   ./dot diff   [path...]  show what apply would change in $HOME
+#   ./dot apply  [path...]  copy differing files into $HOME, backing up overwritten ones first
+#   ./dot sync   [path...]  copy edited live files back into home/ (never adds new files)
+# Paths are relative to $HOME (".config/rex") or absolute ("$HOME/.config/rex").
+set -euo pipefail
+
+[[ $(uname -s) == Darwin ]] || { echo 'This repository supports macOS only.' >&2; exit 1; }
+REPO=$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd -P)
+SRC=$REPO/home
+cmd=${1:-}
+[[ $cmd =~ ^(status|diff|apply|sync)$ ]] || { echo 'usage: ./dot status|diff|apply|sync [path...]' >&2; exit 2; }
+shift
+filters=("${@#"$HOME"/}")
+
+selected() {
+  ((${#filters[@]} == 0)) && return 0
+  local f
+  for f in "${filters[@]}"; do
+    f=${f%/}
+    [[ $1 == "$f" || $1 == "$f"/* ]] && return 0
+  done
+  return 1
+}
+
+is_exec() { [[ -x $1 ]] && echo y || echo n; }
+
+# Prints A or M for a differing file, nothing when the live copy matches.
+state() {
+  local src=$SRC/$1 dst=$HOME/$1
+  if [[ ! -e $dst && ! -L $dst ]]; then
+    echo A
+  elif ! cmp -s "$src" "$dst" || [[ $(is_exec "$src") != "$(is_exec "$dst")" ]]; then
+    echo M
+  fi
+}
+
+backup=
+while IFS= read -r -d '' path; do
+  if [[ ! -f $SRC/$path ]] || ! selected "$path"; then continue; fi
+  s=$(state "$path")
+  [[ -n $s ]] || continue
+  src=$SRC/$path dst=$HOME/$path
+  case $cmd in
+  status) echo "$s $path" ;;
+  diff)
+    if [[ $s == A ]]; then
+      diff -u --label "/dev/null" --label "$HOME/$path" /dev/null "$src" || true
+    elif cmp -s "$src" "$dst"; then
+      echo "$HOME/$path: executable bit differs"
+    else
+      diff -u --label "$HOME/$path (live)" --label "$HOME/$path (repo)" "$dst" "$src" || true
+    fi
+    ;;
+  apply)
+    if [[ $s == M ]]; then
+      backup=${backup:-${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/backups/$(date +%Y%m%d-%H%M%S)}
+      (umask 077 && mkdir -p "$(dirname "$backup/$path")" && cp -p "$dst" "$backup/$path")
+    fi
+    mkdir -p "$(dirname "$dst")"
+    cp "$src" "$dst"
+    if [[ -x $src ]]; then chmod +x "$dst"; else chmod -x "$dst"; fi
+    echo "applied $s $path"
+    ;;
+  sync)
+    if [[ $s == M ]] && ! cmp -s "$src" "$dst"; then
+      cp "$dst" "$src"
+      echo "synced $path"
+    fi
+    ;;
+  esac
+done < <(git -C "$SRC" ls-files --cached --others --exclude-standard -z)
+
+[[ -z $backup ]] || echo "Overwritten files backed up to $backup"
+[[ $cmd != sync ]] || git -C "$REPO" status --short

@@ -8,11 +8,6 @@ import shutil
 import subprocess
 import sys
 
-try:
-    import tomllib
-except ImportError:
-    tomllib = None
-
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -75,21 +70,20 @@ class Doctor:
             self.report("OK", f"{label}: clean working tree")
 
     def externals(self):
-        if tomllib is None:
-            self.report("WARN", "Python 3.11+ needed to inspect .chezmoiexternal.toml; check externals manually")
-            return
         try:
-            data = tomllib.loads((self.root / "home/.chezmoiexternal.toml").read_text())
-        except (OSError, ValueError):
-            self.report("FAIL", "Cannot parse external manifest")
+            lines = (self.root / "externals").read_text().splitlines()
+        except OSError:
+            self.report("FAIL", "Cannot read externals manifest")
             return
-        for target, spec in data.items():
-            if (not isinstance(spec, dict) or spec.get("type") != "git-repo"
-                    or not isinstance(spec.get("url"), str)
-                    or Path(target).is_absolute() or ".." in Path(target).parts):
-                self.report("FAIL", "Unsupported external declaration; review manifest manually")
+        for line in lines:
+            fields = line.split()
+            if not fields or fields[0].startswith("#"):
                 continue
-            self.checkout(self.home / target, spec["url"])
+            if (len(fields) != 2 or Path(fields[0]).is_absolute()
+                    or ".." in Path(fields[0]).parts):
+                self.report("FAIL", "Unsupported externals entry; review manifest manually")
+                continue
+            self.checkout(self.home / fields[0], fields[1])
 
     def packages(self):
         # Current Brewfile is declarative; don't evaluate arbitrary Ruby or run bundle.
@@ -128,21 +122,13 @@ class Doctor:
                     "Emacs GUI app absent/broken; see docs/doom-emacs.md")
 
     def drift(self):
-        if not self.command("chezmoi"):
-            return
-        # Verify the active source first: do not accidentally audit a different checkout.
-        code, source = run("chezmoi", "--no-tty", "source-path")
-        if code or Path(source).resolve() != (self.root / "home").resolve():
-            self.report("WARN", "chezmoi not initialized to this repo's home/; run ./setup after review")
-            return
-        code, status = run("chezmoi", "--no-tty", "--dry-run", "--refresh-externals=never",
-                           "--skip-secrets", "status", "--exclude=externals")
+        code, status = run(str(self.root / "dot"), "status")
         if code:
-            self.report("WARN", "chezmoi status failed; inspect locally (error output suppressed)")
+            self.report("WARN", "./dot status failed; inspect locally (error output suppressed)")
         elif status:
-            self.report("WARN", f"chezmoi reports {len(status.splitlines())} status entries; review dot diff before apply")
+            self.report("WARN", f"{len(status.splitlines())} managed files differ from $HOME; review make diff before apply")
         else:
-            self.report("OK", "No managed-file drift detected (externals and secret templates excluded)")
+            self.report("OK", "No managed-file drift detected")
 
     def check(self):
         print(f"Machine: {platform.system()} {platform.release()} / {platform.machine()}")
@@ -153,7 +139,7 @@ class Doctor:
         git = self.command("git")
         for tool in ("zsh", "rg", "fd", "emacs"):
             self.command(tool)
-        for tool in ("dot", "cargo", "clio"):
+        for tool in ("cargo", "clio"):
             self.command(tool, required=False)
         self.macos()
         if git:
